@@ -7,19 +7,23 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model Goals {
+model Goal {
   id                     String   @id @default(uuid()) @db.Uuid
   title                  String
   desiredWeeklyFrequency String   @map("desired_weekly_frequency")
   createdAt              DateTime @default(now()) @map("created_at")
 
-  GoalsCompleted GoalsCompleted[]
+  GoalsCompleted GoalCompleted[]
+
+  @@map("goals")
 }
 
-model GoalsCompleted {
+model GoalCompleted {
   id        String   @id @default(uuid()) @db.Uuid
   goalId    String   @map("goal_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
 
-  goal Goals @relation(fields: [goalId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  goal Goal @relation(fields: [goalId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+
+  @@map("goals_completed")
 }
