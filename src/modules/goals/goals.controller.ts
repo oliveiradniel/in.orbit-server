@@ -1,5 +1,6 @@
-import { Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Post } from '@nestjs/common';
 import { GoalsService } from './goals.service';
+import { CreateGoalDTO } from './dto/create-goal.dto';
 
 @Controller('goals')
 export class GoalsController {
@@ -9,5 +10,12 @@ export class GoalsController {
   async findWeekGoals() {}
 
   @Post()
-  async create() {}
+  create(@Body() createGoalDTO: CreateGoalDTO) {
+    const { title, desiredWeeklyFrequency } = createGoalDTO;
+
+    return this.goalsService.create({
+      title,
+      desiredWeeklyFrequency,
+    });
+  }
 }
