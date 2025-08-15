@@ -1,5 +1,7 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
+
 import { GoalsService } from './goals.service';
+
 import { CreateGoalDTO } from './dto/create-goal.dto';
 
 @Controller('goals')
@@ -7,7 +9,9 @@ export class GoalsController {
   constructor(private readonly goalsService: GoalsService) {}
 
   @Get()
-  async findWeekGoals() {}
+  findWeeklyGoalsWithCompletion() {
+    return this.goalsService.findWeeklyGoalsWithCompletion();
+  }
 
   @Post()
   create(@Body() createGoalDTO: CreateGoalDTO) {

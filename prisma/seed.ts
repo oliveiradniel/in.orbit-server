@@ -1,5 +1,6 @@
-import dayjs from 'dayjs';
 import { prismaClient } from 'src/lib/prismaClient';
+
+import dayjs from 'dayjs';
 
 async function main() {
   const goalId1 = crypto.randomUUID();
@@ -21,7 +22,12 @@ async function main() {
         title: 'Me exercitar',
         desiredWeeklyFrequency: 3,
       },
-      { id: goalId3, title: 'Meditar', desiredWeeklyFrequency: 1 },
+      {
+        id: goalId3,
+        title: 'Meditar',
+        desiredWeeklyFrequency: 1,
+        createdAt: new Date(2025, 7, 18),
+      },
     ],
   });
 
@@ -30,7 +36,11 @@ async function main() {
   await prismaClient.goalCompleted.createMany({
     data: [
       { goalId: goalId1, createdAt: startOfWeek.toDate() },
-      { goalId: goalId2, createdAt: startOfWeek.add(1, 'day').toDate() },
+      { goalId: goalId1, createdAt: startOfWeek.add(1, 'day').toDate() },
+      { goalId: goalId1, createdAt: startOfWeek.add(2, 'day').toDate() },
+      { goalId: goalId1, createdAt: startOfWeek.add(3, 'day').toDate() },
+      { goalId: goalId1, createdAt: startOfWeek.add(4, 'day').toDate() },
+      { goalId: goalId3, createdAt: startOfWeek.add(1, 'day').toDate() },
     ],
   });
 }

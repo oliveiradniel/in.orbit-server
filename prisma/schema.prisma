@@ -13,7 +13,7 @@ model Goal {
   desiredWeeklyFrequency Int      @map("desired_weekly_frequency")
   createdAt              DateTime @default(now()) @map("created_at")
 
-  goalCompleted GoalCompleted[]
+  goalsCompleted GoalCompleted[]
 
   @@map("goals")
 }
