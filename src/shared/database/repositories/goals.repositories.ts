@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 import { PrismaService } from '../prisma.service';
+import { type Prisma } from '@prisma/client';
 
 @Injectable()
 export class GoalsRepository {
@@ -8,5 +9,14 @@ export class GoalsRepository {
 
   async getWeekGoals() {}
 
-  async create() {}
+  create(createUserDTO: Prisma.GoalCreateInput) {
+    const { title, desiredWeeklyFrequency } = createUserDTO;
+
+    return this.prismaService.goal.create({
+      data: {
+        title,
+        desiredWeeklyFrequency,
+      },
+    });
+  }
 }
