@@ -1,10 +1,9 @@
 import { Injectable } from '@nestjs/common';
 
 import { PrismaService } from '../prisma.service';
-import { type Prisma } from '@prisma/client';
-import { GetWeeklyGoalsWithCompletionResponse } from '../interfaces/Goal';
 
-// import { CountOfCompletedGoal, GoalCreatedUpToWeek } from '../interfaces/Goal';
+import { type Prisma } from '@prisma/client';
+import { type GetWeeklyGoalsWithCompletionResponse } from '../interfaces/Goal';
 
 @Injectable()
 export class GoalsRepository {
