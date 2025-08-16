@@ -3,11 +3,44 @@ import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 
 import { type Prisma } from '@prisma/client';
-import { type GetWeeklyGoalsWithCompletionResponse } from '../interfaces/Goal';
+
+import {
+  type GetWeeklyFrequencyAndCompletionCountParams,
+  type GetWeeklyGoalsWithCompletionResponse,
+} from '../interfaces/Goal';
 
 @Injectable()
 export class GoalsRepository {
   constructor(private readonly prismaService: PrismaService) {}
+
+  async getWeeklyFrequencyAndCompletionCount({
+    goalId,
+    firstDayOfWeek,
+    lastDayOfWeek,
+  }: GetWeeklyFrequencyAndCompletionCountParams) {
+    const goal = await this.prismaService.goal.findUnique({
+      where: { id: goalId },
+      select: {
+        desiredWeeklyFrequency: true,
+        goalCompleted: {
+          where: {
+            createdAt: {
+              gte: firstDayOfWeek,
+              lte: lastDayOfWeek,
+            },
+          },
+          select: { id: true },
+        },
+      },
+    });
+
+    if (!goal) return null;
+
+    return {
+      desiredWeeklyFrequency: goal.desiredWeeklyFrequency,
+      countCompletion: goal.goalCompleted.length,
+    };
+  }
 
   async getWeeklyGoalsWithCompletion({
     lastDayOfWeek,

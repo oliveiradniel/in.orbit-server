@@ -4,3 +4,9 @@ export interface GetWeeklyGoalsWithCompletionResponse {
   desiredWeeklyFrequency: number;
   completionCount: number;
 }
+
+export interface GetWeeklyFrequencyAndCompletionCountParams {
+  goalId: string;
+  firstDayOfWeek: Date;
+  lastDayOfWeek: Date;
+}
