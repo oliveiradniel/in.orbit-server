@@ -13,6 +13,13 @@ export class GoalsController {
     return this.goalsService.findWeeklyGoalsWithCompletion();
   }
 
+  @Get('summary')
+  async findWeeklySummaryOfCompletedGoals() {
+    return {
+      summary: await this.goalsService.findWeeklySummaryOfGoalsCompletedByDay(),
+    };
+  }
+
   @Post()
   create(@Body() createGoalDTO: CreateGoalDTO) {
     const { title, desiredWeeklyFrequency } = createGoalDTO;
