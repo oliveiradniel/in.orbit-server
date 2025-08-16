@@ -20,6 +20,16 @@ export class GoalsService {
     });
   }
 
+  findWeeklySummaryOfGoalsCompletedByDay() {
+    const firstDayOfWeek = dayjs().startOf('week').toDate();
+    const lastDayOfWeek = dayjs().endOf('week').toDate();
+
+    return this.goalsRepository.getWeeklySummaryOfGoalsCompletedByDay({
+      firstDayOfWeek,
+      lastDayOfWeek,
+    });
+  }
+
   create(createGoalDTO: CreateGoalDTO) {
     const { title, desiredWeeklyFrequency } = createGoalDTO;
 
