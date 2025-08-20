@@ -14,8 +14,8 @@ export interface WeeklySummaryOfCompletedGoalsResponse {
       id: string;
       title: string;
       completedAt: Date;
-    }
-  >[];
+    }[]
+  >;
 }
 
 export interface WeeklyFrequencyAndCompletionCountParams {
