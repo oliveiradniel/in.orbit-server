@@ -39,7 +39,7 @@ export class GoalsRepository {
       )
     `;
 
-    const cteCompletedByWeekDay = `
+    const cteGoalsCompletedByWeekDay = `
       goals_completed_by_week_day AS (
         SELECT "completedAtDate",
                 JSON_AGG(
@@ -51,6 +51,7 @@ export class GoalsRepository {
                 ) AS "completions"
         FROM goals_completed_in_week gcw
         GROUP BY "completedAtDate"
+        ORDER BY "completedAtDate" DESC
       )
     `;
 
@@ -58,7 +59,7 @@ export class GoalsRepository {
       WITH
         ${cteGoalsCreatedUpToWeek},
         ${cteGoalsCompletedInWeek},
-        ${cteCompletedByWeekDay}
+        ${cteGoalsCompletedByWeekDay}
       SELECT
         (SELECT COUNT(*)::int FROM goals_completed_in_week) AS completed,
         (SELECT SUM(
