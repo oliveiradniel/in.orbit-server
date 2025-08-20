@@ -15,9 +15,10 @@ export class GoalsController {
 
   @Get('summary')
   async findWeeklySummaryOfCompletedGoals() {
-    return {
-      summary: await this.goalsService.findWeeklySummaryOfGoalsCompletedByDay(),
-    };
+    const summary =
+      await this.goalsService.findWeeklySummaryOfGoalsCompletedByDay();
+
+    return summary[0];
   }
 
   @Post()
