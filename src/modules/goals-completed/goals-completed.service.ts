@@ -1,4 +1,8 @@
-import { ConflictException, Injectable } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 
 import dayjs from 'dayjs';
 
@@ -25,7 +29,9 @@ export class GoalsCompletedService {
         lastDayOfWeek,
       });
 
-    if (!goal) return null;
+    if (!goal) {
+      throw new NotFoundException('Goal not exists!');
+    }
 
     if (goal.countCompletion >= goal.desiredWeeklyFrequency) {
       throw new ConflictException('Goal already completed this week');
