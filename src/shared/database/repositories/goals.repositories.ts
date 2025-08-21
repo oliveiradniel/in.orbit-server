@@ -36,6 +36,7 @@ export class GoalsRepository {
         FROM goals_completed gc
         INNER JOIN goals g ON g.id = gc.goal_id
         WHERE gc.created_at BETWEEN $2 AND $1
+        ORDER BY gc.created_at DESC
       )
     `;
 
