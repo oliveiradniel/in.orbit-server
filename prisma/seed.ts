@@ -10,20 +10,31 @@ async function main() {
   await prismaClient.goalCompleted.deleteMany();
   await prismaClient.goal.deleteMany();
 
+  const createdUser = await prismaClient.user.create({
+    data: {
+      name: 'John Doe',
+      externalAccountId: 412312,
+      avatarURL: 'https://avatars.githubusercontent.com/u/189175871?v=4',
+    },
+  });
+
   await prismaClient.goal.createMany({
     data: [
       {
         id: goalId1,
+        userId: createdUser.id,
         title: 'Acordar cedo',
         desiredWeeklyFrequency: 5,
       },
       {
         id: goalId2,
+        userId: createdUser.id,
         title: 'Me exercitar',
         desiredWeeklyFrequency: 3,
       },
       {
         id: goalId3,
+        userId: createdUser.id,
         title: 'Meditar',
         desiredWeeklyFrequency: 1,
         createdAt: new Date(2025, 7, 18),
