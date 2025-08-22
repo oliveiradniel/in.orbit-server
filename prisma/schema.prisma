@@ -7,6 +7,16 @@ generator client {
   provider = "prisma-client-js"
 }
 
+model User {
+  id                String  @id @default(uuid()) @db.Uuid
+  name              String?
+  email             String?
+  avatarURL         String  @map("avatar_url")
+  externalAccountId Int     @unique @map("external_account_id")
+
+  @@map("users")
+}
+
 model Goal {
   id                     String   @id @default(uuid()) @db.Uuid
   title                  String
