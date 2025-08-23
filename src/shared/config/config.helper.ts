@@ -8,5 +8,7 @@ export function getConfig(configService: ConfigService): AppConfig {
     POSTGRES_PASSWORD: configService.get<string>('POSTGRES_PASSWORD')!,
     POSTGRES_DB: configService.get<string>('POSTGRES_DB')!,
     DATABASE_URL: configService.get<string>('DATABASE_URL')!,
+    GITHUB_CLIENT_ID: configService.get<string>('GITHUB_CLIENT_ID')!,
+    GITHUB_CLIENT_SECRET: configService.get<string>('GITHUB_CLIENT_SECRET')!,
   };
 }
