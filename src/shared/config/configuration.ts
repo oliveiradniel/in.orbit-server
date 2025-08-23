@@ -21,6 +21,14 @@ class Environment {
   @IsString()
   @IsNotEmpty()
   DATABASE_URL: string;
+
+  @IsString()
+  @IsNotEmpty()
+  GITHUB_CLIENT_ID: string;
+
+  @IsString()
+  @IsNotEmpty()
+  GITHUB_CLIENT_SECRET: string;
 }
 
 export function validate(config: Record<string, unknown>) {
