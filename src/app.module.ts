@@ -3,11 +3,12 @@ import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
 import { GoalsModule } from './modules/goals/goals.module';
-import { DatabaseModule } from './shared/database/database.module';
 import { GoalsCompletedModule } from './modules/goals-completed/goals-completed.module';
+import { OAuthModule } from './modules/oauth/oauth.module';
+import { DatabaseModule } from './shared/database/database.module';
+import { IntegrationModule } from './shared/integrations/integration.module';
 
 import { validate } from './shared/config/configuration';
-import { OAuthModule } from './modules/oauth/oauth.module';
 
 @Module({
   imports: [
@@ -16,9 +17,10 @@ import { OAuthModule } from './modules/oauth/oauth.module';
       validate: validate,
     }),
     GoalsModule,
-    DatabaseModule,
     GoalsCompletedModule,
     OAuthModule,
+    DatabaseModule,
+    IntegrationModule,
   ],
   controllers: [],
   providers: [],
