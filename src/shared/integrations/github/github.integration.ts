@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { BadRequestException, Injectable } from '@nestjs/common';
 
 import { ConfigService } from '@nestjs/config';
 
@@ -38,6 +38,12 @@ export class GitHubIntegration {
     }
 
     const { access_token } = (await response.json()) as AccessTokenResponse;
+
+    if (!access_token) {
+      throw new BadRequestException(
+        'Invalid GitHub code or token not received',
+      );
+    }
 
     return access_token;
   }
