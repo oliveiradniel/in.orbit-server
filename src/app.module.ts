@@ -7,7 +7,7 @@ import { DatabaseModule } from './shared/database/database.module';
 import { GoalsCompletedModule } from './modules/goals-completed/goals-completed.module';
 
 import { validate } from './shared/config/configuration';
-import { OauthModule } from './modules/oauth/oauth.module';
+import { OAuthModule } from './modules/oauth/oauth.module';
 
 @Module({
   imports: [
@@ -18,7 +18,7 @@ import { OauthModule } from './modules/oauth/oauth.module';
     GoalsModule,
     DatabaseModule,
     GoalsCompletedModule,
-    OauthModule,
+    OAuthModule,
   ],
   controllers: [],
   providers: [],
