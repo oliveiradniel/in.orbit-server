@@ -4,10 +4,16 @@ import { PrismaService } from './prisma.service';
 
 import { GoalsRepository } from './repositories/goals.repositories';
 import { GoalsCompletedRepository } from './repositories/goals-completed.repositories';
+import { UsersRepository } from './repositories/users.repositories';
 
 @Global()
 @Module({
-  providers: [PrismaService, GoalsRepository, GoalsCompletedRepository],
-  exports: [GoalsRepository, GoalsCompletedRepository],
+  providers: [
+    PrismaService,
+    GoalsRepository,
+    GoalsCompletedRepository,
+    UsersRepository,
+  ],
+  exports: [GoalsRepository, GoalsCompletedRepository, UsersRepository],
 })
 export class DatabaseModule {}
