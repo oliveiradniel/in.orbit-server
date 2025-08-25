@@ -5,6 +5,9 @@ import { OAuthService } from './oauth.service';
 
 import { AuthenticateGitHubDTO } from './dtos/authenticate-github.dto';
 
+import { IsPublic } from 'src/shared/decorators/is-public.decorator';
+
+@IsPublic()
 @Controller('oauth')
 export class OAuthController {
   constructor(private readonly oauthService: OAuthService) {}
