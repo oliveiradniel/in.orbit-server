@@ -10,5 +10,6 @@ export function getConfig(configService: ConfigService): AppConfig {
     DATABASE_URL: configService.get<string>('DATABASE_URL')!,
     GITHUB_CLIENT_ID: configService.get<string>('GITHUB_CLIENT_ID')!,
     GITHUB_CLIENT_SECRET: configService.get<string>('GITHUB_CLIENT_SECRET')!,
+    JWT_SECRET: configService.get<string>('JWT_SECRET')!,
   };
 }

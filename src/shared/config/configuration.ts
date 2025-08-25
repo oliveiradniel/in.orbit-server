@@ -29,6 +29,10 @@ class Environment {
   @IsString()
   @IsNotEmpty()
   GITHUB_CLIENT_SECRET: string;
+
+  @IsString()
+  @IsNotEmpty()
+  JWT_SECRET: string;
 }
 
 export function validate(config: Record<string, unknown>) {
