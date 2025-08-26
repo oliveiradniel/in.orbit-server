@@ -12,6 +12,7 @@ import { IntegrationModule } from './shared/integrations/integration.module';
 import { AuthGuard } from './modules/auth/auth.guard';
 
 import { validate } from './shared/config/configuration';
+import { UsersModule } from './modules/users/users.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { validate } from './shared/config/configuration';
     OAuthModule,
     DatabaseModule,
     IntegrationModule,
+    UsersModule,
   ],
   controllers: [],
   providers: [{ provide: APP_GUARD, useClass: AuthGuard }],
