@@ -14,8 +14,11 @@
     "start:prod": "node dist/main",
     "seed": "npx tsx prisma/seed.ts",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
+    "pretest": "yarn db:migrate:test",
+    "pretest:watch": "yarn db:migrate:test",
     "test": "vitest run",
-    "test:watch": "vitest"
+    "test:watch": "vitest",
+    "db:migrate:test": "dotenv -e .env.test -- prisma migrate dev"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
