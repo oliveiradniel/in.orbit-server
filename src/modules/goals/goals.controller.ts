@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiResponse } from '@nestjs/swagger';
 
 import { GoalsService } from './goals.service';
 
@@ -7,6 +7,7 @@ import { CreateGoalDTO } from './dto/create-goal.dto';
 
 import { ActiveUserId } from 'src/shared/decorators/active-user-id.decorator';
 
+@ApiBearerAuth()
 @Controller('goals')
 export class GoalsController {
   constructor(private readonly goalsService: GoalsService) {}
@@ -64,6 +65,27 @@ export class GoalsController {
           completionCount: 1,
         },
       ],
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized request.',
+    schema: {
+      type: 'object',
+      properties: {
+        message: {
+          type: 'string',
+          example: 'Unhautorized',
+        },
+        statusCode: {
+          type: 'number',
+          example: 401,
+        },
+      },
+      example: {
+        message: 'Unauthorized',
+        statusCode: 401,
+      },
     },
   })
   @Get()
@@ -138,6 +160,27 @@ export class GoalsController {
       },
     },
   })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized request.',
+    schema: {
+      type: 'object',
+      properties: {
+        message: {
+          type: 'string',
+          example: 'Unhautorized',
+        },
+        statusCode: {
+          type: 'number',
+          example: 401,
+        },
+      },
+      example: {
+        message: 'Unauthorized',
+        statusCode: 401,
+      },
+    },
+  })
   @Get('summary')
   async findWeeklySummaryOfCompletedGoals(@ActiveUserId() userId: string) {
     const summary =
@@ -181,6 +224,27 @@ export class GoalsController {
         title: 'Acordar cedo',
         desiredWeeklyFrequency: 7,
         createdAt: '2025-08-15T19:13:42.909Z',
+      },
+    },
+  })
+  @ApiResponse({
+    status: 401,
+    description: 'Unauthorized request.',
+    schema: {
+      type: 'object',
+      properties: {
+        message: {
+          type: 'string',
+          example: 'Unhautorized',
+        },
+        statusCode: {
+          type: 'number',
+          example: 401,
+        },
+      },
+      example: {
+        message: 'Unauthorized',
+        statusCode: 401,
       },
     },
   })
