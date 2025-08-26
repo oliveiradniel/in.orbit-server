@@ -10,29 +10,35 @@ import { CreateGoalDTO } from './dto/create-goal.dto';
 export class GoalsService {
   constructor(private readonly goalsRepository: GoalsRepository) {}
 
-  async findWeeklyGoalsWithCompletion() {
+  async findWeeklyGoalsWithCompletion(userId: string) {
     const firstDayOfWeek = dayjs().startOf('week').toDate();
     const lastDayOfWeek = dayjs().endOf('week').toDate();
 
     return this.goalsRepository.getWeeklyGoalsWithCompletion({
+      userId,
       lastDayOfWeek,
       firstDayOfWeek,
     });
   }
 
-  findWeeklySummaryOfGoalsCompletedByDay() {
+  findWeeklySummaryOfGoalsCompletedByDay(userId: string) {
     const firstDayOfWeek = dayjs().startOf('week').toDate();
     const lastDayOfWeek = dayjs().endOf('week').toDate();
 
     return this.goalsRepository.getWeeklySummaryOfGoalsCompletedByDay({
+      userId,
       firstDayOfWeek,
       lastDayOfWeek,
     });
   }
 
-  create(createGoalDTO: CreateGoalDTO) {
+  create(userId: string, createGoalDTO: CreateGoalDTO) {
     const { title, desiredWeeklyFrequency } = createGoalDTO;
 
-    return this.goalsRepository.create({ title, desiredWeeklyFrequency });
+    return this.goalsRepository.create({
+      userId,
+      title,
+      desiredWeeklyFrequency,
+    });
   }
 }
