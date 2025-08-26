@@ -9,7 +9,7 @@ import dayjs from 'dayjs';
 import { GoalsCompletedRepository } from 'src/shared/database/repositories/goals-completed.repositories';
 import { GoalsRepository } from 'src/shared/database/repositories/goals.repositories';
 
-import { CreateGoalCompletedDTO } from './dto/create-goal-completed.dto';
+import { CreateGoalCompletedDTO } from './dtos/create-goal-completed.dto';
 
 @Injectable()
 export class GoalsCompletedService {

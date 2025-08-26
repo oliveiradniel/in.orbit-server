@@ -4,7 +4,7 @@ import dayjs from 'dayjs';
 
 import { GoalsRepository } from 'src/shared/database/repositories/goals.repositories';
 
-import { CreateGoalDTO } from './dto/create-goal.dto';
+import { CreateGoalDTO } from './dtos/create-goal.dto';
 
 @Injectable()
 export class GoalsService {
