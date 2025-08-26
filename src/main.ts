@@ -30,6 +30,11 @@ async function bootstrap() {
         .setTitle('InOrbit API')
         .setDescription('API for goals control.')
         .setVersion('1.0')
+        .addBearerAuth({
+          type: 'http',
+          scheme: 'bearer',
+          bearerFormat: 'JWT',
+        })
         .build(),
     ),
     {
