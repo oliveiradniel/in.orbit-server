@@ -25,6 +25,7 @@ export interface WeeklyFrequencyAndCompletionCountParams {
 }
 
 export interface WeeklySummaryOfCompletedGoalsParams {
+  userId: string;
   firstDayOfWeek: Date;
   lastDayOfWeek: Date;
 }

@@ -15,7 +15,53 @@ import {
 export class GoalsRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
+  async getWeeklyGoalsWithCompletion({
+    userId,
+    lastDayOfWeek,
+    firstDayOfWeek,
+  }: {
+    userId: string;
+    firstDayOfWeek: Date;
+    lastDayOfWeek: Date;
+  }) {
+    const cteGoalsCreatedUpToWeek = `
+      goals_created_up_to_week AS (
+        SELECT id, title, desired_weekly_frequency AS "desiredWeeklyFrequency", created_at AS "createdAt"
+        FROM goals
+        WHERE created_at <= $1 AND user_id = $3::uuid
+      )
+    `;
+
+    const cteCountOfCompletedGoals = `
+      count_of_completed_goals AS (
+        SELECT goal_id, COUNT(gc.id)::int AS "completionCount"
+        FROM goals_completed gc
+        INNER JOIN goals g ON g.id = gc.goal_id
+        WHERE gc.created_at BETWEEN $2 AND $1
+          AND g.user_id = $3::uuid
+        GROUP BY gc.goal_id
+      )
+    `;
+
+    const query = `
+      WITH
+        ${cteGoalsCreatedUpToWeek},
+        ${cteCountOfCompletedGoals}
+      SELECT g.id,
+              g.title,
+              g."desiredWeeklyFrequency",
+              COALESCE(c."completionCount", 0) AS "completionCount"
+      FROM goals_created_up_to_week g
+      LEFT JOIN count_of_completed_goals c ON c.goal_id = g.id;
+    `;
+
+    return this.prismaService.$queryRawUnsafe<
+      WeeklyGoalsWithCompletionResponse[]
+    >(query, lastDayOfWeek, firstDayOfWeek, userId);
+  }
+
   async getWeeklySummaryOfGoalsCompletedByDay({
+    userId,
     firstDayOfWeek,
     lastDayOfWeek,
   }: WeeklySummaryOfCompletedGoalsParams) {
@@ -23,7 +69,7 @@ export class GoalsRepository {
       goals_created_up_to_week AS (
         SELECT id, title, desired_weekly_frequency AS "desiredWeeklyFrequency", created_at AS "createdAt"
         FROM goals
-        WHERE created_at <= $1
+        WHERE created_at <= $1 AND user_id = $3::uuid
       )
     `;
 
@@ -35,7 +81,7 @@ export class GoalsRepository {
                 DATE(gc.created_at) AS "completedAtDate"
         FROM goals_completed gc
         INNER JOIN goals g ON g.id = gc.goal_id
-        WHERE gc.created_at BETWEEN $2 AND $1
+        WHERE gc.created_at BETWEEN $2 AND $1 AND user_id = $3::uuid
         ORDER BY gc.created_at DESC
       )
     `;
@@ -76,7 +122,7 @@ export class GoalsRepository {
 
     return await this.prismaService.$queryRawUnsafe<
       WeeklySummaryOfCompletedGoalsResponse[]
-    >(query, lastDayOfWeek, firstDayOfWeek);
+    >(query, lastDayOfWeek, firstDayOfWeek, userId);
   }
 
   async getWeeklyFrequencyAndCompletionCount({
@@ -108,52 +154,12 @@ export class GoalsRepository {
     };
   }
 
-  async getWeeklyGoalsWithCompletion({
-    lastDayOfWeek,
-    firstDayOfWeek,
-  }: {
-    firstDayOfWeek: Date;
-    lastDayOfWeek: Date;
-  }) {
-    const cteGoalsCreatedUpToWeek = `
-      goals_created_up_to_week AS (
-        SELECT id, title, desired_weekly_frequency AS "desiredWeeklyFrequency", created_at AS "createdAt"
-        FROM goals
-        WHERE created_at <= $1
-      )
-    `;
-
-    const cteCountOfCompletedGoals = `
-      count_of_completed_goals AS (
-        SELECT goal_id, COUNT(id)::int AS "completionCount"
-        FROM goals_completed
-        WHERE created_at BETWEEN $2 AND $1
-        GROUP BY goal_id
-      )
-    `;
-
-    const query = `
-      WITH
-        ${cteGoalsCreatedUpToWeek},
-        ${cteCountOfCompletedGoals}
-      SELECT g.id,
-              g.title,
-              g."desiredWeeklyFrequency",
-              COALESCE(c."completionCount", 0) AS "completionCount"
-      FROM goals_created_up_to_week g
-      LEFT JOIN count_of_completed_goals c ON c.goal_id = g.id;
-    `;
-
-    return this.prismaService.$queryRawUnsafe<
-      WeeklyGoalsWithCompletionResponse[]
-    >(query, lastDayOfWeek, firstDayOfWeek);
-  }
-
-  create(createUserDTO: Prisma.GoalCreateInput) {
-    const { title, desiredWeeklyFrequency } = createUserDTO;
+  create(createUserDTO: Prisma.GoalUncheckedCreateInput) {
+    const { userId, title, desiredWeeklyFrequency } = createUserDTO;
 
     return this.prismaService.goal.create({
       data: {
+        userId,
         title,
         desiredWeeklyFrequency,
       },

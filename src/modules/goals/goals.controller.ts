@@ -1,9 +1,11 @@
 import { Body, Controller, Get, Post } from '@nestjs/common';
+import { ApiResponse } from '@nestjs/swagger';
 
 import { GoalsService } from './goals.service';
 
 import { CreateGoalDTO } from './dto/create-goal.dto';
-import { ApiResponse } from '@nestjs/swagger';
+
+import { ActiveUserId } from 'src/shared/decorators/active-user-id.decorator';
 
 @Controller('goals')
 export class GoalsController {
@@ -65,8 +67,8 @@ export class GoalsController {
     },
   })
   @Get()
-  findWeeklyGoalsWithCompletion() {
-    return this.goalsService.findWeeklyGoalsWithCompletion();
+  findWeeklyGoalsWithCompletion(@ActiveUserId() userId: string) {
+    return this.goalsService.findWeeklyGoalsWithCompletion(userId);
   }
 
   @ApiResponse({
@@ -137,9 +139,9 @@ export class GoalsController {
     },
   })
   @Get('summary')
-  async findWeeklySummaryOfCompletedGoals() {
+  async findWeeklySummaryOfCompletedGoals(@ActiveUserId() userId: string) {
     const summary =
-      await this.goalsService.findWeeklySummaryOfGoalsCompletedByDay();
+      await this.goalsService.findWeeklySummaryOfGoalsCompletedByDay(userId);
 
     return summary[0];
   }
@@ -183,10 +185,10 @@ export class GoalsController {
     },
   })
   @Post()
-  create(@Body() createGoalDTO: CreateGoalDTO) {
+  create(@ActiveUserId() userId: string, @Body() createGoalDTO: CreateGoalDTO) {
     const { title, desiredWeeklyFrequency } = createGoalDTO;
 
-    return this.goalsService.create({
+    return this.goalsService.create(userId, {
       title,
       desiredWeeklyFrequency,
     });
