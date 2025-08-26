@@ -6,6 +6,20 @@ import { type Prisma } from '@prisma/client';
 export class UsersRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
+  getUserById(userId: string) {
+    return this.prismaService.user.findUnique({
+      where: {
+        id: userId,
+      },
+      select: {
+        id: true,
+        name: true,
+        email: true,
+        avatarURL: true,
+      },
+    });
+  }
+
   getUserByExternalAccountId(githubUserId: number) {
     return this.prismaService.user.findUnique({
       where: {
