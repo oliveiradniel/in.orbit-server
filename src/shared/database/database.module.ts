@@ -2,10 +2,10 @@ import { Global, Module } from '@nestjs/common';
 
 import { PrismaService } from './prisma.service';
 
-import { GoalsRepository } from './repositories/goals.repositories';
-import { GoalsCompletedRepository } from './repositories/goals-completed.repositories';
+import { GoalsRepository } from './repositories/goals.repository';
+import { GoalsCompletedRepository } from './repositories/goals-completed.repository';
 
-import { PrismaUsersRepository } from './repositories/users.repositories';
+import { PrismaUsersRepository } from './repositories/users.repository';
 import { UsersRepository } from '../contracts/users-repository.contract';
 
 @Global()

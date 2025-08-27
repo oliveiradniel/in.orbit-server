@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import dayjs from 'dayjs';
 
-import { GoalsRepository } from 'src/shared/database/repositories/goals.repositories';
+import { GoalsRepository } from 'src/shared/database/repositories/goals.repository';
 
 import { CreateGoalDTO } from './dtos/create-goal.dto';
 
