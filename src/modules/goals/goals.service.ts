@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 
 import dayjs from 'dayjs';
 
-import { GoalsRepository } from 'src/shared/database/repositories/goals.repository';
+import { GoalsRepository } from 'src/shared/contracts/goals.repository.contract';
 
 import { CreateGoalDTO } from './dtos/create-goal.dto';
 
@@ -35,8 +35,7 @@ export class GoalsService {
   create(userId: string, createGoalDTO: CreateGoalDTO) {
     const { title, desiredWeeklyFrequency } = createGoalDTO;
 
-    return this.goalsRepository.create({
-      userId,
+    return this.goalsRepository.create(userId, {
       title,
       desiredWeeklyFrequency,
     });

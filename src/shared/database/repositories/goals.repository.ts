@@ -1,16 +1,18 @@
 import { Injectable } from '@nestjs/common';
 
-import { PrismaService } from '../prisma.service';
+import { GoalsRepository } from 'src/shared/contracts/goals.repository.contract';
 
+import { PrismaService } from '../prisma.service';
 import { type Prisma } from '@prisma/client';
 
 import { type UserDateRangeFilter } from 'src/shared/interfaces/goals/user-date-range-filter.interface';
 import { type GoalDateRangeFilter } from 'src/shared/interfaces/goals/goal-date-range-filter.interface';
 import { type WeeklyGoalsProgress } from 'src/shared/interfaces/goals/weekly-goals-progress.interface';
 import { type WeeklyGoalsSummary } from 'src/shared/interfaces/goals/weekly-goals-summary.interface';
+import { type WeeklyGoalProgress } from 'src/shared/interfaces/goals/weekly-goal-progress.interface';
 
 @Injectable()
-export class GoalsRepository {
+export class PrismaGoalsRepository implements GoalsRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
   async getWeeklyGoalsWithCompletion({
@@ -129,7 +131,7 @@ export class GoalsRepository {
     goalId,
     firstDayOfWeek,
     lastDayOfWeek,
-  }: GoalDateRangeFilter) {
+  }: GoalDateRangeFilter): Promise<WeeklyGoalProgress | null> {
     const goal = await this.prismaService.goal.findUnique({
       where: { id: goalId },
       select: {
@@ -154,8 +156,8 @@ export class GoalsRepository {
     };
   }
 
-  create(createGoalDTO: Prisma.GoalUncheckedCreateInput) {
-    const { userId, title, desiredWeeklyFrequency } = createGoalDTO;
+  create(userId: string, createGoalDTO: Prisma.GoalUncheckedCreateInput) {
+    const { title, desiredWeeklyFrequency } = createGoalDTO;
 
     return this.prismaService.goal.create({
       data: {
