@@ -4,7 +4,9 @@ import { PrismaService } from './prisma.service';
 
 import { GoalsRepository } from './repositories/goals.repositories';
 import { GoalsCompletedRepository } from './repositories/goals-completed.repositories';
-import { UsersRepository } from './repositories/users.repositories';
+
+import { PrismaUsersRepository } from './repositories/users.repositories';
+import { UsersRepository } from '../contracts/users-repository.contract';
 
 @Global()
 @Module({
@@ -12,7 +14,7 @@ import { UsersRepository } from './repositories/users.repositories';
     PrismaService,
     GoalsRepository,
     GoalsCompletedRepository,
-    UsersRepository,
+    { provide: UsersRepository, useClass: PrismaUsersRepository },
   ],
   exports: [GoalsRepository, GoalsCompletedRepository, UsersRepository],
 })

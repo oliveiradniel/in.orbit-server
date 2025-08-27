@@ -3,7 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 
 import { GitHubIntegration } from 'src/shared/integrations/github/github.integration';
 
-import { UsersRepository } from 'src/shared/database/repositories/users.repositories';
+import { UsersRepository } from 'src/shared/contracts/users-repository.contract';
 
 @Injectable()
 export class OAuthService {
@@ -26,7 +26,7 @@ export class OAuthService {
       githubUser.id,
     );
 
-    let userId: string | null;
+    let userId: string | undefined;
 
     if (user) {
       userId = user.id;
