@@ -1,9 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import { GitHubIntegration } from 'src/shared/integrations/github/github.integration';
-
 import { UsersRepository } from 'src/shared/contracts/users-repository.contract';
+
+import { GitHubIntegration } from './contracts/github.integration.contract';
 
 @Injectable()
 export class OAuthService {
@@ -14,7 +14,7 @@ export class OAuthService {
   ) {}
 
   async githubLogin(code: string) {
-    const githubAccessToken =
+    const { accessToken: githubAccessToken } =
       await this.githubIntegration.getAccessTokenFromCode(code);
 
     const githubUser =
@@ -34,7 +34,7 @@ export class OAuthService {
       const createdUser = await this.usersRepository.create({
         name: githubUser.name,
         email: githubUser.email,
-        avatarURL: githubUser.avatar_url,
+        avatarURL: githubUser.avatarURL,
         externalAccountId: githubUser.id,
       });
 

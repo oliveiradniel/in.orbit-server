@@ -5,8 +5,10 @@ import { ConfigService } from '@nestjs/config';
 import { AccessTokenResponse } from './interfaces/access-token-response.interface';
 import { UserResponse } from './interfaces/user-response.interface';
 
+import { GitHubIntegration } from 'src/modules/oauth/contracts/github.integration.contract';
+
 @Injectable()
-export class GitHubIntegration {
+export class HTTPGitHubIntegration implements GitHubIntegration {
   constructor(private readonly configService: ConfigService) {}
 
   async getAccessTokenFromCode(code: string) {
@@ -45,7 +47,7 @@ export class GitHubIntegration {
       );
     }
 
-    return access_token;
+    return { accessToken: access_token };
   }
 
   async getUserFromGitHubAccessToken(accessToken: string) {
@@ -57,6 +59,11 @@ export class GitHubIntegration {
 
     const data = (await response.json()) as UserResponse;
 
-    return data;
+    return {
+      id: data.id,
+      name: data.name,
+      email: data.email,
+      avatarURL: data.avatar_url,
+    };
   }
 }
