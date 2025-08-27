@@ -6,7 +6,7 @@ import {
 
 import dayjs from 'dayjs';
 
-import { GoalsCompletedRepository } from 'src/shared/database/repositories/goals-completed.repository';
+import { GoalsCompletedRepository } from './contracts/goals-completed.repository.contract';
 import { GoalsRepository } from 'src/shared/contracts/goals.repository.contract';
 
 import { CreateGoalCompletedDTO } from './dtos/create-goal-completed.dto';

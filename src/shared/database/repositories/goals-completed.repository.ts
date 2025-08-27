@@ -1,9 +1,13 @@
 import { Injectable } from '@nestjs/common';
 
+import { GoalsCompletedRepository } from 'src/modules/goals-completed/contracts/goals-completed.repository.contract';
+
 import { PrismaService } from '../prisma.service';
 
 @Injectable()
-export class GoalsCompletedRepository {
+export class PrismaGoalsCompletedRepository
+  implements GoalsCompletedRepository
+{
   constructor(private readonly prismaService: PrismaService) {}
 
   create({ goalId }: { goalId: string }) {
