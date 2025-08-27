@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 
 import { UsersRepository } from 'src/shared/contracts/users-repository.contract';
 
@@ -6,7 +6,13 @@ import { UsersRepository } from 'src/shared/contracts/users-repository.contract'
 export class UsersService {
   constructor(private readonly usersRepository: UsersRepository) {}
 
-  findUserById(userId: string) {
-    return this.usersRepository.getUserById(userId);
+  async findUserById(userId: string) {
+    const user = await this.usersRepository.getUserById(userId);
+
+    if (!user) {
+      throw new NotFoundException('User not found.');
+    }
+
+    return user;
   }
 }
