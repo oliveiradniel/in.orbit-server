@@ -14,11 +14,12 @@
     "start:prod": "node dist/main",
     "seed": "npx tsx prisma/seed.ts",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "pretest": "yarn db:migrate:test",
+    "db:migrate:test": "dotenv -e .env.test -- prisma migrate dev",
     "pretest:watch": "yarn db:migrate:test",
-    "test": "vitest run",
+    "pretest": "yarn db:migrate:test",
+    "test:unit": "vitest run --config vitest.unit.config.ts",
     "test:watch": "vitest",
-    "db:migrate:test": "dotenv -e .env.test -- prisma migrate dev"
+    "test": "vitest run"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
