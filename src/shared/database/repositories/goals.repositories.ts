@@ -4,12 +4,10 @@ import { PrismaService } from '../prisma.service';
 
 import { type Prisma } from '@prisma/client';
 
-import {
-  type WeeklySummaryOfCompletedGoalsParams,
-  type WeeklyFrequencyAndCompletionCountParams,
-  type WeeklyGoalsWithCompletionResponse,
-  WeeklySummaryOfCompletedGoalsResponse,
-} from '../interfaces/Goal';
+import { type UserDateRangeFilter } from 'src/shared/interfaces/goals/user-date-range-filter.interface';
+import { type GoalDateRangeFilter } from 'src/shared/interfaces/goals/goal-date-range-filter.interface';
+import { type WeeklyGoalsProgress } from 'src/shared/interfaces/goals/weekly-goals-progress.interface';
+import { type WeeklyGoalsSummary } from 'src/shared/interfaces/goals/weekly-goals-summary.interface';
 
 @Injectable()
 export class GoalsRepository {
@@ -19,11 +17,7 @@ export class GoalsRepository {
     userId,
     lastDayOfWeek,
     firstDayOfWeek,
-  }: {
-    userId: string;
-    firstDayOfWeek: Date;
-    lastDayOfWeek: Date;
-  }) {
+  }: UserDateRangeFilter): Promise<WeeklyGoalsProgress[]> {
     const cteGoalsCreatedUpToWeek = `
       goals_created_up_to_week AS (
         SELECT id, title, desired_weekly_frequency AS "desiredWeeklyFrequency", created_at AS "createdAt"
@@ -55,16 +49,19 @@ export class GoalsRepository {
       LEFT JOIN count_of_completed_goals c ON c.goal_id = g.id;
     `;
 
-    return this.prismaService.$queryRawUnsafe<
-      WeeklyGoalsWithCompletionResponse[]
-    >(query, lastDayOfWeek, firstDayOfWeek, userId);
+    return this.prismaService.$queryRawUnsafe(
+      query,
+      lastDayOfWeek,
+      firstDayOfWeek,
+      userId,
+    );
   }
 
   async getWeeklySummaryOfGoalsCompletedByDay({
     userId,
     firstDayOfWeek,
     lastDayOfWeek,
-  }: WeeklySummaryOfCompletedGoalsParams) {
+  }: UserDateRangeFilter): Promise<WeeklyGoalsSummary[]> {
     const cteGoalsCreatedUpToWeek = `
       goals_created_up_to_week AS (
         SELECT id, title, desired_weekly_frequency AS "desiredWeeklyFrequency", created_at AS "createdAt"
@@ -120,16 +117,19 @@ export class GoalsRepository {
       ;
     `;
 
-    return await this.prismaService.$queryRawUnsafe<
-      WeeklySummaryOfCompletedGoalsResponse[]
-    >(query, lastDayOfWeek, firstDayOfWeek, userId);
+    return await this.prismaService.$queryRawUnsafe(
+      query,
+      lastDayOfWeek,
+      firstDayOfWeek,
+      userId,
+    );
   }
 
   async getWeeklyFrequencyAndCompletionCount({
     goalId,
     firstDayOfWeek,
     lastDayOfWeek,
-  }: WeeklyFrequencyAndCompletionCountParams) {
+  }: GoalDateRangeFilter) {
     const goal = await this.prismaService.goal.findUnique({
       where: { id: goalId },
       select: {
@@ -154,8 +154,8 @@ export class GoalsRepository {
     };
   }
 
-  create(createUserDTO: Prisma.GoalUncheckedCreateInput) {
-    const { userId, title, desiredWeeklyFrequency } = createUserDTO;
+  create(createGoalDTO: Prisma.GoalUncheckedCreateInput) {
+    const { userId, title, desiredWeeklyFrequency } = createGoalDTO;
 
     return this.prismaService.goal.create({
       data: {
