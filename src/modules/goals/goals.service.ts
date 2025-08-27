@@ -10,7 +10,7 @@ import { CreateGoalDTO } from './dtos/create-goal.dto';
 export class GoalsService {
   constructor(private readonly goalsRepository: GoalsRepository) {}
 
-  async findWeeklyGoalsWithCompletion(userId: string) {
+  findWeeklyGoalsWithCompletion(userId: string) {
     const firstDayOfWeek = dayjs().startOf('week').toDate();
     const lastDayOfWeek = dayjs().endOf('week').toDate();
 

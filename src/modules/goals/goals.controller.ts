@@ -43,11 +43,8 @@ export class GoalsController {
     type: WeeklySummaryResponseDTO,
   })
   @Get('summary')
-  async findWeeklySummaryOfCompletedGoals(@ActiveUserId() userId: string) {
-    const summary =
-      await this.goalsService.findWeeklySummaryOfGoalsCompletedByDay(userId);
-
-    return summary[0];
+  findWeeklySummaryOfCompletedGoals(@ActiveUserId() userId: string) {
+    return this.goalsService.findWeeklySummaryOfGoalsCompletedByDay(userId);
   }
 
   @ApiCreatedResponse({

@@ -19,7 +19,7 @@ export abstract class GoalsRepository {
     userId,
     firstDayOfWeek,
     lastDayOfWeek,
-  }: UserDateRangeFilter): Promise<WeeklyGoalsSummary[]>;
+  }: UserDateRangeFilter): Promise<WeeklyGoalsSummary>;
 
   abstract getWeeklyFrequencyAndCompletionCount({
     goalId,
