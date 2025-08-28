@@ -1,6 +1,8 @@
 import { type User } from 'src/modules/users/entities/user.entity';
 import { type CreateUserDTO } from 'src/modules/users/dtos/create-user.dto';
 
+export const USERS_REPOSITORY = Symbol('USERS_REPOSITORY');
+
 export abstract class UsersRepository {
   abstract getUserById(
     userId: string,

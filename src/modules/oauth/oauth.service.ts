@@ -1,7 +1,10 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import { UsersRepository } from 'src/shared/contracts/users-repository.contract';
+import {
+  USERS_REPOSITORY,
+  UsersRepository,
+} from 'src/shared/contracts/users-repository.contract';
 
 import { GitHubIntegration } from './contracts/github.integration.contract';
 
@@ -9,7 +12,7 @@ import { GitHubIntegration } from './contracts/github.integration.contract';
 export class OAuthService {
   constructor(
     private readonly githubIntegration: GitHubIntegration,
-    private readonly usersRepository: UsersRepository,
+    @Inject(USERS_REPOSITORY) private readonly usersRepository: UsersRepository,
     private readonly jwtService: JwtService,
   ) {}
 

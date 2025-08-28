@@ -3,7 +3,8 @@ import { Global, Module } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 
 import { PrismaUsersRepository } from './repositories/users.repository';
-import { UsersRepository } from '../contracts/users-repository.contract';
+import { USERS_REPOSITORY } from '../contracts/users-repository.contract';
+
 import { PrismaGoalsRepository } from './repositories/goals.repository';
 import { GoalsRepository } from '../contracts/goals.repository.contract';
 import { GoalsCompletedRepository } from 'src/modules/goals-completed/contracts/goals-completed.repository.contract';
@@ -18,8 +19,8 @@ import { PrismaGoalsCompletedRepository } from './repositories/goals-completed.r
       provide: GoalsCompletedRepository,
       useClass: PrismaGoalsCompletedRepository,
     },
-    { provide: UsersRepository, useClass: PrismaUsersRepository },
+    { provide: USERS_REPOSITORY, useClass: PrismaUsersRepository },
   ],
-  exports: [GoalsRepository, GoalsCompletedRepository, UsersRepository],
+  exports: [GoalsRepository, GoalsCompletedRepository, USERS_REPOSITORY],
 })
 export class DatabaseModule {}
