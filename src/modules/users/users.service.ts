@@ -5,6 +5,8 @@ import {
   UsersRepository,
 } from 'src/shared/contracts/users-repository.contract';
 
+export const USERS_SERVICE = Symbol('USERS_SERVICE');
+
 @Injectable()
 export class UsersService {
   constructor(

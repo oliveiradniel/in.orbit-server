@@ -1,11 +1,11 @@
-import { Controller, Get } from '@nestjs/common';
+import { Controller, Get, Inject } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiOkResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
-import { UsersService } from './users.service';
+import { USERS_SERVICE, UsersService } from './users.service';
 
 import { ActiveUserId } from 'src/shared/decorators/active-user-id.decorator';
 
@@ -20,7 +20,9 @@ import { UnauthorizedResponseDTO } from 'src/shared/dtos/unauthorized-response.d
 })
 @Controller('users')
 export class UsersController {
-  constructor(private readonly usersService: UsersService) {}
+  constructor(
+    @Inject(USERS_SERVICE) private readonly usersService: UsersService,
+  ) {}
 
   @ApiOkResponse({
     description: 'Returns the currently authenticated user.',

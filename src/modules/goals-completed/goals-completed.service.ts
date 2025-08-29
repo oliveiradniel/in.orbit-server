@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  Inject,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
@@ -7,7 +8,10 @@ import {
 import dayjs from 'dayjs';
 
 import { GoalsCompletedRepository } from './contracts/goals-completed.repository.contract';
-import { GoalsRepository } from 'src/shared/contracts/goals.repository.contract';
+import {
+  GOALS_REPOSITORY,
+  GoalsRepository,
+} from 'src/shared/contracts/goals.repository.contract';
 
 import { CreateGoalCompletedDTO } from './dtos/create-goal-completed.dto';
 
@@ -15,7 +19,7 @@ import { CreateGoalCompletedDTO } from './dtos/create-goal-completed.dto';
 export class GoalsCompletedService {
   constructor(
     private readonly goalsCompletedRepository: GoalsCompletedRepository,
-    private readonly goalsRepository: GoalsRepository,
+    @Inject(GOALS_REPOSITORY) private readonly goalsRepository: GoalsRepository,
   ) {}
 
   async create({ goalId }: CreateGoalCompletedDTO) {

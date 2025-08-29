@@ -3,4 +3,5 @@ export interface Goal {
   userId: string;
   title: string;
   desiredWeeklyFrequency: number;
+  createdAt: Date;
 }

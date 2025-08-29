@@ -1,17 +1,21 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
 import dayjs from 'dayjs';
 
-import { GoalsRepository } from 'src/shared/contracts/goals.repository.contract';
+import {
+  GOALS_REPOSITORY,
+  GoalsRepository,
+} from 'src/shared/contracts/goals.repository.contract';
+
+import { USERS_SERVICE, UsersService } from '../users/users.service';
 
 import { CreateGoalDTO } from './dtos/create-goal.dto';
-import { UsersService } from '../users/users.service';
 
 @Injectable()
 export class GoalsService {
   constructor(
-    private readonly goalsRepository: GoalsRepository,
-    private readonly usersService: UsersService,
+    @Inject(GOALS_REPOSITORY) private readonly goalsRepository: GoalsRepository,
+    @Inject(USERS_SERVICE) private readonly usersService: UsersService,
   ) {}
 
   async findWeeklyGoalsWithCompletion(userId: string) {
