@@ -3,7 +3,8 @@ import { NotFoundException } from '@nestjs/common';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { USERS_SERVICE, UsersService } from '../users/users.service';
+import { UsersMockFactory } from 'src/shared/__factories__/users-mock.factory';
+import { USERS_SERVICE } from '../users/users.service';
 
 import {
   GOALS_REPOSITORY,
@@ -11,47 +12,24 @@ import {
 } from 'src/shared/contracts/goals.repository.contract';
 import { GoalsService } from './goals.service';
 
-import dayjs from 'dayjs';
-
-import { User } from '../users/entities/user.entity';
 import { Goal } from './entities/goal.entity';
 import { WeeklyGoalsProgress } from 'src/shared/interfaces/goals/weekly-goals-progress.interface';
 import { WeeklyGoalsSummary } from 'src/shared/interfaces/goals/weekly-goals-summary.interface';
 
+import dayjs from 'dayjs';
+
 describe('GoalsService', () => {
   let goalsService: GoalsService;
-  let mockUsersService: Pick<UsersService, 'findUserById'>;
   let mockGoalsRepository: Partial<GoalsRepository>;
-
-  let mockFindUserByIdSuccess: ReturnType<typeof vi.fn>;
-  let mockFindUserByIdFailure: () => ReturnType<typeof vi.fn>;
 
   let mockGetWeeklyGoalsWithCompletion: ReturnType<typeof vi.fn>;
   let mockGetWeeklySummaryOfGoalsCompletedByDay: ReturnType<typeof vi.fn>;
   let mockCreateGoal: ReturnType<typeof vi.fn>;
 
-  let userId: string;
-  let mockUser: User;
+  let mockUserId: string;
 
   beforeEach(async () => {
-    userId = 'john-doe';
-    mockUser = {
-      id: 'john-doe',
-      avatarURL: 'https://avatars.githubusercontent.com/u/189175871?v=4',
-      externalAccountId: 1232143123,
-    };
-
-    mockUsersService = {
-      findUserById: vi.fn(),
-    };
-
-    const mockFindUserById = mockUsersService.findUserById as ReturnType<
-      typeof vi.fn
-    >;
-
-    mockFindUserByIdSuccess = mockFindUserById.mockResolvedValue(mockUser);
-    mockFindUserByIdFailure = () =>
-      mockFindUserById.mockRejectedValue(new NotFoundException());
+    mockUserId = UsersMockFactory.createUserId();
 
     mockGoalsRepository = {
       getWeeklyGoalsWithCompletion: vi.fn(),
@@ -62,7 +40,7 @@ describe('GoalsService', () => {
     const module = await Test.createTestingModule({
       providers: [
         GoalsService,
-        { provide: USERS_SERVICE, useValue: mockUsersService },
+        { provide: USERS_SERVICE, useValue: UsersMockFactory.service },
         { provide: GOALS_REPOSITORY, useValue: mockGoalsRepository },
       ],
     }).compile();
@@ -94,27 +72,33 @@ describe('GoalsService', () => {
     });
 
     it('should be able to return a goal with completion count', async () => {
-      mockFindUserByIdSuccess();
+      UsersMockFactory.serviceResponses().findUserByIdSuccess();
       mockGetWeeklyGoalsWithCompletion.mockResolvedValue(weeklyGoalsProgress);
 
-      const goal = await goalsService.findWeeklyGoalsWithCompletion(userId);
+      const goal = await goalsService.findWeeklyGoalsWithCompletion(mockUserId);
 
       const firstDayOfWeek = dayjs().startOf('week').toDate();
       const lastDayOfWeek = dayjs().endOf('week').toDate();
 
-      expect(mockFindUserByIdSuccess).toHaveBeenCalledWith(userId);
+      expect(UsersMockFactory.service.findUserById).toHaveBeenCalledWith(
+        mockUserId,
+      );
       expect(mockGetWeeklyGoalsWithCompletion).toHaveBeenCalledWith(
-        expect.objectContaining({ userId, lastDayOfWeek, firstDayOfWeek }),
+        expect.objectContaining({
+          userId: mockUserId,
+          lastDayOfWeek,
+          firstDayOfWeek,
+        }),
       );
       expect(goal).toEqual(weeklyGoalsProgress);
     });
 
     it('should be able to throw an error when the user does not exist', async () => {
-      mockFindUserByIdFailure();
+      UsersMockFactory.serviceResponses().findUserByIdFailure();
 
       expect(mockGetWeeklyGoalsWithCompletion).not.toHaveBeenCalled();
       await expect(
-        goalsService.findWeeklyGoalsWithCompletion(userId),
+        goalsService.findWeeklyGoalsWithCompletion(mockUserId),
       ).rejects.toThrow(NotFoundException);
     });
   });
@@ -156,30 +140,36 @@ describe('GoalsService', () => {
     });
 
     it('should be able to return a weekly summary of completed goals', async () => {
-      mockFindUserByIdSuccess();
+      UsersMockFactory.serviceResponses().findUserByIdSuccess();
       mockGetWeeklySummaryOfGoalsCompletedByDay.mockResolvedValue(
         weeklyGoalsSummary,
       );
 
       const goal =
-        await goalsService.findWeeklySummaryOfGoalsCompletedByDay(userId);
+        await goalsService.findWeeklySummaryOfGoalsCompletedByDay(mockUserId);
 
       const firstDayOfWeek = dayjs().startOf('week').toDate();
       const lastDayOfWeek = dayjs().endOf('week').toDate();
 
-      expect(mockFindUserByIdSuccess).toHaveBeenCalledWith(userId);
+      expect(UsersMockFactory.service.findUserById).toHaveBeenCalledWith(
+        mockUserId,
+      );
       expect(mockGetWeeklySummaryOfGoalsCompletedByDay).toHaveBeenCalledWith(
-        expect.objectContaining({ userId, lastDayOfWeek, firstDayOfWeek }),
+        expect.objectContaining({
+          userId: mockUserId,
+          lastDayOfWeek,
+          firstDayOfWeek,
+        }),
       );
       expect(goal).toEqual(weeklyGoalsSummary);
     });
 
     it('should be able to throw an error when the user does not exist', async () => {
-      mockFindUserByIdFailure();
+      UsersMockFactory.serviceResponses().findUserByIdFailure();
 
       expect(mockGetWeeklySummaryOfGoalsCompletedByDay).not.toHaveBeenCalled();
       await expect(
-        goalsService.findWeeklySummaryOfGoalsCompletedByDay(userId),
+        goalsService.findWeeklySummaryOfGoalsCompletedByDay(mockUserId),
       ).rejects.toThrow(NotFoundException);
     });
   });
@@ -192,7 +182,7 @@ describe('GoalsService', () => {
 
       mockCreatedGoal = {
         id: 'mock-goal',
-        userId,
+        userId: mockUserId,
         title: 'Estudar',
         desiredWeeklyFrequency: 7,
         createdAt: startOfWeek.add(3, 'day').toDate(),
@@ -204,16 +194,18 @@ describe('GoalsService', () => {
     });
 
     it('should be able to create a user and return it', async () => {
-      mockFindUserByIdSuccess();
+      UsersMockFactory.serviceResponses().findUserByIdSuccess();
       mockCreateGoal();
 
-      const goal = await goalsService.create(userId, {
+      const goal = await goalsService.create(mockUserId, {
         title: 'Estudar',
         desiredWeeklyFrequency: 7,
       });
 
-      expect(mockFindUserByIdSuccess).toHaveBeenCalledWith(userId);
-      expect(mockCreateGoal).toHaveBeenCalledWith(userId, {
+      expect(UsersMockFactory.service.findUserById).toHaveBeenCalledWith(
+        mockUserId,
+      );
+      expect(mockCreateGoal).toHaveBeenCalledWith(mockUserId, {
         title: 'Estudar',
         desiredWeeklyFrequency: 7,
       });
@@ -221,11 +213,11 @@ describe('GoalsService', () => {
     });
 
     it('should be able to throw an error when the user does not exist', async () => {
-      mockFindUserByIdFailure();
+      UsersMockFactory.serviceResponses().findUserByIdFailure();
 
       expect(mockCreateGoal).not.toHaveBeenCalled();
       await expect(
-        goalsService.create(userId, {
+        goalsService.create(mockUserId, {
           title: 'Estudar',
           desiredWeeklyFrequency: 7,
         }),
