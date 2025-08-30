@@ -15,38 +15,41 @@ export class UsersMockFactory {
     findUserById: vi.fn(),
   };
 
-  static createUserId(id = 'john-doe'): string {
-    return id;
-  }
+  static create = {
+    id: (id = 'john-doe') => id,
 
-  static createUser(override?: Partial<User>, id?: string): User {
-    return {
-      id: id ?? this.createUserId(),
-      name: 'John Doe',
-      email: 'johndoe@email.com',
-      avatarURL: 'https://avatars.githubusercontent.com/u/189175871?v=4',
-      externalAccountId: 1232143123,
-      ...override,
-    };
-  }
+    user: (override?: Partial<User>): User => {
+      return {
+        id: this.create.id(),
+        name: 'John Doe',
+        email: 'johndoe@email.com',
+        avatarURL: 'https://avatars.githubusercontent.com/u/189175871?v=4',
+        externalAccountId: 1232143123,
+        ...override,
+      };
+    },
+  };
 
-  static repositoryResponses() {
-    return {
-      getUserByIdSuccess: () =>
-        this.repository.getUserById.mockResolvedValue(this.createUser()),
-      getUserByIdNull: () =>
-        this.repository.getUserById.mockResolvedValue(null),
-      getUserByIdFailure: () =>
-        this.repository.getUserById.mockRejectedValue(new NotFoundException()),
-    };
-  }
+  static responses = {
+    repository: {
+      getUserById: {
+        success: () =>
+          this.repository.getUserById.mockResolvedValue(this.create.user()),
+        null: () => this.repository.getUserById.mockResolvedValue(null),
+        failure: () =>
+          this.repository.getUserById.mockRejectedValue(
+            new NotFoundException(),
+          ),
+      },
+    },
 
-  static serviceResponses() {
-    return {
-      findUserByIdSuccess: () =>
-        this.service.findUserById.mockResolvedValue(this.createUser()),
-      findUserByIdFailure: () =>
-        this.service.findUserById.mockRejectedValue(new NotFoundException()),
-    };
-  }
+    service: {
+      findUserById: {
+        success: () =>
+          this.service.findUserById.mockResolvedValue(this.create.user()),
+        failure: () =>
+          this.service.findUserById.mockRejectedValue(new NotFoundException()),
+      },
+    },
+  };
 }

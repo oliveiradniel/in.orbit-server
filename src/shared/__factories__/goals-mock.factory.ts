@@ -24,16 +24,14 @@ export class GoalsMockFactory {
   };
 
   static create = {
-    id: (id = 'goal-id') => {
-      return id;
-    },
+    id: (id = 'goal-id') => id,
 
     goal: (override?: Partial<Goal>): Goal => ({
       id: this.create.id(),
-      userId: UsersMockFactory.createUserId(),
+      userId: UsersMockFactory.create.id(),
       title: 'Acordar cedo',
       desiredWeeklyFrequency: 7,
-      createdAt: new Date(),
+      createdAt: new Date('2025-08-30T00:00:00.000Z'),
       ...override,
     }),
 
@@ -56,7 +54,7 @@ export class GoalsMockFactory {
       const startOfWeek = dayjs().startOf('week');
 
       const firstDayAnalysed = startOfWeek.format('YYYY-MM-DD');
-      const secondDayAnalysed = startOfWeek.add(1, 'day');
+      const secondDayAnalysed = startOfWeek.add(1, 'day').format('YYYY-MM-DD');
 
       return {
         completed: 1,
@@ -66,14 +64,14 @@ export class GoalsMockFactory {
             {
               id: 'mock-goal',
               title: 'Acordar cedo',
-              completedAt: startOfWeek.toDate(),
+              completedAt: new Date('2025-08-30T00:00:00.000Z'),
             },
           ],
-          [secondDayAnalysed.format('YYYY-MM-DD')]: [
+          [secondDayAnalysed]: [
             {
               id: 'mock-goal',
               title: 'Acordar cedo',
-              completedAt: secondDayAnalysed.toDate(),
+              completedAt: new Date('2025-08-30T00:00:00.000Z'),
             },
           ],
         },
@@ -83,37 +81,49 @@ export class GoalsMockFactory {
 
   static responses = {
     repository: {
-      getWeeklyGoalsWithCompletionSuccess: () =>
-        this.repository.getWeeklyGoalsWithCompletion.mockResolvedValue(
-          this.create.weeklyGoalsProgress(),
-        ),
-      getWeeklySummaryOfGoalsCompletedByDaySuccess: () =>
-        this.repository.getWeeklySummaryOfGoalsCompletedByDay.mockResolvedValue(
-          this.create.weeklyGoalsSummary(),
-        ),
-      createGoalSuccess: () =>
-        this.repository.create.mockResolvedValue(this.create.goal()),
+      getWeeklyGoalsWithCompletion: {
+        success: () =>
+          this.repository.getWeeklyGoalsWithCompletion.mockResolvedValue(
+            this.create.weeklyGoalsProgress(),
+          ),
+      },
+      getWeeklySummaryOfGoalsCompletedByDay: {
+        success: () =>
+          this.repository.getWeeklySummaryOfGoalsCompletedByDay.mockResolvedValue(
+            this.create.weeklyGoalsSummary(),
+          ),
+      },
+      create: {
+        success: () =>
+          this.repository.create.mockResolvedValue(this.create.goal()),
+      },
     },
 
     service: {
-      findWeeklyGoalsWithCompletionSuccess: () => {
-        const data = this.create.weeklyGoalsProgress();
-        this.repository.getWeeklyGoalsWithCompletion.mockResolvedValue(data);
-        this.service.findWeeklyGoalsWithCompletion.mockResolvedValue(data);
+      findWeeklyGoalsWithCompletion: {
+        success: () => {
+          const data = this.create.weeklyGoalsProgress();
+          this.repository.getWeeklyGoalsWithCompletion.mockResolvedValue(data);
+          this.service.findWeeklyGoalsWithCompletion.mockResolvedValue(data);
+        },
       },
-      findWeeklySummaryOfGoalsCompletedByDaySuccess: () => {
-        const data = this.create.weeklyGoalsSummary();
-        this.repository.getWeeklySummaryOfGoalsCompletedByDay.mockResolvedValue(
-          data,
-        );
-        this.service.findWeeklySummaryOfGoalsCompletedByDay.mockResolvedValue(
-          data,
-        );
+      findWeeklySummaryOfGoalsCompletedByDay: {
+        success: () => {
+          const data = this.create.weeklyGoalsSummary();
+          this.repository.getWeeklySummaryOfGoalsCompletedByDay.mockResolvedValue(
+            data,
+          );
+          this.service.findWeeklySummaryOfGoalsCompletedByDay.mockResolvedValue(
+            data,
+          );
+        },
       },
-      createGoalSuccess: () => {
-        const data = this.create.goal();
-        this.repository.create.mockResolvedValue(data);
-        this.service.create.mockResolvedValue(data);
+      create: {
+        success: () => {
+          const data = this.create.goal();
+          this.repository.create.mockResolvedValue(data);
+          this.service.create.mockResolvedValue(data);
+        },
       },
     },
   };

@@ -11,11 +11,11 @@ describe('UsersService', () => {
   let usersService: UsersService;
 
   let mockUserId: string;
-  let mockUser: ReturnType<typeof UsersMockFactory.createUser>;
+  let mockUser: ReturnType<typeof UsersMockFactory.create.user>;
 
   beforeEach(async () => {
-    mockUserId = UsersMockFactory.createUserId();
-    mockUser = UsersMockFactory.createUser();
+    mockUserId = UsersMockFactory.create.id();
+    mockUser = UsersMockFactory.create.user();
 
     const module = await Test.createTestingModule({
       providers: [
@@ -34,25 +34,27 @@ describe('UsersService', () => {
     vi.clearAllMocks();
   });
 
-  it('should be able to get a user', async () => {
-    UsersMockFactory.repositoryResponses().getUserByIdSuccess();
+  describe('findUserById', () => {
+    it('should be able to get a user', async () => {
+      UsersMockFactory.responses.repository.getUserById.success();
 
-    const user = await usersService.findUserById(mockUserId);
+      const user = await usersService.findUserById(mockUserId);
 
-    expect(UsersMockFactory.repository.getUserById).toHaveBeenCalledWith(
-      mockUserId,
-    );
-    expect(user).toEqual(mockUser);
-  });
+      expect(UsersMockFactory.repository.getUserById).toHaveBeenCalledWith(
+        mockUserId,
+      );
+      expect(user).toEqual(mockUser);
+    });
 
-  it('should be able to throw an error when the user does not exist', async () => {
-    UsersMockFactory.repositoryResponses().getUserByIdNull();
+    it('should be able to throw an error when the user does not exist', async () => {
+      UsersMockFactory.responses.repository.getUserById.null();
 
-    await expect(usersService.findUserById(mockUserId)).rejects.toThrow(
-      NotFoundException,
-    );
-    expect(UsersMockFactory.repository.getUserById).toHaveBeenCalledWith(
-      mockUserId,
-    );
+      await expect(usersService.findUserById(mockUserId)).rejects.toThrow(
+        NotFoundException,
+      );
+      expect(UsersMockFactory.repository.getUserById).toHaveBeenCalledWith(
+        mockUserId,
+      );
+    });
   });
 });

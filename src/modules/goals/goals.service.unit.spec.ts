@@ -15,10 +15,10 @@ import dayjs from 'dayjs';
 describe('GoalsService', () => {
   let goalsService: GoalsService;
 
-  let mockUserId: ReturnType<typeof UsersMockFactory.createUserId>;
+  let mockUserId: ReturnType<typeof UsersMockFactory.create.id>;
 
   beforeEach(async () => {
-    mockUserId = UsersMockFactory.createUserId();
+    mockUserId = UsersMockFactory.create.id();
 
     const module = await Test.createTestingModule({
       providers: [
@@ -39,8 +39,8 @@ describe('GoalsService', () => {
     const weeklyGoalsProgress = GoalsMockFactory.create.weeklyGoalsProgress();
 
     it('should be able to return a goal with completion count', async () => {
-      UsersMockFactory.serviceResponses().findUserByIdSuccess();
-      GoalsMockFactory.responses.repository.getWeeklyGoalsWithCompletionSuccess();
+      UsersMockFactory.responses.service.findUserById.success();
+      GoalsMockFactory.responses.repository.getWeeklyGoalsWithCompletion.success();
 
       const goal = await goalsService.findWeeklyGoalsWithCompletion(mockUserId);
 
@@ -63,7 +63,7 @@ describe('GoalsService', () => {
     });
 
     it('should be able to throw an error when the user does not exist', async () => {
-      UsersMockFactory.serviceResponses().findUserByIdFailure();
+      UsersMockFactory.responses.service.findUserById.failure();
 
       expect(
         GoalsMockFactory.repository.getWeeklyGoalsWithCompletion,
@@ -78,8 +78,8 @@ describe('GoalsService', () => {
     const weeklyGoalsSummary = GoalsMockFactory.create.weeklyGoalsSummary();
 
     it('should be able to return a weekly summary of completed goals', async () => {
-      UsersMockFactory.serviceResponses().findUserByIdSuccess();
-      GoalsMockFactory.responses.repository.getWeeklySummaryOfGoalsCompletedByDaySuccess();
+      UsersMockFactory.responses.service.findUserById.success();
+      GoalsMockFactory.responses.repository.getWeeklySummaryOfGoalsCompletedByDay.success();
 
       const goal =
         await goalsService.findWeeklySummaryOfGoalsCompletedByDay(mockUserId);
@@ -103,7 +103,7 @@ describe('GoalsService', () => {
     });
 
     it('should be able to throw an error when the user does not exist', async () => {
-      UsersMockFactory.serviceResponses().findUserByIdFailure();
+      UsersMockFactory.responses.service.findUserById.failure();
 
       expect(
         GoalsMockFactory.repository.getWeeklySummaryOfGoalsCompletedByDay,
@@ -117,9 +117,9 @@ describe('GoalsService', () => {
   describe('create', () => {
     const mockGoal = GoalsMockFactory.create.goal();
 
-    it('should be able to create a user and return it', async () => {
-      UsersMockFactory.serviceResponses().findUserByIdSuccess();
-      GoalsMockFactory.responses.repository.createGoalSuccess();
+    it('should be able to create a goal and return it', async () => {
+      UsersMockFactory.responses.service.findUserById.success();
+      GoalsMockFactory.responses.repository.create.success();
 
       const goal = await goalsService.create(mockUserId, {
         title: 'Estudar',
@@ -140,7 +140,7 @@ describe('GoalsService', () => {
     });
 
     it('should be able to throw an error when the user does not exist', async () => {
-      UsersMockFactory.serviceResponses().findUserByIdFailure();
+      UsersMockFactory.responses.service.findUserById.failure();
 
       expect(GoalsMockFactory.repository.create).not.toHaveBeenCalled();
       await expect(
