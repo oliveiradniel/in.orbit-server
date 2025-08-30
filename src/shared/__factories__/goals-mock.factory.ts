@@ -2,6 +2,7 @@ import { Goal } from 'src/modules/goals/entities/goal.entity';
 
 import { WeeklyGoalsProgress } from '../interfaces/goals/weekly-goals-progress.interface';
 import { WeeklyGoalsSummary } from '../interfaces/goals/weekly-goals-summary.interface';
+import { GoalProgressMetric } from '../interfaces/goals/goal-progress-metric.interface';
 
 import { UsersMockFactory } from './users-mock.factory';
 
@@ -20,6 +21,7 @@ export class GoalsMockFactory {
   static service = {
     findWeeklyGoalsWithCompletion: vi.fn(),
     findWeeklySummaryOfGoalsCompletedByDay: vi.fn(),
+    findWeeklyFrequencyAndCompletionCount: vi.fn(),
     create: vi.fn(),
   };
 
@@ -77,6 +79,14 @@ export class GoalsMockFactory {
         },
       };
     },
+
+    goalProgressMetric: ({
+      desiredWeeklyFrequency,
+      countCompletion,
+    }: GoalProgressMetric): GoalProgressMetric => ({
+      desiredWeeklyFrequency,
+      countCompletion,
+    }),
   };
 
   static responses = {
@@ -93,6 +103,26 @@ export class GoalsMockFactory {
             this.create.weeklyGoalsSummary(),
           ),
       },
+      getWeeklyFrequencyAndCompletionCount: {
+        success: () =>
+          this.repository.getWeeklyFrequencyAndCompletionCount.mockResolvedValue(
+            this.create.goalProgressMetric({
+              desiredWeeklyFrequency: 7,
+              countCompletion: 3,
+            }),
+          ),
+        null: () =>
+          this.repository.getWeeklyFrequencyAndCompletionCount.mockResolvedValue(
+            null,
+          ),
+        conflict: () =>
+          this.repository.getWeeklyFrequencyAndCompletionCount.mockResolvedValue(
+            this.create.goalProgressMetric({
+              desiredWeeklyFrequency: 7,
+              countCompletion: 7,
+            }),
+          ),
+      },
       create: {
         success: () =>
           this.repository.create.mockResolvedValue(this.create.goal()),
@@ -102,27 +132,24 @@ export class GoalsMockFactory {
     service: {
       findWeeklyGoalsWithCompletion: {
         success: () => {
-          const data = this.create.weeklyGoalsProgress();
-          this.repository.getWeeklyGoalsWithCompletion.mockResolvedValue(data);
-          this.service.findWeeklyGoalsWithCompletion.mockResolvedValue(data);
+          this.responses.repository.getWeeklyGoalsWithCompletion.success();
+          this.service.findWeeklyGoalsWithCompletion.mockResolvedValue(
+            this.create.weeklyGoalsProgress(),
+          );
         },
       },
       findWeeklySummaryOfGoalsCompletedByDay: {
         success: () => {
-          const data = this.create.weeklyGoalsSummary();
-          this.repository.getWeeklySummaryOfGoalsCompletedByDay.mockResolvedValue(
-            data,
-          );
+          this.responses.repository.getWeeklySummaryOfGoalsCompletedByDay.success();
           this.service.findWeeklySummaryOfGoalsCompletedByDay.mockResolvedValue(
-            data,
+            this.create.weeklyGoalsSummary(),
           );
         },
       },
       create: {
         success: () => {
-          const data = this.create.goal();
-          this.repository.create.mockResolvedValue(data);
-          this.service.create.mockResolvedValue(data);
+          this.responses.repository.create.success();
+          this.service.create.mockResolvedValue(this.create.goal());
         },
       },
     },

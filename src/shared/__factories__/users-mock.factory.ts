@@ -36,19 +36,19 @@ export class UsersMockFactory {
         success: () =>
           this.repository.getUserById.mockResolvedValue(this.create.user()),
         null: () => this.repository.getUserById.mockResolvedValue(null),
-        failure: () =>
-          this.repository.getUserById.mockRejectedValue(
-            new NotFoundException(),
-          ),
       },
     },
 
     service: {
       findUserById: {
-        success: () =>
-          this.service.findUserById.mockResolvedValue(this.create.user()),
-        failure: () =>
-          this.service.findUserById.mockRejectedValue(new NotFoundException()),
+        success: () => {
+          this.responses.repository.getUserById.success();
+          this.service.findUserById.mockResolvedValue(this.create.user());
+        },
+        failure: () => {
+          this.responses.repository.getUserById.null();
+          this.service.findUserById.mockRejectedValue(new NotFoundException());
+        },
       },
     },
   };
