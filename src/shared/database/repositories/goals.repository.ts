@@ -9,7 +9,7 @@ import { type UserDateRangeFilter } from 'src/shared/interfaces/goals/user-date-
 import { type GoalDateRangeFilter } from 'src/shared/interfaces/goals/goal-date-range-filter.interface';
 import { type WeeklyGoalsProgress } from 'src/shared/interfaces/goals/weekly-goals-progress.interface';
 import { type WeeklyGoalsSummary } from 'src/shared/interfaces/goals/weekly-goals-summary.interface';
-import { type WeeklyGoalProgress } from 'src/shared/interfaces/goals/weekly-goal-progress.interface';
+import { type GoalProgressMetric } from 'src/shared/interfaces/goals/goal-progress-metric.interface';
 
 @Injectable()
 export class PrismaGoalsRepository implements GoalsRepository {
@@ -133,7 +133,7 @@ export class PrismaGoalsRepository implements GoalsRepository {
     goalId,
     firstDayOfWeek,
     lastDayOfWeek,
-  }: GoalDateRangeFilter): Promise<WeeklyGoalProgress | null> {
+  }: GoalDateRangeFilter): Promise<GoalProgressMetric | null> {
     const goal = await this.prismaService.goal.findUnique({
       where: { id: goalId },
       select: {
