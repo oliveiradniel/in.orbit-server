@@ -7,7 +7,11 @@ import {
 
 import dayjs from 'dayjs';
 
-import { GoalsCompletedRepository } from './contracts/goals-completed.repository.contract';
+import {
+  GOALS_COMPLETED_REPOSITORY,
+  GoalsCompletedRepository,
+} from './contracts/goals-completed.repository.contract';
+
 import {
   GOALS_REPOSITORY,
   GoalsRepository,
@@ -18,6 +22,7 @@ import { CreateGoalCompletedDTO } from './dtos/create-goal-completed.dto';
 @Injectable()
 export class GoalsCompletedService {
   constructor(
+    @Inject(GOALS_COMPLETED_REPOSITORY)
     private readonly goalsCompletedRepository: GoalsCompletedRepository,
     @Inject(GOALS_REPOSITORY) private readonly goalsRepository: GoalsRepository,
   ) {}

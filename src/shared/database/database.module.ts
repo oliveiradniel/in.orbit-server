@@ -8,7 +8,7 @@ import { USERS_REPOSITORY } from '../contracts/users-repository.contract';
 import { PrismaGoalsRepository } from './repositories/goals.repository';
 import { GOALS_REPOSITORY } from '../contracts/goals.repository.contract';
 
-import { GoalsCompletedRepository } from 'src/modules/goals-completed/contracts/goals-completed.repository.contract';
+import { GOALS_COMPLETED_REPOSITORY } from 'src/modules/goals-completed/contracts/goals-completed.repository.contract';
 import { PrismaGoalsCompletedRepository } from './repositories/goals-completed.repository';
 
 @Global()
@@ -17,11 +17,11 @@ import { PrismaGoalsCompletedRepository } from './repositories/goals-completed.r
     PrismaService,
     { provide: GOALS_REPOSITORY, useClass: PrismaGoalsRepository },
     {
-      provide: GoalsCompletedRepository,
+      provide: GOALS_COMPLETED_REPOSITORY,
       useClass: PrismaGoalsCompletedRepository,
     },
     { provide: USERS_REPOSITORY, useClass: PrismaUsersRepository },
   ],
-  exports: [GOALS_REPOSITORY, GoalsCompletedRepository, USERS_REPOSITORY],
+  exports: [GOALS_REPOSITORY, GOALS_COMPLETED_REPOSITORY, USERS_REPOSITORY],
 })
 export class DatabaseModule {}
