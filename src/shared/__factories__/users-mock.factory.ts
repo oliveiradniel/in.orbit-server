@@ -16,7 +16,7 @@ export class UsersMockFactory {
   };
 
   static create = {
-    id: (id = 'john-doe') => id,
+    id: (id = 'john-doe'): string => id,
 
     user: (override?: Partial<User>): User => {
       return {
@@ -36,6 +36,23 @@ export class UsersMockFactory {
         success: () =>
           this.repository.getUserById.mockResolvedValue(this.create.user()),
         null: () => this.repository.getUserById.mockResolvedValue(null),
+      },
+
+      getUserByExternalAccountId: {
+        success: () =>
+          this.repository.getUserByExternalAccountId.mockResolvedValue(
+            this.create.user(),
+          ),
+        null: () => {
+          UsersMockFactory.repository.getUserByExternalAccountId.mockResolvedValue(
+            null,
+          );
+        },
+      },
+
+      create: {
+        success: () =>
+          this.repository.create.mockResolvedValue(this.create.user()),
       },
     },
 

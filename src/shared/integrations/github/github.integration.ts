@@ -36,14 +36,14 @@ export class HTTPGitHubIntegration implements GitHubIntegration {
     });
 
     if (!response.ok) {
-      throw new Error(`GitHub auth failed: ${response.statusText}`);
+      throw new Error(`GitHub auth failed: ${response.statusText}.`);
     }
 
     const { access_token } = (await response.json()) as AccessTokenResponse;
 
     if (!access_token) {
       throw new BadRequestException(
-        'Invalid GitHub code or token not received',
+        'Invalid GitHub code or token not received.',
       );
     }
 

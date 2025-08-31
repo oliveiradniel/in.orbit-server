@@ -26,7 +26,7 @@ export class GoalsMockFactory {
   };
 
   static create = {
-    id: (id = 'goal-id') => id,
+    id: (id = 'goal-id'): string => id,
 
     goal: (override?: Partial<Goal>): Goal => ({
       id: this.create.id(),
