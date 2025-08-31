@@ -16,9 +16,11 @@
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "db:migrate:test": "dotenv -e .env.test -- prisma migrate dev",
     "pretest:watch": "yarn db:migrate:test",
-    "pretest": "yarn db:migrate:test",
     "test:unit": "vitest run --config vitest.unit.config.ts",
+    "pretest:int": "yarn db:migrate:test",
+    "test:int": "vitest run --config vitest.int.config.ts",
     "test:watch": "vitest",
+    "pretest": "yarn db:migrate:test",
     "test": "vitest run"
   },
   "dependencies": {
