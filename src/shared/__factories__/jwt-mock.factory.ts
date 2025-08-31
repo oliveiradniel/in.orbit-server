@@ -1,5 +1,7 @@
 import { vi } from 'vitest';
 
+export const JWT_SERVICE = Symbol('JWT_SERVICE');
+
 export class JWTMockFactory {
   static service = {
     signAsync: vi.fn(),

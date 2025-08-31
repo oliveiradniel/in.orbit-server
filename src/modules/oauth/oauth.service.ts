@@ -6,14 +6,20 @@ import {
   UsersRepository,
 } from 'src/shared/contracts/users-repository.contract';
 
-import { GitHubIntegration } from './contracts/github.integration.contract';
+import {
+  GITHUB_INTEGRATION,
+  GitHubIntegration,
+} from './contracts/github.integration.contract';
+
+import { JWT_SERVICE } from 'src/shared/__factories__/jwt-mock.factory';
 
 @Injectable()
 export class OAuthService {
   constructor(
+    @Inject(GITHUB_INTEGRATION)
     private readonly githubIntegration: GitHubIntegration,
     @Inject(USERS_REPOSITORY) private readonly usersRepository: UsersRepository,
-    private readonly jwtService: JwtService,
+    @Inject(JWT_SERVICE) private readonly jwtService: JwtService,
   ) {}
 
   async githubLogin(code: string) {
