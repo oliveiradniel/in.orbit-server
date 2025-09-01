@@ -3,7 +3,7 @@ import { NotFoundException } from '@nestjs/common';
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
-import { UsersService } from './users.service';
+import { UsersService } from '../users.service';
 import { UsersMockFactory } from 'src/shared/__factories__/users-mock.factory';
 import { USERS_REPOSITORY } from 'src/shared/constants/tokens';
 

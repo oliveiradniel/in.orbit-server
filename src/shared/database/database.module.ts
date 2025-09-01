@@ -9,13 +9,14 @@ import { PrismaGoalsCompletedRepository } from './repositories/goals-completed.r
 import {
   GOALS_COMPLETED_REPOSITORY,
   GOALS_REPOSITORY,
+  PRISMA_SERVICE,
   USERS_REPOSITORY,
 } from '../constants/tokens';
 
 @Global()
 @Module({
   providers: [
-    PrismaService,
+    { provide: PRISMA_SERVICE, useClass: PrismaService },
     { provide: GOALS_REPOSITORY, useClass: PrismaGoalsRepository },
     {
       provide: GOALS_COMPLETED_REPOSITORY,
@@ -23,6 +24,11 @@ import {
     },
     { provide: USERS_REPOSITORY, useClass: PrismaUsersRepository },
   ],
-  exports: [GOALS_REPOSITORY, GOALS_COMPLETED_REPOSITORY, USERS_REPOSITORY],
+  exports: [
+    PRISMA_SERVICE,
+    GOALS_REPOSITORY,
+    GOALS_COMPLETED_REPOSITORY,
+    USERS_REPOSITORY,
+  ],
 })
 export class DatabaseModule {}
