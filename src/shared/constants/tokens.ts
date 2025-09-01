@@ -1,0 +1,10 @@
+export const USERS_SERVICE = Symbol('USERS_SERVICE');
+export const USERS_REPOSITORY = Symbol('USERS_REPOSITORY');
+
+export const GOALS_REPOSITORY = Symbol('GOALS_REPOSITORY');
+
+export const GOALS_COMPLETED_REPOSITORY = Symbol('GOALS_COMPLETED_REPOSITORY');
+
+export const GITHUB_INTEGRATION = Symbol('GITHUB_INTEGRATION');
+
+export const JWT_SERVICE = Symbol('JWT_SERVICE');

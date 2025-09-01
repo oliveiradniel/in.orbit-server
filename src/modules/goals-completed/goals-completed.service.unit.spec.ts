@@ -4,11 +4,14 @@ import { ConflictException, NotFoundException } from '@nestjs/common';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { GoalsCompletedService } from './goals-completed.service';
-import { GoalsCompletedMockFactory } from './__factories__/goals-completed-mock.factory';
-import { GOALS_COMPLETED_REPOSITORY } from './contracts/goals-completed.repository.contract';
 
+import { GoalsCompletedMockFactory } from './__factories__/goals-completed-mock.factory';
 import { GoalsMockFactory } from 'src/shared/__factories__/goals-mock.factory';
-import { GOALS_REPOSITORY } from 'src/shared/contracts/goals.repository.contract';
+
+import {
+  GOALS_COMPLETED_REPOSITORY,
+  GOALS_REPOSITORY,
+} from 'src/shared/constants/tokens';
 
 describe('GoalsCompletedService', () => {
   let goalsCompletedService: GoalsCompletedService;

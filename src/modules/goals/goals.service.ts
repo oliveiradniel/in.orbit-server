@@ -2,14 +2,13 @@ import { Inject, Injectable } from '@nestjs/common';
 
 import dayjs from 'dayjs';
 
-import {
-  GOALS_REPOSITORY,
-  GoalsRepository,
-} from 'src/shared/contracts/goals.repository.contract';
+import { UsersService } from '../users/users.service';
 
-import { USERS_SERVICE, UsersService } from '../users/users.service';
+import { GoalsRepository } from 'src/shared/contracts/goals.repository.contract';
 
 import { CreateGoalDTO } from './dtos/create-goal.dto';
+
+import { GOALS_REPOSITORY, USERS_SERVICE } from 'src/shared/constants/tokens';
 
 @Injectable()
 export class GoalsService {

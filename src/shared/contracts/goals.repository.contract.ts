@@ -8,8 +8,6 @@ import { type WeeklyGoalsProgress } from 'src/shared/interfaces/goals/weekly-goa
 import { type WeeklyGoalsSummary } from 'src/shared/interfaces/goals/weekly-goals-summary.interface';
 import { type GoalProgressMetric } from 'src/shared/interfaces/goals/goal-progress-metric.interface';
 
-export const GOALS_REPOSITORY = Symbol('GOALS_REPOSITORY');
-
 export abstract class GoalsRepository {
   abstract getWeeklyGoalsWithCompletion({
     userId,

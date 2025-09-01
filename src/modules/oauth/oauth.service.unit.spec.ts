@@ -4,17 +4,16 @@ import { BadRequestException } from '@nestjs/common';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { OAuthService } from './oauth.service';
+
 import { OAuthMockFactory } from './__factories__/oauth-mock.factory';
-
-import { GITHUB_INTEGRATION } from './contracts/github.integration.contract';
-
 import { UsersMockFactory } from 'src/shared/__factories__/users-mock.factory';
-import { USERS_REPOSITORY } from 'src/shared/contracts/users-repository.contract';
+import { JWTMockFactory } from 'src/shared/__factories__/jwt-mock.factory';
 
 import {
+  GITHUB_INTEGRATION,
   JWT_SERVICE,
-  JWTMockFactory,
-} from 'src/shared/__factories__/jwt-mock.factory';
+  USERS_REPOSITORY,
+} from 'src/shared/constants/tokens';
 
 describe('OAuthService', () => {
   let oauthService: OAuthService;

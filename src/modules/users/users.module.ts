@@ -1,5 +1,8 @@
 import { Module } from '@nestjs/common';
-import { USERS_SERVICE, UsersService } from './users.service';
+
+import { UsersService } from './users.service';
+import { USERS_SERVICE } from 'src/shared/constants/tokens';
+
 import { UsersController } from './users.controller';
 
 @Module({

@@ -5,12 +5,12 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
-import { USERS_SERVICE, UsersService } from './users.service';
+import { UsersService } from './users.service';
+import { USERS_SERVICE } from 'src/shared/constants/tokens';
 
 import { ActiveUserId } from 'src/shared/decorators/active-user-id.decorator';
 
 import { FindUserByIdResponseDTO } from './dtos/find-user-by-id-response.dto';
-
 import { UnauthorizedResponseDTO } from 'src/shared/dtos/unauthorized-response.dto';
 
 @ApiBearerAuth()

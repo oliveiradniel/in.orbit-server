@@ -1,17 +1,14 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import {
-  USERS_REPOSITORY,
-  UsersRepository,
-} from 'src/shared/contracts/users-repository.contract';
+import { UsersRepository } from 'src/shared/contracts/users-repository.contract';
+import { GitHubIntegration } from './contracts/github.integration.contract';
 
 import {
   GITHUB_INTEGRATION,
-  GitHubIntegration,
-} from './contracts/github.integration.contract';
-
-import { JWT_SERVICE } from 'src/shared/__factories__/jwt-mock.factory';
+  JWT_SERVICE,
+  USERS_REPOSITORY,
+} from 'src/shared/constants/tokens';
 
 @Injectable()
 export class OAuthService {

@@ -3,13 +3,14 @@ import { Global, Module } from '@nestjs/common';
 import { PrismaService } from './prisma.service';
 
 import { PrismaUsersRepository } from './repositories/users.repository';
-import { USERS_REPOSITORY } from '../contracts/users-repository.contract';
-
 import { PrismaGoalsRepository } from './repositories/goals.repository';
-import { GOALS_REPOSITORY } from '../contracts/goals.repository.contract';
-
-import { GOALS_COMPLETED_REPOSITORY } from 'src/modules/goals-completed/contracts/goals-completed.repository.contract';
 import { PrismaGoalsCompletedRepository } from './repositories/goals-completed.repository';
+
+import {
+  GOALS_COMPLETED_REPOSITORY,
+  GOALS_REPOSITORY,
+  USERS_REPOSITORY,
+} from '../constants/tokens';
 
 @Global()
 @Module({

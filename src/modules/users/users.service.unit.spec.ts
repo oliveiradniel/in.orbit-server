@@ -5,7 +5,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 import { UsersService } from './users.service';
 import { UsersMockFactory } from 'src/shared/__factories__/users-mock.factory';
-import { USERS_REPOSITORY } from 'src/shared/contracts/users-repository.contract';
+import { USERS_REPOSITORY } from 'src/shared/constants/tokens';
 
 describe('UsersService', () => {
   let usersService: UsersService;

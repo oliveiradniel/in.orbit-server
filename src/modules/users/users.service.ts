@@ -1,11 +1,7 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 
-import {
-  USERS_REPOSITORY,
-  UsersRepository,
-} from 'src/shared/contracts/users-repository.contract';
-
-export const USERS_SERVICE = Symbol('USERS_SERVICE');
+import { UsersRepository } from 'src/shared/contracts/users-repository.contract';
+import { USERS_REPOSITORY } from 'src/shared/constants/tokens';
 
 @Injectable()
 export class UsersService {

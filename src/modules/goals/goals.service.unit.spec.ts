@@ -3,14 +3,14 @@ import { NotFoundException } from '@nestjs/common';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { UsersMockFactory } from 'src/shared/__factories__/users-mock.factory';
-import { USERS_SERVICE } from '../users/users.service';
+import dayjs from 'dayjs';
 
 import { GoalsService } from './goals.service';
-import { GoalsMockFactory } from 'src/shared/__factories__/goals-mock.factory';
-import { GOALS_REPOSITORY } from 'src/shared/contracts/goals.repository.contract';
 
-import dayjs from 'dayjs';
+import { UsersMockFactory } from 'src/shared/__factories__/users-mock.factory';
+import { GoalsMockFactory } from 'src/shared/__factories__/goals-mock.factory';
+
+import { GOALS_REPOSITORY, USERS_SERVICE } from 'src/shared/constants/tokens';
 
 describe('GoalsService', () => {
   let goalsService: GoalsService;

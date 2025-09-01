@@ -1,16 +1,17 @@
 import { Global, Module } from '@nestjs/common';
 
-import { GitHubIntegration } from 'src/modules/oauth/contracts/github.integration.contract';
 import { HTTPGitHubIntegration } from './github/github.integration';
+
+import { GITHUB_INTEGRATION } from '../constants/tokens';
 
 @Global()
 @Module({
   providers: [
     {
-      provide: GitHubIntegration,
+      provide: GITHUB_INTEGRATION,
       useClass: HTTPGitHubIntegration,
     },
   ],
-  exports: [GitHubIntegration],
+  exports: [GITHUB_INTEGRATION],
 })
 export class IntegrationModule {}

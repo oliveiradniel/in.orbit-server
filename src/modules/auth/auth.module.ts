@@ -1,8 +1,9 @@
 import { Global, Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
+import { JwtModule, JwtService } from '@nestjs/jwt';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 
 import { getConfig } from 'src/shared/config/config.helper';
+import { JWT_SERVICE } from 'src/shared/constants/tokens';
 
 @Global()
 @Module({
@@ -20,6 +21,7 @@ import { getConfig } from 'src/shared/config/config.helper';
       },
     }),
   ],
-  exports: [JwtModule],
+  providers: [{ provide: JWT_SERVICE, useExisting: JwtService }],
+  exports: [JwtModule, JWT_SERVICE],
 })
 export class AuthModule {}

@@ -7,17 +7,15 @@ import {
 
 import dayjs from 'dayjs';
 
-import {
-  GOALS_COMPLETED_REPOSITORY,
-  GoalsCompletedRepository,
-} from './contracts/goals-completed.repository.contract';
-
-import {
-  GOALS_REPOSITORY,
-  GoalsRepository,
-} from 'src/shared/contracts/goals.repository.contract';
+import { GoalsCompletedRepository } from './contracts/goals-completed.repository.contract';
+import { GoalsRepository } from 'src/shared/contracts/goals.repository.contract';
 
 import { CreateGoalCompletedDTO } from './dtos/create-goal-completed.dto';
+
+import {
+  GOALS_COMPLETED_REPOSITORY,
+  GOALS_REPOSITORY,
+} from 'src/shared/constants/tokens';
 
 @Injectable()
 export class GoalsCompletedService {
