@@ -21,6 +21,10 @@ import {
   PRISMA_SERVICE,
   USERS_REPOSITORY,
 } from 'src/shared/constants/tokens';
+import {
+  expectUnauthorized,
+  expectUserNotFound,
+} from 'src/shared/__tests__/helpers/expect-errors.helper';
 
 describe('Users Integration', () => {
   let app: INestApplication;
@@ -82,11 +86,7 @@ describe('Users Integration', () => {
         .get('/users')
         .set('Authorization', 'Bearer');
 
-      expect(response.statusCode).toEqual(401);
-      expect(JSON.parse(response.text)).toEqual({
-        message: 'Unauthorized',
-        statusCode: 401,
-      });
+      expectUnauthorized(response);
     });
 
     it('should be able to throw UnauthorizedException when is invalid token', async () => {
@@ -97,11 +97,7 @@ describe('Users Integration', () => {
           'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30',
         );
 
-      expect(response.statusCode).toEqual(401);
-      expect(JSON.parse(response.text)).toEqual({
-        message: 'Unauthorized',
-        statusCode: 401,
-      });
+      expectUnauthorized(response);
     });
 
     it('shoud ble able to throw NotFound when user not exists', async () => {
@@ -112,12 +108,7 @@ describe('Users Integration', () => {
         .get('/users')
         .set('Authorization', `Bearer ${accessTokenWithInvalidUserId}`);
 
-      expect(response.statusCode).toEqual(404);
-      expect(JSON.parse(response.text)).toEqual({
-        message: 'User not found.',
-        error: 'Not Found',
-        statusCode: 404,
-      });
+      expectUserNotFound(response);
     });
   });
 });
