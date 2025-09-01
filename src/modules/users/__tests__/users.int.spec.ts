@@ -14,6 +14,8 @@ import { UsersRepository } from 'src/shared/contracts/users-repository.contract'
 
 import { PrismaService } from 'src/shared/database/prisma.service';
 
+import { createTestUser } from 'src/shared/__tests__/helpers/create-test-user.helper';
+
 import {
   JWT_SERVICE,
   PRISMA_SERVICE,
@@ -52,18 +54,14 @@ describe('Users Integration', () => {
 
   describe('GET/ users', () => {
     beforeEach(async () => {
-      await prismaService.user.deleteMany();
-
-      createdUser = await usersRepository.create({
-        id: crypto.randomUUID(),
-        name: 'John Doe',
-        email: 'johndoe@email.com',
-        avatarURL: 'https://avatars.githubusercontent.com/u/189175871?v=4',
-        externalAccountId: 123456789,
+      const result = await createTestUser({
+        usersRepository,
+        prismaService,
+        jwtService,
       });
 
-      const payload = { sub: createdUser.id };
-      accessToken = await jwtService.signAsync(payload);
+      createdUser = result.user;
+      accessToken = result.accessToken;
     });
 
     it('shoud be able to get the authenticated user', async () => {
