@@ -11,14 +11,14 @@ import { UsersController } from '../users.controller';
 import { UsersService } from '../users.service';
 import { PrismaService } from 'src/shared/database/prisma.service';
 
+import { PrismaUsersRepository } from 'src/shared/database/repositories/users.repository';
+
 import {
   JWT_SERVICE,
   PRISMA_SERVICE,
   USERS_REPOSITORY,
   USERS_SERVICE,
 } from 'src/shared/constants/tokens';
-
-import { PrismaUsersRepository } from 'src/shared/database/repositories/users.repository';
 
 @Module({
   imports: [AuthModule],

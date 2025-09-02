@@ -1,6 +1,7 @@
 export const USERS_SERVICE = Symbol('USERS_SERVICE');
 export const USERS_REPOSITORY = Symbol('USERS_REPOSITORY');
 
+export const GOALS_SERVICE = Symbol('GOALS_SERVICE');
 export const GOALS_REPOSITORY = Symbol('GOALS_REPOSITORY');
 
 export const GOALS_COMPLETED_REPOSITORY = Symbol('GOALS_COMPLETED_REPOSITORY');

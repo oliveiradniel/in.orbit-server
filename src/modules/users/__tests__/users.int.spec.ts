@@ -15,16 +15,16 @@ import { UsersRepository } from 'src/shared/contracts/users-repository.contract'
 import { PrismaService } from 'src/shared/database/prisma.service';
 
 import { createTestUser } from 'src/shared/__tests__/helpers/create-test-user.helper';
+import {
+  expectUnauthorized,
+  expectUserNotFound,
+} from 'src/shared/__tests__/helpers/expect-errors.helper';
 
 import {
   JWT_SERVICE,
   PRISMA_SERVICE,
   USERS_REPOSITORY,
 } from 'src/shared/constants/tokens';
-import {
-  expectUnauthorized,
-  expectUserNotFound,
-} from 'src/shared/__tests__/helpers/expect-errors.helper';
 
 describe('Users Integration', () => {
   let app: INestApplication;
@@ -35,7 +35,8 @@ describe('Users Integration', () => {
   let accessToken: string;
 
   let usersRepository: UsersRepository;
-  let createdUser: User;
+
+  let activerUser: User;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
@@ -64,7 +65,7 @@ describe('Users Integration', () => {
         jwtService,
       });
 
-      createdUser = result.user;
+      activerUser = result.user;
       accessToken = result.accessToken;
     });
 
@@ -76,8 +77,8 @@ describe('Users Integration', () => {
       expect(response.headers['content-type']).toMatch('application/json');
       expect(response.statusCode).toEqual(200);
       expect(response.body).toMatchObject({
-        id: createdUser.id,
-        avatarURL: createdUser.avatarURL,
+        id: activerUser.id,
+        avatarURL: activerUser.avatarURL,
       });
     });
 

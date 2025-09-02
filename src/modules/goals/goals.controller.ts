@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -17,6 +17,7 @@ import { WeeklySummaryResponseDTO } from './dtos/weekly-summary-response.dto';
 import { CreateGoalResponseDTO } from './dtos/create-goal-response.dto';
 
 import { UnauthorizedResponseDTO } from 'src/shared/dtos/unauthorized-response.dto';
+import { GOALS_SERVICE } from 'src/shared/constants/tokens';
 
 @ApiBearerAuth()
 @ApiUnauthorizedResponse({
@@ -25,7 +26,9 @@ import { UnauthorizedResponseDTO } from 'src/shared/dtos/unauthorized-response.d
 })
 @Controller('goals')
 export class GoalsController {
-  constructor(private readonly goalsService: GoalsService) {}
+  constructor(
+    @Inject(GOALS_SERVICE) private readonly goalsService: GoalsService,
+  ) {}
 
   @ApiOkResponse({
     description:
