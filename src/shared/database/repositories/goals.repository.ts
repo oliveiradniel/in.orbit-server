@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 
 import { GoalsRepository } from 'src/shared/contracts/goals.repository.contract';
 
@@ -11,9 +11,13 @@ import { type WeeklyGoalsProgress } from 'src/shared/interfaces/goals/weekly-goa
 import { type WeeklyGoalsSummary } from 'src/shared/interfaces/goals/weekly-goals-summary.interface';
 import { type GoalProgressMetric } from 'src/shared/interfaces/goals/goal-progress-metric.interface';
 
+import { PRISMA_SERVICE } from 'src/shared/constants/tokens';
+
 @Injectable()
 export class PrismaGoalsRepository implements GoalsRepository {
-  constructor(private readonly prismaService: PrismaService) {}
+  constructor(
+    @Inject(PRISMA_SERVICE) private readonly prismaService: PrismaService,
+  ) {}
 
   async getWeeklyGoalsWithCompletion({
     userId,
