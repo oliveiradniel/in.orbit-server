@@ -1,3 +1,5 @@
+import { randomInt } from 'crypto';
+
 import { CreateTestUserParams } from 'src/shared/interfaces/helpers/create-test-user.interface';
 
 export async function createTestUser({
@@ -8,12 +10,15 @@ export async function createTestUser({
 }: CreateTestUserParams) {
   await prismaService.user.deleteMany();
 
+  const MIN_NUMBER = 0;
+  const MAX_NUMBER = 1_000_000_000;
+
   const user = await usersRepository.create({
     id: crypto.randomUUID(),
     name: 'John Doe',
     email: 'johndoe@email.com',
     avatarURL: 'https://avatars.githubusercontent.com/u/189175871?v=4',
-    externalAccountId: 123456789,
+    externalAccountId: Number(String(randomInt(MIN_NUMBER, MAX_NUMBER))),
     ...override,
   });
 
