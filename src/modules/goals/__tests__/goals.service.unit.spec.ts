@@ -5,7 +5,7 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 import dayjs from 'dayjs';
 
-import { GoalsService } from './goals.service';
+import { GoalsService } from '../goals.service';
 
 import { UsersMockFactory } from 'src/shared/__factories__/users-mock.factory';
 import { GoalsMockFactory } from 'src/shared/__factories__/goals-mock.factory';
