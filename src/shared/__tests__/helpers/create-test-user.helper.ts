@@ -8,13 +8,18 @@ export async function createTestUser({
   jwtService,
   override,
 }: CreateTestUserParams) {
-  await prismaService.user.deleteMany();
+  const id = override.id;
+
+  await prismaService.user.deleteMany({
+    where: {
+      id,
+    },
+  });
 
   const MIN_NUMBER = 0;
   const MAX_NUMBER = 1_000_000_000;
 
   const user = await usersRepository.create({
-    id: crypto.randomUUID(),
     name: 'John Doe',
     email: 'johndoe@email.com',
     avatarURL: 'https://avatars.githubusercontent.com/u/189175871?v=4',

@@ -60,6 +60,9 @@ describe('Users Integration', () => {
         usersRepository,
         prismaService,
         jwtService,
+        override: {
+          id: crypto.randomUUID(),
+        },
       });
 
       activerUser = result.user;

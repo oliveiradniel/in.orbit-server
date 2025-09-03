@@ -9,5 +9,5 @@ export interface CreateTestUserParams {
   usersRepository: UsersRepository;
   prismaService: PrismaService;
   jwtService: JwtService;
-  override?: Partial<User>;
+  override: Omit<Partial<User>, 'id'> & { id: string };
 }
