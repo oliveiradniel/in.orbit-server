@@ -15,10 +15,7 @@ import { UsersRepository } from 'src/shared/contracts/users-repository.contract'
 import { PrismaService } from 'src/shared/database/prisma.service';
 
 import { createTestUser } from 'src/shared/__tests__/helpers/create-test-user.helper';
-import {
-  expectUnauthorized,
-  expectUserNotFound,
-} from 'src/shared/__tests__/helpers/expect-errors.helper';
+import { describeAuthGuard } from 'src/shared/__tests__/helpers/describe-auth-guard.helper';
 
 import {
   JWT_SERVICE,
@@ -82,34 +79,10 @@ describe('Users Integration', () => {
       });
     });
 
-    it('should be able to throw UnauthorizedException when token is missing', async () => {
-      const response = await request(server)
-        .get('/users')
-        .set('Authorization', 'Bearer');
-
-      expectUnauthorized(response);
-    });
-
-    it('should be able to throw UnauthorizedException when is invalid token', async () => {
-      const response = await request(server)
-        .get('/users')
-        .set(
-          'Authorization',
-          'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30',
-        );
-
-      expectUnauthorized(response);
-    });
-
-    it('shoud ble able to throw NotFound when user not exists', async () => {
-      const payload = { sub: crypto.randomUUID() };
-      const accessTokenWithInvalidUserId = await jwtService.signAsync(payload);
-
-      const response = await request(server)
-        .get('/users')
-        .set('Authorization', `Bearer ${accessTokenWithInvalidUserId}`);
-
-      expectUserNotFound(response);
+    describeAuthGuard({
+      getServer: () => server,
+      route: '/users',
+      getJWTService: () => jwtService,
     });
   });
 });
