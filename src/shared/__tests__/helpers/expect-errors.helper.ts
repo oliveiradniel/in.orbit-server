@@ -1,6 +1,6 @@
 import { expect } from 'vitest';
 
-interface SupertestResponse {
+export interface SupertestResponse {
   statusCode: number;
   body: any;
   text: string;

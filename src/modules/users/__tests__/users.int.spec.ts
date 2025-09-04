@@ -16,6 +16,7 @@ import { PrismaService } from 'src/shared/database/prisma.service';
 
 import { createTestUser } from 'src/shared/__tests__/helpers/create-test-user.helper';
 import { describeAuthGuard } from 'src/shared/__tests__/helpers/describe-auth-guard.helper';
+import { describeUserNotExists } from 'src/shared/__tests__/helpers/describe-user-not-exists.helper';
 
 import {
   JWT_SERVICE,
@@ -82,6 +83,12 @@ describe('Users Module', () => {
           avatarURL: activerUser.avatarURL,
         });
       });
+    });
+
+    describeUserNotExists({
+      getServer: () => server,
+      getJWTService: () => jwtService,
+      route: '/users',
     });
 
     describeAuthGuard({

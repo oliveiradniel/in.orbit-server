@@ -31,6 +31,7 @@ import { WeeklyGoalsProgress } from 'src/shared/interfaces/goals/weekly-goals-pr
 
 import { WeeklyGoalsSummary } from 'src/shared/interfaces/goals/weekly-goals-summary.interface';
 import dayjs from 'dayjs';
+import { describeUserNotExists } from 'src/shared/__tests__/helpers/describe-user-not-exists.helper';
 
 describe('Goals Module', () => {
   let app: NestApplication;
@@ -117,6 +118,12 @@ describe('Goals Module', () => {
 
         expect(response.statusCode).toBe(200);
         expect(response.body).toEqual([]);
+      });
+
+      describeUserNotExists({
+        getServer: () => server,
+        getJWTService: () => jwtService,
+        route: '/goals',
       });
 
       describeAuthGuard({
@@ -226,6 +233,12 @@ describe('Goals Module', () => {
         });
       });
 
+      describeUserNotExists({
+        getServer: () => server,
+        getJWTService: () => jwtService,
+        route: '/goals/summary',
+      });
+
       describeAuthGuard({
         getServer: () => server,
         route: '/goals/summary',
@@ -247,6 +260,14 @@ describe('Goals Module', () => {
           title: 'Estudar',
           desiredWeeklyFrequency: 5,
         });
+      });
+
+      describeUserNotExists({
+        getServer: () => server,
+        getJWTService: () => jwtService,
+        route: '/goals',
+        method: 'post',
+        data: { title: 'Acordar cedo', desiredWeeklyFrequency: 7 },
       });
 
       describeAuthGuard({
