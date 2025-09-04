@@ -85,7 +85,6 @@ describe('Users Integration', () => {
     describeAuthGuard({
       getServer: () => server,
       route: '/users',
-      getJWTService: () => jwtService,
     });
   });
 });

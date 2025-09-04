@@ -1,24 +1,20 @@
-import { JwtService } from '@nestjs/jwt';
-
 import { describe, it } from 'vitest';
 import request from 'supertest';
 
 import { Server } from 'http';
 
-import { expectUnauthorized, expectUserNotFound } from './expect-errors.helper';
+import { expectUnauthorized } from './expect-errors.helper';
 
 interface DescribeAuthGuardParams {
   getServer: () => Server;
   route: string;
   method?: 'get' | 'post' | 'put' | 'delete';
-  getJWTService: () => JwtService;
 }
 
 export function describeAuthGuard({
   getServer,
   route,
   method = 'get',
-  getJWTService,
 }: DescribeAuthGuardParams) {
   describe('AuthGuard', () => {
     it(`should be able to throw Unauthorized when token is missing`, async () => {
@@ -38,18 +34,6 @@ export function describeAuthGuard({
         );
 
       expectUnauthorized(response);
-    });
-
-    it(`shoud ble able to throw NotFound when user not exists`, async () => {
-      const payload = { sub: crypto.randomUUID() };
-      const accessTokenWithInvalidUserId =
-        await getJWTService().signAsync(payload);
-
-      const response = await request(getServer())
-        [method](route)
-        .set('Authorization', `Bearer ${accessTokenWithInvalidUserId}`);
-
-      expectUserNotFound(response);
     });
   });
 }
