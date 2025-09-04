@@ -12,7 +12,7 @@ interface DescribeUserNotExistsParams {
   getJWTService: () => JwtService;
   route: string;
   method?: 'get' | 'post' | 'put' | 'delete';
-  data?: Record<string, string | number>;
+  getData?: () => Record<string, string | number>;
 }
 
 export function describeUserNotExists({
@@ -20,7 +20,7 @@ export function describeUserNotExists({
   getJWTService,
   route,
   method = 'get',
-  data,
+  getData,
 }: DescribeUserNotExistsParams) {
   describe('User not found', () => {
     it('should to throw NotFound error', async () => {
@@ -33,14 +33,14 @@ export function describeUserNotExists({
         response = await request(getServer())
           [method](route)
           .set('Authorization', `Bearer ${token}`);
-      } else {
+      } else if (getData) {
         response = await request(getServer())
           [method](route)
-          .send(data)
+          .send(getData())
           .set('Authorization', `Bearer ${token}`);
       }
 
-      expectUserNotFound(response);
+      expectUserNotFound(response!);
     });
   });
 }
