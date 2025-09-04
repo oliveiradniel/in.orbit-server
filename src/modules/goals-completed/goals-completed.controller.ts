@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Inject, Post } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -14,6 +14,8 @@ import { CreateGoalCompletedResponseDTO } from './dtos/create-goal-completed-res
 import { UnauthorizedResponseDTO } from 'src/shared/dtos/unauthorized-response.dto';
 import { NotFoundGoalResponseDTO } from 'src/shared/dtos/not-found-goal-response.dto';
 
+import { GOALS_COMPLETED_SERVICE } from 'src/shared/constants/tokens';
+
 @ApiBearerAuth()
 @ApiUnauthorizedResponse({
   description: 'Unauthorized request.',
@@ -21,7 +23,10 @@ import { NotFoundGoalResponseDTO } from 'src/shared/dtos/not-found-goal-response
 })
 @Controller('goals-completed')
 export class GoalsCompletedController {
-  constructor(private readonly goalsCompletedService: GoalsCompletedService) {}
+  constructor(
+    @Inject(GOALS_COMPLETED_SERVICE)
+    private readonly goalsCompletedService: GoalsCompletedService,
+  ) {}
 
   @ApiCreatedResponse({
     description: 'Returns the newly created goal completion record',
