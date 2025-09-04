@@ -70,7 +70,7 @@ describe('Users Module', () => {
         accessToken = result.accessToken;
       });
 
-      it('shoud be able to get the authenticated user', async () => {
+      it('shoud to get the authenticated user', async () => {
         const response = await request(server)
           .get('/users')
           .set('Authorization', `Bearer ${accessToken}`);

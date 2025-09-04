@@ -1,5 +1,6 @@
 import { Test } from '@nestjs/testing';
 import { NestApplication } from '@nestjs/core';
+import { ValidationPipe } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
@@ -9,9 +10,15 @@ import { Server } from 'http';
 
 import { User } from 'src/modules/users/entities/user.entity';
 import { GoalsSpecModule } from './goals.spec.module';
-import { createTestUser } from 'src/shared/__tests__/helpers/create-test-user.helper';
+
+import { GoalsRepository } from 'src/shared/contracts/goals.repository.contract';
 import { UsersRepository } from 'src/shared/contracts/users-repository.contract';
+
 import { PrismaService } from 'src/shared/database/prisma.service';
+
+import { createTestUser } from 'src/shared/__tests__/helpers/create-test-user.helper';
+
+import { describeAuthGuard } from 'src/shared/__tests__/helpers/describe-auth-guard.helper';
 
 import {
   GOALS_REPOSITORY,
@@ -20,15 +27,12 @@ import {
   USERS_REPOSITORY,
 } from 'src/shared/constants/tokens';
 
-import { GoalsRepository } from 'src/shared/contracts/goals.repository.contract';
 import { WeeklyGoalsProgress } from 'src/shared/interfaces/goals/weekly-goals-progress.interface';
 
 import { WeeklyGoalsSummary } from 'src/shared/interfaces/goals/weekly-goals-summary.interface';
 import dayjs from 'dayjs';
-import { describeAuthGuard } from 'src/shared/__tests__/helpers/describe-auth-guard.helper';
-import { ValidationPipe } from '@nestjs/common';
 
-describe('Goals Integration', () => {
+describe('Goals Module', () => {
   let app: NestApplication;
   let server: Server;
 
