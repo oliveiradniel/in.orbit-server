@@ -16,7 +16,6 @@ import { PrismaUsersRepository } from 'src/shared/database/repositories/users.re
 import { PrismaGoalsRepository } from 'src/shared/database/repositories/goals.repository';
 
 import {
-  GOALS_COMPLETED_REPOSITORY,
   GOALS_REPOSITORY,
   GOALS_SERVICE,
   JWT_SERVICE,
@@ -24,7 +23,6 @@ import {
   USERS_REPOSITORY,
   USERS_SERVICE,
 } from 'src/shared/constants/tokens';
-import { PrismaGoalsCompletedRepository } from 'src/shared/database/repositories/goals-completed.repository';
 
 @Module({
   imports: [AuthModule],
@@ -36,10 +34,6 @@ import { PrismaGoalsCompletedRepository } from 'src/shared/database/repositories
     { provide: USERS_SERVICE, useClass: UsersService },
     { provide: GOALS_SERVICE, useClass: GoalsService },
     { provide: GOALS_REPOSITORY, useClass: PrismaGoalsRepository },
-    {
-      provide: GOALS_COMPLETED_REPOSITORY,
-      useClass: PrismaGoalsCompletedRepository,
-    },
     { provide: JWT_SERVICE, useClass: JwtService },
     {
       provide: APP_GUARD,
