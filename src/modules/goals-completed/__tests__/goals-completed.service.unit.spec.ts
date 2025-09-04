@@ -3,9 +3,9 @@ import { ConflictException, NotFoundException } from '@nestjs/common';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { GoalsCompletedService } from './goals-completed.service';
+import { GoalsCompletedService } from '../goals-completed.service';
 
-import { GoalsCompletedMockFactory } from './__factories__/goals-completed-mock.factory';
+import { GoalsCompletedMockFactory } from '../__factories__/goals-completed-mock.factory';
 import { GoalsMockFactory } from 'src/shared/__factories__/goals-mock.factory';
 
 import {

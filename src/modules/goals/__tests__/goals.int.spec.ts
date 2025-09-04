@@ -88,7 +88,7 @@ describe('Goals Module', () => {
     accessToken = result.accessToken;
   });
 
-  describe.skip('GET', () => {
+  describe('GET', () => {
     describe('/goals', () => {
       it('should to return the weekly goals with completion', async () => {
         const createdGoal = await goalsRepository.create(activeUser.id!, {
@@ -246,7 +246,7 @@ describe('Goals Module', () => {
     });
   });
 
-  describe.skip('POST', () => {
+  describe('POST', () => {
     describe('/goals', () => {
       it('should to create a goal', async () => {
         const response = await request(server)
