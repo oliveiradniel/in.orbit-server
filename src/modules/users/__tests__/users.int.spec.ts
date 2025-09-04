@@ -23,7 +23,7 @@ import {
   USERS_REPOSITORY,
 } from 'src/shared/constants/tokens';
 
-describe('Users Integration', () => {
+describe('Users Module', () => {
   let app: INestApplication;
   let server: Server;
 
@@ -55,30 +55,32 @@ describe('Users Integration', () => {
   });
 
   describe('GET/ users', () => {
-    beforeEach(async () => {
-      const result = await createTestUser({
-        usersRepository,
-        prismaService,
-        jwtService,
-        override: {
-          id: crypto.randomUUID(),
-        },
+    describe('Authenticated requests', () => {
+      beforeEach(async () => {
+        const result = await createTestUser({
+          usersRepository,
+          prismaService,
+          jwtService,
+          override: {
+            id: crypto.randomUUID(),
+          },
+        });
+
+        activerUser = result.user;
+        accessToken = result.accessToken;
       });
 
-      activerUser = result.user;
-      accessToken = result.accessToken;
-    });
+      it('shoud be able to get the authenticated user', async () => {
+        const response = await request(server)
+          .get('/users')
+          .set('Authorization', `Bearer ${accessToken}`);
 
-    it('shoud be able to get the authenticated user', async () => {
-      const response = await request(server)
-        .get('/users')
-        .set('Authorization', `Bearer ${accessToken}`);
-
-      expect(response.headers['content-type']).toMatch('application/json');
-      expect(response.statusCode).toEqual(200);
-      expect(response.body).toMatchObject({
-        id: activerUser.id,
-        avatarURL: activerUser.avatarURL,
+        expect(response.headers['content-type']).toMatch('application/json');
+        expect(response.statusCode).toEqual(200);
+        expect(response.body).toMatchObject({
+          id: activerUser.id,
+          avatarURL: activerUser.avatarURL,
+        });
       });
     });
 

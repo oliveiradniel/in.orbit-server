@@ -17,7 +17,7 @@ export function describeAuthGuard({
   method = 'get',
 }: DescribeAuthGuardParams) {
   describe('AuthGuard', () => {
-    it(`should be able to throw Unauthorized when token is missing`, async () => {
+    it(`should throw Unauthorized when token is missing`, async () => {
       const response = await request(getServer())
         [method](route)
         .set('Authorization', 'Bearer');
@@ -25,7 +25,7 @@ export function describeAuthGuard({
       expectUnauthorized(response);
     });
 
-    it(`should be able to throw Unauthorized when is token is signed with a different secret`, async () => {
+    it(`should throw Unauthorized when is token is signed with a different secret`, async () => {
       const response = await request(getServer())
         [method](route)
         .set(
