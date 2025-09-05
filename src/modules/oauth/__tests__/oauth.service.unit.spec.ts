@@ -3,9 +3,9 @@ import { BadRequestException } from '@nestjs/common';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
-import { OAuthService } from './oauth.service';
+import { OAuthService } from '../oauth.service';
 
-import { OAuthMockFactory } from './__factories__/oauth-mock.factory';
+import { OAuthMockFactory } from '../__factories__/oauth-mock.factory';
 import { UsersMockFactory } from 'src/shared/__factories__/users-mock.factory';
 import { JWTMockFactory } from 'src/shared/__factories__/jwt-mock.factory';
 

@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Inject, Post } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
 
 import { OAuthService } from './oauth.service';
@@ -7,10 +7,14 @@ import { AuthenticateGitHubDTO } from './dtos/authenticate-github.dto';
 
 import { IsPublic } from 'src/shared/decorators/is-public.decorator';
 
+import { OAUTH_SERVICE } from 'src/shared/constants/tokens';
+
 @IsPublic()
 @Controller('oauth')
 export class OAuthController {
-  constructor(private readonly oauthService: OAuthService) {}
+  constructor(
+    @Inject(OAUTH_SERVICE) private readonly oauthService: OAuthService,
+  ) {}
 
   @ApiResponse({
     status: 201,
