@@ -36,7 +36,7 @@ export class OAuthMockFactory {
             }),
           failure: () =>
             this.github.integration.getAccessTokenFromCode.mockRejectedValue(
-              new Error('GitHub auth failed: Error.'),
+              new BadRequestException('GitHub auth failed: Error.'),
             ),
           invalidData: () =>
             this.github.integration.getAccessTokenFromCode.mockRejectedValue(

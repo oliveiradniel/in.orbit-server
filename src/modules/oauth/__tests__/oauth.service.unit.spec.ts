@@ -143,16 +143,16 @@ describe('OAuthService', () => {
     });
 
     describe('error', () => {
-      it('should throw Error when request fails', async () => {
+      it('should throw BadRequest error when request fails', async () => {
         OAuthMockFactory.github.responses.integration.getAccessTokenFromCode.failure();
 
         const result = oauthService.githubLogin(mockCode);
 
-        await expect(result).rejects.toThrow(Error);
+        await expect(result).rejects.toThrow(BadRequestException);
         await expect(result).rejects.toThrow('GitHub auth failed: Error.');
       });
 
-      it('should throw BadRequestException when code or token is missing', async () => {
+      it('should throw BadRequest error when code or token is missing', async () => {
         OAuthMockFactory.github.responses.integration.getAccessTokenFromCode.invalidData();
 
         const result = oauthService.githubLogin(mockCode);

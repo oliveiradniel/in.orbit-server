@@ -62,11 +62,11 @@ describe('OAuth Module', () => {
   describe('POST', () => {
     describe('/oauth', () => {
       describe('/github', () => {
-        describe('should to authenticate by code', () => {
-          const mockCode = OAuthMockFactory.github.create.code();
-          const mockGitHubAccessToken =
-            OAuthMockFactory.github.create.accessToken();
+        const mockCode = OAuthMockFactory.github.create.code();
+        const mockGitHubAccessToken =
+          OAuthMockFactory.github.create.accessToken();
 
+        describe('should to authenticate by code', () => {
           it('when not user exists', async () => {
             OAuthMockFactory.github.responses.integration.getAccessTokenFromCode.success();
             OAuthMockFactory.github.responses.integration.getUserFromGitHubAccessToken.success();
@@ -140,6 +140,44 @@ describe('OAuth Module', () => {
             expect(user).toMatchObject({
               id: payload.sub,
             });
+          });
+        });
+
+        it('should to throw BadRequest error when request failure', async () => {
+          OAuthMockFactory.github.responses.integration.getAccessTokenFromCode.failure();
+
+          const response = await request(server)
+            .post('/oauth/github')
+            .send({ code: mockCode });
+
+          expect(
+            OAuthMockFactory.github.integration.getAccessTokenFromCode,
+          ).toHaveBeenCalled();
+
+          expect(response.statusCode).toBe(400);
+          expect(response.body).toEqual({
+            message: 'GitHub auth failed: Error.',
+            error: 'Bad Request',
+            statusCode: 400,
+          });
+        });
+
+        it('should to throw BadRequest error when code or token is missing', async () => {
+          OAuthMockFactory.github.responses.integration.getAccessTokenFromCode.invalidData();
+
+          const response = await request(server)
+            .post('/oauth/github')
+            .send({ code: mockCode });
+
+          expect(
+            OAuthMockFactory.github.integration.getAccessTokenFromCode,
+          ).toHaveBeenCalled();
+
+          expect(response.statusCode).toBe(400);
+          expect(response.body).toEqual({
+            message: 'Invalid GitHub code or token not received.',
+            error: 'Bad Request',
+            statusCode: 400,
           });
         });
       });

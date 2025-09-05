@@ -36,7 +36,9 @@ export class HTTPGitHubIntegration implements GitHubIntegration {
     });
 
     if (!response.ok) {
-      throw new Error(`GitHub auth failed: ${response.statusText}.`);
+      throw new BadRequestException(
+        `GitHub auth failed: ${response.statusText}.`,
+      );
     }
 
     const { access_token } = (await response.json()) as AccessTokenResponse;
