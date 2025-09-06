@@ -6,5 +6,6 @@ dotenv.config({ path: '.env.test' });
 export default defineConfig({
   test: {
     include: ['src/modules/**/*.int.spec.ts'],
+    fileParallelism: false,
   },
 });
