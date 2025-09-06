@@ -12,23 +12,16 @@ import { UsersSpecModule } from './users.spec.module';
 
 import { UsersRepository } from 'src/shared/contracts/users-repository.contract';
 
-import { PrismaService } from 'src/shared/database/prisma.service';
-
 import { createTestUser } from 'src/shared/__tests__/helpers/create-test-user.helper';
 import { describeAuthGuard } from 'src/shared/__tests__/helpers/describe-auth-guard.helper';
 import { describeUserNotExists } from 'src/shared/__tests__/helpers/describe-user-not-exists.helper';
 
-import {
-  JWT_SERVICE,
-  PRISMA_SERVICE,
-  USERS_REPOSITORY,
-} from 'src/shared/constants/tokens';
+import { JWT_SERVICE, USERS_REPOSITORY } from 'src/shared/constants/tokens';
 
 describe('Users Module', () => {
   let app: INestApplication;
   let server: Server;
 
-  let prismaService: PrismaService;
   let jwtService: JwtService;
   let accessToken: string;
 
@@ -47,7 +40,6 @@ describe('Users Module', () => {
     server = app.getHttpServer() as Server;
 
     usersRepository = module.get<UsersRepository>(USERS_REPOSITORY);
-    prismaService = module.get<PrismaService>(PRISMA_SERVICE);
     jwtService = module.get<JwtService>(JWT_SERVICE);
   });
 
@@ -60,11 +52,7 @@ describe('Users Module', () => {
       beforeEach(async () => {
         const result = await createTestUser({
           usersRepository,
-          prismaService,
           jwtService,
-          override: {
-            id: crypto.randomUUID(),
-          },
         });
 
         activerUser = result.user;

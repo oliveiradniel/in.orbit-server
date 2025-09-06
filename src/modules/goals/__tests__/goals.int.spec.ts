@@ -78,11 +78,7 @@ describe('Goals Module', () => {
   beforeEach(async () => {
     const result = await createTestUser({
       usersRepository,
-      prismaService,
       jwtService,
-      override: {
-        id: crypto.randomUUID(),
-      },
     });
     activeUser = result.user;
     accessToken = result.accessToken;

@@ -4,18 +4,9 @@ import { CreateTestUserParams } from 'src/shared/interfaces/helpers/create-test-
 
 export async function createTestUser({
   usersRepository,
-  prismaService,
   jwtService,
   override,
 }: CreateTestUserParams) {
-  const id = override.id;
-
-  await prismaService.user.deleteMany({
-    where: {
-      id,
-    },
-  });
-
   const MIN_NUMBER = 0;
   const MAX_NUMBER = 1_000_000_000;
 
