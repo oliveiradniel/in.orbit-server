@@ -17,6 +17,7 @@ import { PrismaService } from 'src/shared/database/prisma.service';
 
 import { createTestUser } from 'src/shared/__tests__/helpers/create-test-user.helper';
 import { createTestGoal } from 'src/shared/__tests__/helpers/create-test-goal.helper';
+import { createTestGoalCompleted } from 'src/shared/__tests__/helpers/create-test-goal-completed.helper';
 
 import {
   JWT_SERVICE,
@@ -76,6 +77,11 @@ describe('Goals Completed Module', () => {
 
         const goalId = goal.id!;
 
+        await createTestGoalCompleted({
+          prismaService,
+          goalId,
+        });
+
         const response = await request(server)
           .post('/goals-completed')
           .send({ goalId })
@@ -112,10 +118,9 @@ describe('Goals Completed Module', () => {
 
         const goalId = goal.id!;
 
-        await prismaService.goalCompleted.create({
-          data: {
-            goalId,
-          },
+        await createTestGoalCompleted({
+          prismaService,
+          goalId,
         });
 
         const response = await request(server)
