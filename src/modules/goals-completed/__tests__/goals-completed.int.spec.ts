@@ -11,19 +11,13 @@ import { User } from 'src/modules/users/entities/user.entity';
 
 import { GoalsCompletedSpecModule } from './goals-completed.spec.module';
 
-import { UsersRepository } from 'src/shared/contracts/users-repository.contract';
-
 import { PrismaService } from 'src/shared/database/prisma.service';
 
 import { createTestUser } from 'src/shared/__tests__/helpers/create-test-user.helper';
 import { createTestGoal } from 'src/shared/__tests__/helpers/create-test-goal.helper';
 import { createTestGoalCompleted } from 'src/shared/__tests__/helpers/create-test-goal-completed.helper';
 
-import {
-  JWT_SERVICE,
-  PRISMA_SERVICE,
-  USERS_REPOSITORY,
-} from 'src/shared/constants/tokens';
+import { JWT_SERVICE, PRISMA_SERVICE } from 'src/shared/constants/tokens';
 
 describe('Goals Completed Module', () => {
   let app: NestApplication;
@@ -32,8 +26,6 @@ describe('Goals Completed Module', () => {
   let prismaService: PrismaService;
   let jwtService: JwtService;
   let accessToken: string;
-
-  let usersRepository: UsersRepository;
 
   let activeUser: User;
 
@@ -47,15 +39,13 @@ describe('Goals Completed Module', () => {
 
     server = app.getHttpServer() as Server;
 
-    usersRepository = module.get(USERS_REPOSITORY);
-
     prismaService = module.get(PRISMA_SERVICE);
     jwtService = module.get(JWT_SERVICE);
   });
 
   beforeEach(async () => {
     const result = await createTestUser({
-      usersRepository,
+      prismaService,
       jwtService,
     });
 
