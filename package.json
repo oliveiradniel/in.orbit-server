@@ -14,7 +14,7 @@
     "start:prod": "node dist/main",
     "seed": "npx tsx prisma/seed.ts",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "db:migrate:test": "dotenv -e .env.test -- prisma migrate dev",
+    "db:migrate:test": "dotenv -e .env.test -- prisma db push",
     "pretest:watch": "yarn db:migrate:test",
     "test:unit": "vitest run --config vitest.unit.config.ts",
     "pretest:int": "yarn db:migrate:test",
