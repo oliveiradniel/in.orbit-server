@@ -14,17 +14,16 @@ import { User } from 'src/modules/users/entities/user.entity';
 
 import { GoalsSpecModule } from './goals.spec.module';
 
-import { GoalsRepository } from 'src/shared/contracts/goals.repository.contract';
 import { UsersRepository } from 'src/shared/contracts/users-repository.contract';
 
 import { PrismaService } from 'src/shared/database/prisma.service';
 
 import { createTestUser } from 'src/shared/__tests__/helpers/create-test-user.helper';
+import { createTestGoal } from 'src/shared/__tests__/helpers/create-test-goal.helper';
 import { describeAuthGuard } from 'src/shared/__tests__/helpers/describe-auth-guard.helper';
 import { describeUserNotExists } from 'src/shared/__tests__/helpers/describe-user-not-exists.helper';
 
 import {
-  GOALS_REPOSITORY,
   JWT_SERVICE,
   PRISMA_SERVICE,
   USERS_REPOSITORY,
@@ -42,7 +41,6 @@ describe('Goals Module', () => {
   let accessToken: string;
 
   let usersRepository: UsersRepository;
-  let goalsRepository: GoalsRepository;
 
   let activeUser: User;
 
@@ -65,7 +63,6 @@ describe('Goals Module', () => {
     server = app.getHttpServer() as Server;
 
     usersRepository = module.get(USERS_REPOSITORY);
-    goalsRepository = module.get(GOALS_REPOSITORY);
 
     prismaService = module.get(PRISMA_SERVICE);
     jwtService = module.get(JWT_SERVICE);
@@ -87,9 +84,9 @@ describe('Goals Module', () => {
   describe('GET', () => {
     describe('/goals', () => {
       it('should to return the weekly goals with completion', async () => {
-        const createdGoal = await goalsRepository.create(activeUser.id!, {
-          title: 'Acordar cedo',
-          desiredWeeklyFrequency: 7,
+        const goal = await createTestGoal({
+          prismaService,
+          userId: activeUser.id!,
         });
 
         const response = await request(server)
@@ -100,9 +97,9 @@ describe('Goals Module', () => {
 
         expect(response.statusCode).toBe(200);
         expect(responseBodyArray[0]).toMatchObject({
-          id: createdGoal.id,
-          title: createdGoal.title,
-          desiredWeeklyFrequency: createdGoal.desiredWeeklyFrequency,
+          id: goal.id,
+          title: goal.title,
+          desiredWeeklyFrequency: goal.desiredWeeklyFrequency,
           completionCount: 0,
         });
       });
@@ -130,14 +127,10 @@ describe('Goals Module', () => {
 
     describe('/goals/summary', () => {
       it('should to return the weekly goals summary', async () => {
-        const createdGoal1 = await goalsRepository.create(activeUser.id!, {
-          title: 'Acordar cedo',
-          desiredWeeklyFrequency: 7,
-        });
-
-        const createdGoal2 = await goalsRepository.create(activeUser.id!, {
-          title: 'Estudar',
-          desiredWeeklyFrequency: 5,
+        const [goal1, goal2] = await createTestGoal({
+          prismaService,
+          userId: activeUser.id!,
+          otherGoals: [{ title: 'Estudar', desiredWeeklyFrequency: 5 }],
         });
 
         const startOfWeek = dayjs().startOf('week');
@@ -148,13 +141,13 @@ describe('Goals Module', () => {
 
         await prismaService.goalCompleted.createMany({
           data: [
-            { goalId: createdGoal1.id!, createdAt: firstDayOfWeek },
+            { goalId: goal1.id!, createdAt: firstDayOfWeek },
             {
-              goalId: createdGoal1.id!,
+              goalId: goal1.id!,
               createdAt: secondDayOfWeek,
             },
             {
-              goalId: createdGoal2.id!,
+              goalId: goal2.id!,
               createdAt: thirdDayOfWeek,
             },
           ],
@@ -193,14 +186,15 @@ describe('Goals Module', () => {
 
       describe('Without any goals completed', () => {
         it('should return 0 completed and correct total with created goals', async () => {
-          await goalsRepository.create(activeUser.id!, {
-            title: 'Acordar cedo',
-            desiredWeeklyFrequency: 7,
-          });
-
-          await goalsRepository.create(activeUser.id!, {
-            title: 'Estudar',
-            desiredWeeklyFrequency: 5,
+          await createTestGoal({
+            prismaService,
+            userId: activeUser.id!,
+            otherGoals: [
+              {
+                title: 'Estudar',
+                desiredWeeklyFrequency: 5,
+              },
+            ],
           });
 
           const response = await request(server)

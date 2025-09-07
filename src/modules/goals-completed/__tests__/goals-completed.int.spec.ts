@@ -8,19 +8,17 @@ import request from 'supertest';
 import { Server } from 'http';
 
 import { User } from 'src/modules/users/entities/user.entity';
-import { Goal } from 'src/modules/goals/entities/goal.entity';
 
 import { GoalsCompletedSpecModule } from './goals-completed.spec.module';
 
 import { UsersRepository } from 'src/shared/contracts/users-repository.contract';
-import { GoalsRepository } from 'src/shared/contracts/goals.repository.contract';
 
 import { PrismaService } from 'src/shared/database/prisma.service';
 
 import { createTestUser } from 'src/shared/__tests__/helpers/create-test-user.helper';
+import { createTestGoal } from 'src/shared/__tests__/helpers/create-test-goal.helper';
 
 import {
-  GOALS_REPOSITORY,
   JWT_SERVICE,
   PRISMA_SERVICE,
   USERS_REPOSITORY,
@@ -35,10 +33,8 @@ describe('Goals Completed Module', () => {
   let accessToken: string;
 
   let usersRepository: UsersRepository;
-  let goalsRepository: GoalsRepository;
 
   let activeUser: User;
-  let createdGoal: Goal;
 
   beforeAll(async () => {
     const module = await Test.createTestingModule({
@@ -51,7 +47,6 @@ describe('Goals Completed Module', () => {
     server = app.getHttpServer() as Server;
 
     usersRepository = module.get(USERS_REPOSITORY);
-    goalsRepository = module.get(GOALS_REPOSITORY);
 
     prismaService = module.get(PRISMA_SERVICE);
     jwtService = module.get(JWT_SERVICE);
@@ -65,11 +60,6 @@ describe('Goals Completed Module', () => {
 
     activeUser = result.user;
     accessToken = result.accessToken;
-
-    createdGoal = await goalsRepository.create(activeUser.id!, {
-      title: 'Acordar cedo',
-      desiredWeeklyFrequency: 7,
-    });
   });
 
   afterAll(async () => {
@@ -79,14 +69,21 @@ describe('Goals Completed Module', () => {
   describe('POST', () => {
     describe('/goals-completed', () => {
       it('should to complete a goal', async () => {
+        const goal = await createTestGoal({
+          prismaService,
+          userId: activeUser.id!,
+        });
+
+        const goalId = goal.id!;
+
         const response = await request(server)
           .post('/goals-completed')
-          .send({ goalId: createdGoal.id })
+          .send({ goalId })
           .set('Authorization', `Bearer ${accessToken}`);
 
         expect(response.statusCode).toBe(201);
         expect(response.body).toMatchObject({
-          goalId: createdGoal.id,
+          goalId,
         });
       });
 
@@ -105,23 +102,25 @@ describe('Goals Completed Module', () => {
       });
 
       it('should to throw Conflit error when goal already total completed this week', async () => {
-        const createdGoal2 = await prismaService.goal.create({
-          data: {
-            userId: activeUser.id!,
-            title: 'Acordar cedo',
+        const goal = await createTestGoal({
+          prismaService,
+          override: {
             desiredWeeklyFrequency: 1,
           },
+          userId: activeUser.id!,
         });
+
+        const goalId = goal.id!;
 
         await prismaService.goalCompleted.create({
           data: {
-            goalId: createdGoal2.id,
+            goalId,
           },
         });
 
         const response = await request(server)
           .post('/goals-completed')
-          .send({ goalId: createdGoal2.id })
+          .send({ goalId })
           .set('Authorization', `Bearer ${accessToken}`);
 
         expect(response.statusCode).toBe(409);
