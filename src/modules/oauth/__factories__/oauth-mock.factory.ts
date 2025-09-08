@@ -4,6 +4,8 @@ import { vi } from 'vitest';
 
 import { GitHubUser } from '../entities/github-user.entity';
 
+import { FakerFactory } from 'src/shared/__factories__/faker.factory';
+
 export class OAuthMockFactory {
   static github = {
     integration: {
@@ -12,44 +14,55 @@ export class OAuthMockFactory {
     },
 
     create: {
-      id: (id = 123456789): number => id,
+      id: (id = FakerFactory.github.id()): number => id,
 
-      code: (code = '987654321'): string => code,
+      code: (code = FakerFactory.github.code()): string => code,
 
-      user: (override?: Partial<GitHubUser>): GitHubUser => ({
-        id: this.github.create.id(),
-        name: 'John Doe',
-        email: 'johndoe@email.com',
-        avatarURL: 'https://avatars.githubusercontent.com/u/189175871?v=4',
+      user: (override: Partial<GitHubUser> = {}): GitHubUser => ({
+        id: OAuthMockFactory.github.create.id(),
+        name: FakerFactory.github.name(),
+        email: FakerFactory.github.email(),
+        avatarURL: FakerFactory.github.avatarURL(),
         ...override,
       }),
 
-      accessToken: (accessToken = 'github-access-token'): string => accessToken,
+      accessToken: (accessToken = FakerFactory.data.token()): string =>
+        accessToken,
+
+      avatarURL: () => FakerFactory.github.avatarURL(),
     },
 
     responses: {
       integration: {
         getAccessTokenFromCode: {
-          success: () =>
-            this.github.integration.getAccessTokenFromCode.mockResolvedValue({
-              accessToken: this.github.create.accessToken(),
-            }),
+          success: (accessToken?: string) =>
+            OAuthMockFactory.github.integration.getAccessTokenFromCode.mockResolvedValue(
+              {
+                accessToken:
+                  OAuthMockFactory.github.create.accessToken(accessToken),
+              },
+            ),
           failure: () =>
-            this.github.integration.getAccessTokenFromCode.mockRejectedValue(
+            OAuthMockFactory.github.integration.getAccessTokenFromCode.mockRejectedValue(
               new BadRequestException('GitHub auth failed: Error.'),
             ),
           invalidData: () =>
-            this.github.integration.getAccessTokenFromCode.mockRejectedValue(
+            OAuthMockFactory.github.integration.getAccessTokenFromCode.mockRejectedValue(
               new BadRequestException(
                 'Invalid GitHub code or token not received.',
               ),
             ),
         },
         getUserFromGitHubAccessToken: {
-          success: () => {
-            this.github.responses.integration.getAccessTokenFromCode.success();
-            this.github.integration.getUserFromGitHubAccessToken.mockResolvedValue(
-              this.github.create.user(),
+          success: (
+            override: Partial<GitHubUser> = {},
+            accessToken?: string,
+          ) => {
+            OAuthMockFactory.github.responses.integration.getAccessTokenFromCode.success(
+              accessToken,
+            );
+            OAuthMockFactory.github.integration.getUserFromGitHubAccessToken.mockResolvedValue(
+              OAuthMockFactory.github.create.user(override),
             );
           },
         },

@@ -52,9 +52,6 @@ describe('OAuthService', () => {
     });
 
     describe('success', () => {
-      let mockGitHubUserId: ReturnType<
-        typeof OAuthMockFactory.github.create.id
-      >;
       let mockGitHubUser: ReturnType<
         typeof OAuthMockFactory.github.create.user
       >;
@@ -63,23 +60,31 @@ describe('OAuthService', () => {
       >;
 
       beforeEach(() => {
-        OAuthMockFactory.github.responses.integration.getAccessTokenFromCode.success();
-        OAuthMockFactory.github.responses.integration.getUserFromGitHubAccessToken.success();
-
-        JWTMockFactory.responses.service.signAsync.success();
-
-        mockGitHubUserId = OAuthMockFactory.github.create.id();
         mockGitHubUser = OAuthMockFactory.github.create.user();
         mockGitHubAccessToken = OAuthMockFactory.github.create.accessToken();
+
+        OAuthMockFactory.github.responses.integration.getAccessTokenFromCode.success(
+          mockGitHubAccessToken,
+        );
+        OAuthMockFactory.github.responses.integration.getUserFromGitHubAccessToken.success(
+          mockGitHubUser,
+          mockGitHubAccessToken,
+        );
+
+        JWTMockFactory.responses.service.signAsync.success(
+          mockGitHubAccessToken,
+        );
       });
 
       describe('when the user already exists', () => {
-        beforeEach(() => {
-          UsersMockFactory.responses.repository.getUserByExternalAccountId.success();
-        });
-
         it('should return an access token without creating a new user', async () => {
-          const result = await oauthService.githubLogin(mockCode);
+          const mockUserId = UsersMockFactory.create.id();
+
+          UsersMockFactory.responses.repository.getUserByExternalAccountId.success(
+            { id: mockUserId },
+          );
+
+          const response = await oauthService.githubLogin(mockCode);
 
           expect(
             OAuthMockFactory.github.integration.getAccessTokenFromCode,
@@ -90,27 +95,35 @@ describe('OAuthService', () => {
 
           expect(
             UsersMockFactory.repository.getUserByExternalAccountId,
-          ).toHaveBeenCalledWith(mockGitHubUserId);
+          ).toHaveBeenCalledWith(mockGitHubUser.id);
           expect(UsersMockFactory.repository.create).not.toHaveBeenCalled();
 
           expect(JWTMockFactory.service.signAsync).toHaveBeenCalledWith(
-            expect.objectContaining({ sub: UsersMockFactory.create.id() }),
+            expect.objectContaining({ sub: mockUserId }),
           );
 
-          expect(result).toEqual({
-            accessToken: JWTMockFactory.create.accessToken(),
+          expect(response).toEqual({
+            accessToken: mockGitHubAccessToken,
           });
         });
       });
 
       describe('when the user does not exist', () => {
-        beforeEach(() => {
-          UsersMockFactory.responses.repository.getUserByExternalAccountId.null();
-          UsersMockFactory.responses.repository.create.success();
-        });
-
         it('should create user and return access token when user does not exist', async () => {
-          const result = await oauthService.githubLogin(mockCode);
+          const mockUserId = UsersMockFactory.create.id();
+
+          const mockUser = {
+            id: mockUserId,
+            name: mockGitHubUser.name,
+            email: mockGitHubUser.email,
+            avatarURL: mockGitHubUser.avatarURL,
+            externalAccountId: mockGitHubUser.id,
+          };
+
+          UsersMockFactory.responses.repository.getUserByExternalAccountId.null();
+          UsersMockFactory.responses.repository.create.success(mockUser);
+
+          const response = await oauthService.githubLogin(mockCode);
 
           expect(
             OAuthMockFactory.github.integration.getAccessTokenFromCode,
@@ -121,7 +134,7 @@ describe('OAuthService', () => {
 
           expect(
             UsersMockFactory.repository.getUserByExternalAccountId,
-          ).toHaveBeenCalledWith(mockGitHubUserId);
+          ).toHaveBeenCalledWith(mockGitHubUser.id);
           expect(UsersMockFactory.repository.create).toHaveBeenCalledWith(
             expect.objectContaining({
               name: mockGitHubUser.name,
@@ -132,11 +145,11 @@ describe('OAuthService', () => {
           );
 
           expect(JWTMockFactory.service.signAsync).toHaveBeenCalledWith(
-            expect.objectContaining({ sub: UsersMockFactory.create.id() }),
+            expect.objectContaining({ sub: mockUserId }),
           );
 
-          expect(result).toEqual({
-            accessToken: JWTMockFactory.create.accessToken(),
+          expect(response).toEqual({
+            accessToken: mockGitHubAccessToken,
           });
         });
       });

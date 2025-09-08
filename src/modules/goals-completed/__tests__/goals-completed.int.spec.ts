@@ -17,6 +17,8 @@ import { createTestUser } from 'src/shared/__tests__/helpers/create-test-user.he
 import { createTestGoal } from 'src/shared/__tests__/helpers/create-test-goal.helper';
 import { createTestGoalCompleted } from 'src/shared/__tests__/helpers/create-test-goal-completed.helper';
 
+import { GoalsCompletedMockFactory } from '../__factories__/goals-completed-mock.factory';
+
 import { JWT_SERVICE, PRISMA_SERVICE } from 'src/shared/constants/tokens';
 
 describe('Goals Completed Module', () => {
@@ -86,7 +88,7 @@ describe('Goals Completed Module', () => {
       it('should to throw NotFound error when goal not exists', async () => {
         const response = await request(server)
           .post('/goals-completed')
-          .send({ goalId: crypto.randomUUID() })
+          .send({ goalId: GoalsCompletedMockFactory.create.id() })
           .set('Authorization', `Bearer ${accessToken}`);
 
         expect(response.statusCode).toBe(404);

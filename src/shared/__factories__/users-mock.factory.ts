@@ -3,6 +3,7 @@ import { NotFoundException } from '@nestjs/common';
 import { User } from 'src/modules/users/entities/user.entity';
 
 import { vi } from 'vitest';
+import { FakerFactory } from './faker.factory';
 
 export class UsersMockFactory {
   static repository = {
@@ -16,15 +17,15 @@ export class UsersMockFactory {
   };
 
   static create = {
-    id: (id = 'john-doe'): string => id,
+    id: (id = FakerFactory.data.uuid()): string => id,
 
-    user: (override?: Partial<User>): User => {
+    user: (override: Partial<User> = {}): User => {
       return {
-        id: this.create.id(),
-        name: 'John Doe',
-        email: 'johndoe@email.com',
-        avatarURL: 'https://avatars.githubusercontent.com/u/189175871?v=4',
-        externalAccountId: 1232143123,
+        id: UsersMockFactory.create.id(),
+        name: FakerFactory.user.name(),
+        email: FakerFactory.user.email(),
+        avatarURL: FakerFactory.github.avatarURL(),
+        externalAccountId: FakerFactory.github.id(),
         ...override,
       };
     },
@@ -33,15 +34,18 @@ export class UsersMockFactory {
   static responses = {
     repository: {
       getUserById: {
-        success: () =>
-          this.repository.getUserById.mockResolvedValue(this.create.user()),
-        null: () => this.repository.getUserById.mockResolvedValue(null),
+        success: (override: Partial<User> = {}) =>
+          UsersMockFactory.repository.getUserById.mockResolvedValue(
+            UsersMockFactory.create.user(override),
+          ),
+        null: () =>
+          UsersMockFactory.repository.getUserById.mockResolvedValue(null),
       },
 
       getUserByExternalAccountId: {
-        success: () =>
-          this.repository.getUserByExternalAccountId.mockResolvedValue(
-            this.create.user(),
+        success: (override: Partial<User> = {}) =>
+          UsersMockFactory.repository.getUserByExternalAccountId.mockResolvedValue(
+            UsersMockFactory.create.user(override),
           ),
         null: () => {
           UsersMockFactory.repository.getUserByExternalAccountId.mockResolvedValue(
@@ -51,20 +55,26 @@ export class UsersMockFactory {
       },
 
       create: {
-        success: () =>
-          this.repository.create.mockResolvedValue(this.create.user()),
+        success: (override: Partial<User> = {}) =>
+          UsersMockFactory.repository.create.mockResolvedValue(
+            UsersMockFactory.create.user(override),
+          ),
       },
     },
 
     service: {
       findUserById: {
         success: () => {
-          this.responses.repository.getUserById.success();
-          this.service.findUserById.mockResolvedValue(this.create.user());
+          UsersMockFactory.responses.repository.getUserById.success();
+          UsersMockFactory.service.findUserById.mockResolvedValue(
+            UsersMockFactory.create.user(),
+          );
         },
         failure: () => {
-          this.responses.repository.getUserById.null();
-          this.service.findUserById.mockRejectedValue(new NotFoundException());
+          UsersMockFactory.responses.repository.getUserById.null();
+          UsersMockFactory.service.findUserById.mockRejectedValue(
+            new NotFoundException(),
+          );
         },
       },
     },

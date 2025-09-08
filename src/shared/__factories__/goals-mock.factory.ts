@@ -5,6 +5,7 @@ import { WeeklyGoalsSummary } from '../interfaces/goals/weekly-goals-summary.int
 import { GoalProgressMetric } from '../interfaces/goals/goal-progress-metric.interface';
 
 import { UsersMockFactory } from './users-mock.factory';
+import { FakerFactory } from './faker.factory';
 
 import { vi } from 'vitest';
 
@@ -26,37 +27,56 @@ export class GoalsMockFactory {
   };
 
   static create = {
-    id: (id = 'goal-id'): string => id,
+    id: (id = FakerFactory.data.uuid()): string => id,
 
-    goal: (override?: Partial<Goal>): Goal => ({
-      id: this.create.id(),
+    title: () => FakerFactory.goal.title(),
+
+    desiredWeeklyFrequency: (max?: number) =>
+      FakerFactory.goal.desiredWeeklyFrequency(max),
+
+    goal: (override: Partial<Goal> = {}): Goal => ({
+      id: GoalsMockFactory.create.id(),
       userId: UsersMockFactory.create.id(),
-      title: 'Acordar cedo',
-      desiredWeeklyFrequency: 7,
+      title: GoalsMockFactory.create.title(),
+      desiredWeeklyFrequency: GoalsMockFactory.create.desiredWeeklyFrequency(),
       createdAt: new Date('2025-08-30T00:00:00.000Z'),
       ...override,
     }),
 
-    weeklyGoalsProgress: (): WeeklyGoalsProgress[] => [
-      {
-        id: this.create.id(),
-        title: 'Acordar cedo',
-        desiredWeeklyFrequency: 4,
-        completionCount: 3,
-      },
-      {
-        id: this.create.id('goal-id-2'),
-        title: 'Estudar',
-        desiredWeeklyFrequency: 7,
-        completionCount: 3,
-      },
-    ],
+    weeklyGoalsProgress: (
+      override: Partial<Goal>[] = [],
+    ): WeeklyGoalsProgress[] => {
+      const [goal1 = {}, goal2 = {}] = override;
 
-    weeklyGoalsSummary: (): WeeklyGoalsSummary => {
+      return [
+        {
+          id: GoalsMockFactory.create.id(),
+          title: GoalsMockFactory.create.title(),
+          desiredWeeklyFrequency:
+            GoalsMockFactory.create.desiredWeeklyFrequency(),
+          completionCount: 7,
+          ...goal1,
+        },
+        {
+          id: GoalsMockFactory.create.id(),
+          title: GoalsMockFactory.create.title(),
+          desiredWeeklyFrequency:
+            GoalsMockFactory.create.desiredWeeklyFrequency(3),
+          completionCount: 3,
+          ...goal2,
+        },
+      ];
+    },
+
+    weeklyGoalsSummary: (
+      override: Partial<Goal>[] = [],
+    ): WeeklyGoalsSummary => {
       const startOfWeek = dayjs().startOf('week');
 
       const firstDayAnalysed = startOfWeek.format('YYYY-MM-DD');
       const secondDayAnalysed = startOfWeek.add(1, 'day').format('YYYY-MM-DD');
+
+      const [goal1 = {}, goal2 = {}] = override;
 
       return {
         completed: 1,
@@ -64,16 +84,18 @@ export class GoalsMockFactory {
         goalsPerDay: {
           [firstDayAnalysed]: [
             {
-              id: 'mock-goal',
-              title: 'Acordar cedo',
+              id: GoalsMockFactory.create.id(),
+              title: GoalsMockFactory.create.title(),
               completedAt: new Date('2025-08-30T00:00:00.000Z'),
+              ...goal1,
             },
           ],
           [secondDayAnalysed]: [
             {
-              id: 'mock-goal',
-              title: 'Acordar cedo',
+              id: GoalsMockFactory.create.id(),
+              title: GoalsMockFactory.create.title(),
               completedAt: new Date('2025-08-30T00:00:00.000Z'),
+              ...goal2,
             },
           ],
         },
@@ -92,64 +114,68 @@ export class GoalsMockFactory {
   static responses = {
     repository: {
       getWeeklyGoalsWithCompletion: {
-        success: () =>
-          this.repository.getWeeklyGoalsWithCompletion.mockResolvedValue(
-            this.create.weeklyGoalsProgress(),
+        success: (override: Partial<Goal>[] = []) =>
+          GoalsMockFactory.repository.getWeeklyGoalsWithCompletion.mockResolvedValue(
+            GoalsMockFactory.create.weeklyGoalsProgress(override),
           ),
       },
       getWeeklySummaryOfGoalsCompletedByDay: {
-        success: () =>
-          this.repository.getWeeklySummaryOfGoalsCompletedByDay.mockResolvedValue(
-            this.create.weeklyGoalsSummary(),
+        success: (override: Partial<Goal>[] = []) =>
+          GoalsMockFactory.repository.getWeeklySummaryOfGoalsCompletedByDay.mockResolvedValue(
+            GoalsMockFactory.create.weeklyGoalsSummary(override),
           ),
       },
       getWeeklyFrequencyAndCompletionCount: {
         success: () =>
-          this.repository.getWeeklyFrequencyAndCompletionCount.mockResolvedValue(
-            this.create.goalProgressMetric({
+          GoalsMockFactory.repository.getWeeklyFrequencyAndCompletionCount.mockResolvedValue(
+            GoalsMockFactory.create.goalProgressMetric({
               desiredWeeklyFrequency: 7,
               countCompletion: 3,
             }),
           ),
         null: () =>
-          this.repository.getWeeklyFrequencyAndCompletionCount.mockResolvedValue(
+          GoalsMockFactory.repository.getWeeklyFrequencyAndCompletionCount.mockResolvedValue(
             null,
           ),
         conflict: () =>
-          this.repository.getWeeklyFrequencyAndCompletionCount.mockResolvedValue(
-            this.create.goalProgressMetric({
+          GoalsMockFactory.repository.getWeeklyFrequencyAndCompletionCount.mockResolvedValue(
+            GoalsMockFactory.create.goalProgressMetric({
               desiredWeeklyFrequency: 7,
               countCompletion: 7,
             }),
           ),
       },
       create: {
-        success: () =>
-          this.repository.create.mockResolvedValue(this.create.goal()),
+        success: (override: Partial<Goal> = {}) =>
+          GoalsMockFactory.repository.create.mockResolvedValue(
+            GoalsMockFactory.create.goal(override),
+          ),
       },
     },
 
     service: {
       findWeeklyGoalsWithCompletion: {
         success: () => {
-          this.responses.repository.getWeeklyGoalsWithCompletion.success();
-          this.service.findWeeklyGoalsWithCompletion.mockResolvedValue(
-            this.create.weeklyGoalsProgress(),
+          GoalsMockFactory.responses.repository.getWeeklyGoalsWithCompletion.success();
+          GoalsMockFactory.service.findWeeklyGoalsWithCompletion.mockResolvedValue(
+            GoalsMockFactory.create.weeklyGoalsProgress(),
           );
         },
       },
       findWeeklySummaryOfGoalsCompletedByDay: {
         success: () => {
-          this.responses.repository.getWeeklySummaryOfGoalsCompletedByDay.success();
-          this.service.findWeeklySummaryOfGoalsCompletedByDay.mockResolvedValue(
-            this.create.weeklyGoalsSummary(),
+          GoalsMockFactory.responses.repository.getWeeklySummaryOfGoalsCompletedByDay.success();
+          GoalsMockFactory.service.findWeeklySummaryOfGoalsCompletedByDay.mockResolvedValue(
+            GoalsMockFactory.create.weeklyGoalsSummary(),
           );
         },
       },
       create: {
         success: () => {
-          this.responses.repository.create.success();
-          this.service.create.mockResolvedValue(this.create.goal());
+          GoalsMockFactory.responses.repository.create.success();
+          GoalsMockFactory.service.create.mockResolvedValue(
+            GoalsMockFactory.create.goal(),
+          );
         },
       },
     },

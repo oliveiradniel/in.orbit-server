@@ -13,7 +13,7 @@ export async function createTestGoalCompleted(
 export async function createTestGoalCompleted({
   prismaService,
   goalId,
-  otherGoalsCompleted = [],
+  otherGoalsCompleted,
 }: CreateTestGoalCompletedParams): Promise<GoalCompleted | GoalCompleted[]> {
   const goalCompleted = await prismaService.goalCompleted.create({
     data: {

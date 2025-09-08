@@ -67,6 +67,7 @@ describe('Goals Module', () => {
       prismaService,
       jwtService,
     });
+
     activeUser = result.user;
     accessToken = result.accessToken;
   });
@@ -120,6 +121,10 @@ describe('Goals Module', () => {
         const [goal1, goal2] = await createTestGoal({
           prismaService,
           userId: activeUser.id!,
+          override: {
+            title: 'Acordar cedo',
+            desiredWeeklyFrequency: 7,
+          },
           otherGoals: [{ title: 'Estudar', desiredWeeklyFrequency: 5 }],
         });
 
@@ -179,6 +184,9 @@ describe('Goals Module', () => {
           await createTestGoal({
             prismaService,
             userId: activeUser.id!,
+            override: {
+              desiredWeeklyFrequency: 7,
+            },
             otherGoals: [
               {
                 title: 'Estudar',

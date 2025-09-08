@@ -17,13 +17,9 @@ describe('GoalsCompletedService', () => {
   let goalsCompletedService: GoalsCompletedService;
 
   let mockGoalId: ReturnType<typeof GoalsMockFactory.create.id>;
-  let mockGoalCompleted: ReturnType<
-    typeof GoalsCompletedMockFactory.create.goalCompleted
-  >;
 
   beforeEach(async () => {
     mockGoalId = GoalsMockFactory.create.id();
-    mockGoalCompleted = GoalsCompletedMockFactory.create.goalCompleted();
 
     const module = await Test.createTestingModule({
       providers: [
@@ -45,8 +41,13 @@ describe('GoalsCompletedService', () => {
 
   describe('create', () => {
     it('should be able to create a goal and return it', async () => {
+      const mockGoalCompleted =
+        GoalsCompletedMockFactory.create.goalCompleted();
+
       GoalsMockFactory.responses.repository.getWeeklyFrequencyAndCompletionCount.success();
-      GoalsCompletedMockFactory.responses.repository.create.success();
+      GoalsCompletedMockFactory.responses.repository.create.success(
+        mockGoalCompleted,
+      );
 
       const goalCompleted = await goalsCompletedService.create({
         goalId: mockGoalId,

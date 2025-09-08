@@ -1,6 +1,9 @@
-import { GoalsMockFactory } from 'src/shared/__factories__/goals-mock.factory';
-
 import { vi } from 'vitest';
+
+import { GoalsMockFactory } from 'src/shared/__factories__/goals-mock.factory';
+import { FakerFactory } from 'src/shared/__factories__/faker.factory';
+
+import { GoalCompleted } from '../entities/goal-completed.entity';
 
 export class GoalsCompletedMockFactory {
   static repository = {
@@ -8,20 +11,23 @@ export class GoalsCompletedMockFactory {
   };
 
   static create = {
-    id: (id = 'goal-completed-id') => id,
+    id: (id = FakerFactory.data.uuid()) => id,
 
-    goalCompleted: () => ({
+    goalCompleted: (override: Partial<GoalCompleted> = {}) => ({
       id: GoalsCompletedMockFactory.create.id(),
       goalId: GoalsMockFactory.create.id(),
       createdAt: new Date('2025-08-30T00:00:00.000Z'),
+      ...override,
     }),
   };
 
   static responses = {
     repository: {
       create: {
-        success: () =>
-          this.repository.create.mockResolvedValue(this.create.goalCompleted()),
+        success: (override: Partial<GoalCompleted> = {}) =>
+          GoalsCompletedMockFactory.repository.create.mockResolvedValue(
+            GoalsCompletedMockFactory.create.goalCompleted(override),
+          ),
       },
     },
   };

@@ -1,19 +1,24 @@
 import { vi } from 'vitest';
 
+import { FakerFactory } from './faker.factory';
+
 export class JWTMockFactory {
   static service = {
     signAsync: vi.fn(),
   };
 
   static create = {
-    accessToken: (accessToken = 'jwt-access-token'): string => accessToken,
+    accessToken: (accessToken = FakerFactory.data.token()): string =>
+      accessToken,
   };
 
   static responses = {
     service: {
       signAsync: {
-        success: () =>
-          this.service.signAsync.mockResolvedValue(this.create.accessToken()),
+        success: (accessToken?: string) =>
+          JWTMockFactory.service.signAsync.mockResolvedValue(
+            JWTMockFactory.create.accessToken(accessToken),
+          ),
       },
     },
   };

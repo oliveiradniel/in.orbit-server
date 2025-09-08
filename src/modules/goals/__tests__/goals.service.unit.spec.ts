@@ -36,11 +36,29 @@ describe('GoalsService', () => {
   });
 
   describe('findWeeklyGoalsWithCompletion', () => {
-    const weeklyGoalsProgress = GoalsMockFactory.create.weeklyGoalsProgress();
-
     it('should be able to return a goal with completion count', async () => {
+      const mockGoals = [
+        {
+          id: GoalsMockFactory.create.id(),
+          title: GoalsMockFactory.create.title(),
+          desiredWeeklyFrequency:
+            GoalsMockFactory.create.desiredWeeklyFrequency(),
+        },
+        {
+          id: GoalsMockFactory.create.id(),
+          title: GoalsMockFactory.create.title(),
+          desiredWeeklyFrequency:
+            GoalsMockFactory.create.desiredWeeklyFrequency(),
+        },
+      ];
+
+      const weeklyGoalsProgress =
+        GoalsMockFactory.create.weeklyGoalsProgress(mockGoals);
+
       UsersMockFactory.responses.service.findUserById.success();
-      GoalsMockFactory.responses.repository.getWeeklyGoalsWithCompletion.success();
+      GoalsMockFactory.responses.repository.getWeeklyGoalsWithCompletion.success(
+        mockGoals,
+      );
 
       const goal = await goalsService.findWeeklyGoalsWithCompletion(mockUserId);
 
@@ -75,11 +93,25 @@ describe('GoalsService', () => {
   });
 
   describe('findWeeklySummaryOfGoalsCompletedByDay', () => {
-    const weeklyGoalsSummary = GoalsMockFactory.create.weeklyGoalsSummary();
-
     it('should be able to return a weekly summary of completed goals', async () => {
+      const mockGoals = [
+        {
+          id: GoalsMockFactory.create.id(),
+          title: GoalsMockFactory.create.title(),
+        },
+        {
+          id: GoalsMockFactory.create.id(),
+          title: GoalsMockFactory.create.title(),
+        },
+      ];
+
+      const weeklyGoalsSummary =
+        GoalsMockFactory.create.weeklyGoalsSummary(mockGoals);
+
       UsersMockFactory.responses.service.findUserById.success();
-      GoalsMockFactory.responses.repository.getWeeklySummaryOfGoalsCompletedByDay.success();
+      GoalsMockFactory.responses.repository.getWeeklySummaryOfGoalsCompletedByDay.success(
+        mockGoals,
+      );
 
       const goal =
         await goalsService.findWeeklySummaryOfGoalsCompletedByDay(mockUserId);
@@ -115,15 +147,28 @@ describe('GoalsService', () => {
   });
 
   describe('create', () => {
-    const mockGoal = GoalsMockFactory.create.goal();
+    let mockGoalTitle: ReturnType<typeof GoalsMockFactory.create.title>;
+    let mockGoalFrequency: ReturnType<
+      typeof GoalsMockFactory.create.desiredWeeklyFrequency
+    >;
+
+    beforeEach(() => {
+      mockGoalTitle = GoalsMockFactory.create.title();
+      mockGoalFrequency = GoalsMockFactory.create.desiredWeeklyFrequency();
+    });
 
     it('should be able to create a goal and return it', async () => {
+      const mockGoal = GoalsMockFactory.create.goal({
+        title: mockGoalTitle,
+        desiredWeeklyFrequency: mockGoalFrequency,
+      });
+
       UsersMockFactory.responses.service.findUserById.success();
-      GoalsMockFactory.responses.repository.create.success();
+      GoalsMockFactory.responses.repository.create.success(mockGoal);
 
       const goal = await goalsService.create(mockUserId, {
-        title: 'Estudar',
-        desiredWeeklyFrequency: 7,
+        title: mockGoalTitle,
+        desiredWeeklyFrequency: mockGoalFrequency,
       });
 
       expect(UsersMockFactory.service.findUserById).toHaveBeenCalledWith(
@@ -132,10 +177,11 @@ describe('GoalsService', () => {
       expect(GoalsMockFactory.repository.create).toHaveBeenCalledWith(
         mockUserId,
         {
-          title: 'Estudar',
-          desiredWeeklyFrequency: 7,
+          title: mockGoalTitle,
+          desiredWeeklyFrequency: mockGoalFrequency,
         },
       );
+
       expect(goal).toEqual(mockGoal);
     });
 
@@ -145,8 +191,8 @@ describe('GoalsService', () => {
       expect(GoalsMockFactory.repository.create).not.toHaveBeenCalled();
       await expect(
         goalsService.create(mockUserId, {
-          title: 'Estudar',
-          desiredWeeklyFrequency: 7,
+          title: mockGoalTitle,
+          desiredWeeklyFrequency: mockGoalFrequency,
         }),
       ).rejects.toThrow(NotFoundException);
     });

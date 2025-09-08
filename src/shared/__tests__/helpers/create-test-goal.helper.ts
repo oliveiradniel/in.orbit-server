@@ -1,4 +1,7 @@
 import { Goal } from 'src/modules/goals/entities/goal.entity';
+
+import { FakerFactory } from 'src/shared/__factories__/faker.factory';
+
 import { CreateTestGoalParams } from 'src/shared/interfaces/helpers/create-test-goal.interface';
 
 export async function createTestGoal(
@@ -12,14 +15,14 @@ export async function createTestGoal(
 export async function createTestGoal({
   prismaService,
   userId,
-  override = {},
-  otherGoals = [],
+  override,
+  otherGoals,
 }: CreateTestGoalParams): Promise<Goal | Goal[]> {
   const goal = await prismaService.goal.create({
     data: {
       userId,
-      title: 'Acordar cedo',
-      desiredWeeklyFrequency: 7,
+      title: FakerFactory.goal.title(),
+      desiredWeeklyFrequency: FakerFactory.goal.desiredWeeklyFrequency(),
       ...override,
     },
   });

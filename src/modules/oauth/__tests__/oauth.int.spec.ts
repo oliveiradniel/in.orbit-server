@@ -10,6 +10,7 @@ import { Server } from 'http';
 
 import { OAuthSpecModule } from './oauth.spec.module';
 import { OAuthMockFactory } from '../__factories__/oauth-mock.factory';
+import { UsersMockFactory } from 'src/shared/__factories__/users-mock.factory';
 
 import { UsersRepository } from 'src/shared/contracts/users-repository.contract';
 
@@ -62,14 +63,23 @@ describe('OAuth Module', () => {
   describe('POST', () => {
     describe('/oauth', () => {
       describe('/github', () => {
-        const mockCode = OAuthMockFactory.github.create.code();
-        const mockGitHubAccessToken =
-          OAuthMockFactory.github.create.accessToken();
+        let mockCode: ReturnType<typeof OAuthMockFactory.github.create.code>;
+        let mockGitHubAccessToken: ReturnType<
+          typeof OAuthMockFactory.github.create.accessToken
+        >;
+
+        beforeEach(() => {
+          mockCode = OAuthMockFactory.github.create.code();
+          mockGitHubAccessToken = OAuthMockFactory.github.create.accessToken();
+        });
 
         describe('should to authenticate by code', () => {
           it('when not user exists', async () => {
             OAuthMockFactory.github.responses.integration.getAccessTokenFromCode.success();
-            OAuthMockFactory.github.responses.integration.getUserFromGitHubAccessToken.success();
+            OAuthMockFactory.github.responses.integration.getUserFromGitHubAccessToken.success(
+              {},
+              mockGitHubAccessToken,
+            );
 
             const response = await request(server)
               .post('/oauth/github')
@@ -92,6 +102,7 @@ describe('OAuth Module', () => {
             expect(
               OAuthMockFactory.github.integration.getUserFromGitHubAccessToken,
             ).toHaveBeenCalledWith(mockGitHubAccessToken);
+
             expect(response.statusCode).toBe(201);
             expect(response.body).toHaveProperty('accessToken');
             expect(user).toMatchObject({
@@ -100,19 +111,21 @@ describe('OAuth Module', () => {
           });
 
           it('when user exists', async () => {
-            const userId = crypto.randomUUID();
+            const userId = UsersMockFactory.create.id();
 
             await prismaService.user.create({
               data: {
                 id: userId,
-                avatarURL:
-                  'https://avatars.githubusercontent.com/u/189175871?v=4',
+                avatarURL: OAuthMockFactory.github.create.avatarURL(),
                 externalAccountId: OAuthMockFactory.github.create.id(),
               },
             });
 
             OAuthMockFactory.github.responses.integration.getAccessTokenFromCode.success();
-            OAuthMockFactory.github.responses.integration.getUserFromGitHubAccessToken.success();
+            OAuthMockFactory.github.responses.integration.getUserFromGitHubAccessToken.success(
+              {},
+              mockGitHubAccessToken,
+            );
 
             const response = await request(server)
               .post('/oauth/github')
