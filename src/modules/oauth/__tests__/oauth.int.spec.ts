@@ -52,10 +52,6 @@ describe('OAuth Module', () => {
     usersRepository = module.get(USERS_REPOSITORY);
   });
 
-  beforeEach(async () => {
-    await prismaService.user.deleteMany();
-  });
-
   afterAll(async () => {
     await app.close();
   });
