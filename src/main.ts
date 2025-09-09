@@ -19,7 +19,11 @@ async function bootstrap() {
     origin,
   });
 
-  app.useGlobalPipes(new ValidationPipe());
+  app.useGlobalPipes(
+    new ValidationPipe({
+      transform: true,
+    }),
+  );
 
   SwaggerModule.setup(
     'docs',

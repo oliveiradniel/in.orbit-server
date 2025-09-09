@@ -1,5 +1,7 @@
 import { faker } from '@faker-js/faker';
 
+import dayjs from 'dayjs';
+
 export class FakerFactory {
   static data = {
     token: (): string =>
@@ -29,5 +31,6 @@ export class FakerFactory {
     title: (): string => faker.lorem.word(),
     desiredWeeklyFrequency: (max: number = 7): number =>
       faker.number.int({ min: 1, max: max }),
+    weekStartsAt: (): dayjs.Dayjs => dayjs(new Date()).startOf('week'),
   };
 }

@@ -42,7 +42,7 @@ export class GoalsService {
   }: {
     userId: string;
   } & FindWeeklySummaryOfCompletedGoalsDTO): Promise<WeeklyGoalsSummary> {
-    const firstDayOfWeek = weekStartsAt;
+    const firstDayOfWeek = dayjs(weekStartsAt).startOf('week').toDate();
     const lastDayOfWeek = dayjs(weekStartsAt).endOf('week').toDate();
 
     await this.usersService.findUserById(userId);

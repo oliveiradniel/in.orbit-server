@@ -8,16 +8,17 @@ import request from 'supertest';
 
 import { Server } from 'http';
 
-import dayjs from 'dayjs';
-
 import { GoalsSpecModule } from './goals.spec.module';
 
 import { PrismaService } from 'src/shared/database/prisma.service';
 
 import { createTestUser } from 'src/shared/__tests__/helpers/create-test-user.helper';
 import { createTestGoal } from 'src/shared/__tests__/helpers/create-test-goal.helper';
+import { createTestGoalCompleted } from 'src/shared/__tests__/helpers/create-test-goal-completed.helper';
 import { describeAuthGuard } from 'src/shared/__tests__/helpers/describe-auth-guard.helper';
 import { describeUserNotExists } from 'src/shared/__tests__/helpers/describe-user-not-exists.helper';
+
+import { GoalsMockFactory } from 'src/shared/__factories__/goals-mock.factory';
 
 import { type User } from 'src/modules/users/entities/user.entity';
 import { type WeeklyGoalsProgress } from 'src/shared/interfaces/goal/weekly-goals-progress.interface';
@@ -127,15 +128,17 @@ describe('Goals Module', () => {
           otherGoals: [{ title: 'Estudar', desiredWeeklyFrequency: 5 }],
         });
 
-        const startOfWeek = dayjs().startOf('week');
+        const weekStartsAt = GoalsMockFactory.create.weekStartsAt();
 
-        const firstDayOfWeek = startOfWeek.toDate();
-        const secondDayOfWeek = startOfWeek.add(1, 'day').toDate();
-        const thirdDayOfWeek = startOfWeek.add(2, 'day').toDate();
+        const firstDayOfWeek = weekStartsAt.toDate();
+        const secondDayOfWeek = weekStartsAt.add(1, 'day').toDate();
+        const thirdDayOfWeek = weekStartsAt.add(2, 'day').toDate();
 
-        await prismaService.goalCompleted.createMany({
-          data: [
-            { goalId: goal1.id!, createdAt: firstDayOfWeek },
+        await createTestGoalCompleted({
+          prismaService,
+          goalId: goal1.id!,
+          createdAt: firstDayOfWeek,
+          otherGoalsCompleted: [
             {
               goalId: goal1.id!,
               createdAt: secondDayOfWeek,
@@ -149,6 +152,7 @@ describe('Goals Module', () => {
 
         const response = await request(server)
           .get('/goals/summary')
+          .query({ weekStartsAt: weekStartsAt.toDate().toISOString() })
           .set('Authorization', `Bearer ${accessToken}`);
 
         const weeklyGoalsSummary = response.body as WeeklyGoalsSummary;
@@ -160,17 +164,17 @@ describe('Goals Module', () => {
         });
 
         expect(weeklyGoalsSummary.goalsPerDay).toMatchObject({
-          [startOfWeek.format('YYYY-MM-DD')]: [
+          [weekStartsAt.format('YYYY-MM-DD')]: [
             {
               title: 'Acordar cedo',
             },
           ],
-          [startOfWeek.add(1, 'day').format('YYYY-MM-DD')]: [
+          [weekStartsAt.add(1, 'day').format('YYYY-MM-DD')]: [
             {
               title: 'Acordar cedo',
             },
           ],
-          [startOfWeek.add(2, 'day').format('YYYY-MM-DD')]: [
+          [weekStartsAt.add(2, 'day').format('YYYY-MM-DD')]: [
             {
               title: 'Estudar',
             },
@@ -196,6 +200,12 @@ describe('Goals Module', () => {
 
           const response = await request(server)
             .get('/goals/summary')
+            .query({
+              weekStartsAt: GoalsMockFactory.create
+                .weekStartsAt()
+                .toDate()
+                .toISOString(),
+            })
             .set('Authorization', `Bearer ${accessToken}`);
 
           expect(response.statusCode).toBe(200);
@@ -209,6 +219,12 @@ describe('Goals Module', () => {
         it('should return 0 completed and correct total without created goals', async () => {
           const response = await request(server)
             .get('/goals/summary')
+            .query({
+              weekStartsAt: GoalsMockFactory.create
+                .weekStartsAt()
+                .toDate()
+                .toISOString(),
+            })
             .set('Authorization', `Bearer ${accessToken}`);
 
           expect(response.statusCode).toBe(200);

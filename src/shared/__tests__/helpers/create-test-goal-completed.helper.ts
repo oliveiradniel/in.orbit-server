@@ -12,21 +12,25 @@ export async function createTestGoalCompleted(
 export async function createTestGoalCompleted({
   prismaService,
   goalId,
+  createdAt,
   otherGoalsCompleted,
 }: CreateTestGoalCompletedParams): Promise<GoalCompleted | GoalCompleted[]> {
   const goalCompleted = await prismaService.goalCompleted.create({
     data: {
       goalId,
+      createdAt,
     },
   });
 
   if (otherGoalsCompleted && otherGoalsCompleted.length > 0) {
-    const goalsToCreate = otherGoalsCompleted.map((currentGoalId) =>
-      prismaService.goalCompleted.create({
-        data: {
-          goalId: currentGoalId,
-        },
-      }),
+    const goalsToCreate = otherGoalsCompleted.map(
+      ({ goalId: currentGoalId, createdAt }) =>
+        prismaService.goalCompleted.create({
+          data: {
+            goalId: currentGoalId ?? goalId,
+            createdAt,
+          },
+        }),
     );
 
     const goalsCompleted = await prismaService.$transaction([...goalsToCreate]);

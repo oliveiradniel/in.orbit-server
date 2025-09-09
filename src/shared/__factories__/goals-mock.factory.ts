@@ -8,7 +8,7 @@ import { type GoalProgressMetric } from '../interfaces/goal/goal-progress-metric
 
 import { vi } from 'vitest';
 
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 
 export class GoalsMockFactory {
   static repository = {
@@ -32,6 +32,8 @@ export class GoalsMockFactory {
 
     desiredWeeklyFrequency: (max?: number): number =>
       FakerFactory.goal.desiredWeeklyFrequency(max),
+
+    weekStartsAt: (): Dayjs => FakerFactory.goal.weekStartsAt(),
 
     goal: (override: Partial<Goal> = {}): Goal => ({
       id: GoalsMockFactory.create.id(),
@@ -70,7 +72,9 @@ export class GoalsMockFactory {
     weeklyGoalsSummary: (
       override: Partial<Goal>[] = [],
     ): WeeklyGoalsSummary => {
-      const startOfWeek = dayjs().startOf('week');
+      const startOfWeek = dayjs(GoalsMockFactory.create.weekStartsAt()).startOf(
+        'week',
+      );
 
       const firstDayAnalysed = startOfWeek.format('YYYY-MM-DD');
       const secondDayAnalysed = startOfWeek.add(1, 'day').format('YYYY-MM-DD');

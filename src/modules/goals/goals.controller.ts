@@ -68,10 +68,10 @@ export class GoalsController {
   @Get('summary')
   findWeeklySummaryOfCompletedGoals(
     @ActiveUserId() userId: string,
-    @Query('weekStartsAt')
-    findWeeklySummaryOfCompletedGoalsDTO: FindWeeklySummaryOfCompletedGoalsDTO,
+    @Query()
+    queryParams: FindWeeklySummaryOfCompletedGoalsDTO,
   ): Promise<WeeklyGoalsSummary> {
-    const { weekStartsAt } = findWeeklySummaryOfCompletedGoalsDTO;
+    const { weekStartsAt } = queryParams;
 
     return this.goalsService.findWeeklySummaryOfGoalsCompletedByDay({
       userId,

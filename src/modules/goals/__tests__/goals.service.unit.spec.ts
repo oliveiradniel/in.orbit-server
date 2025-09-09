@@ -113,11 +113,15 @@ describe('GoalsService', () => {
         mockGoals,
       );
 
-      const goal =
-        await goalsService.findWeeklySummaryOfGoalsCompletedByDay(mockUserId);
+      const goal = await goalsService.findWeeklySummaryOfGoalsCompletedByDay({
+        userId: mockUserId,
+        weekStartsAt: GoalsMockFactory.create.weekStartsAt().toDate(),
+      });
 
-      const firstDayOfWeek = dayjs().startOf('week').toDate();
-      const lastDayOfWeek = dayjs().endOf('week').toDate();
+      const weekStartsAt = GoalsMockFactory.create.weekStartsAt();
+
+      const firstDayOfWeek = weekStartsAt.toDate();
+      const lastDayOfWeek = dayjs(weekStartsAt).endOf('week').toDate();
 
       expect(UsersMockFactory.service.findUserById).toHaveBeenCalledWith(
         mockUserId,
@@ -127,8 +131,8 @@ describe('GoalsService', () => {
       ).toHaveBeenCalledWith(
         expect.objectContaining({
           userId: mockUserId,
-          lastDayOfWeek,
           firstDayOfWeek,
+          lastDayOfWeek,
         }),
       );
       expect(goal).toEqual(weeklyGoalsSummary);
@@ -141,7 +145,10 @@ describe('GoalsService', () => {
         GoalsMockFactory.repository.getWeeklySummaryOfGoalsCompletedByDay,
       ).not.toHaveBeenCalled();
       await expect(
-        goalsService.findWeeklySummaryOfGoalsCompletedByDay(mockUserId),
+        goalsService.findWeeklySummaryOfGoalsCompletedByDay({
+          userId: mockUserId,
+          weekStartsAt: GoalsMockFactory.create.weekStartsAt().toDate(),
+        }),
       ).rejects.toThrow(NotFoundException);
     });
   });
