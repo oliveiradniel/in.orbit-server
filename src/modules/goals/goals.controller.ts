@@ -3,8 +3,11 @@ import {
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
+  ApiQuery,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+
+import dayjs from 'dayjs';
 
 import { GoalsService } from './goals.service';
 
@@ -51,6 +54,16 @@ export class GoalsController {
     description:
       'Returns the weekly progress summary, including the total goals and the list of goals completed per day.',
     type: WeeklySummaryResponseDTO,
+  })
+  @ApiQuery({
+    name: 'weekStartsAt',
+    required: false,
+    type: String,
+    description: 'First day of the week for goals filtering.',
+    default: dayjs()
+      .startOf('week')
+      .startOf('day')
+      .format('YYYY-MM-DD HH:mm:ss'),
   })
   @Get('summary')
   findWeeklySummaryOfCompletedGoals(
