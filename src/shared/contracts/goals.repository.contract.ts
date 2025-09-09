@@ -2,8 +2,10 @@ import { Goal } from 'src/modules/goals/entities/goal.entity';
 
 import { CreateGoalDTO } from 'src/modules/goals/dtos/create-goal.dto';
 
-import { type UserDateRangeFilter } from 'src/shared/interfaces/goals/user-date-range-filter.interface';
-import { type GoalDateRangeFilter } from 'src/shared/interfaces/goals/goal-date-range-filter.interface';
+import {
+  type GoalDateRangeFilter,
+  type UserDateRangeFilter,
+} from '../interfaces/goals/range-filters.interfaces';
 import { type WeeklyGoalsProgress } from 'src/shared/interfaces/goals/weekly-goals-progress.interface';
 import { type WeeklyGoalsSummary } from 'src/shared/interfaces/goals/weekly-goals-summary.interface';
 import { type GoalProgressMetric } from 'src/shared/interfaces/goals/goal-progress-metric.interface';

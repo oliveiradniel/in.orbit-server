@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Inject, Post } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post, Query } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -18,6 +18,7 @@ import { CreateGoalResponseDTO } from './dtos/create-goal-response.dto';
 
 import { UnauthorizedResponseDTO } from 'src/shared/dtos/unauthorized-response.dto';
 import { GOALS_SERVICE } from 'src/shared/constants/tokens';
+import { FindWeeklySummaryOfCompletedGoalsDTO } from './dtos/find-weekly-summary-of-completed-goals.dto';
 
 @ApiBearerAuth()
 @ApiUnauthorizedResponse({
@@ -46,8 +47,17 @@ export class GoalsController {
     type: WeeklySummaryResponseDTO,
   })
   @Get('summary')
-  findWeeklySummaryOfCompletedGoals(@ActiveUserId() userId: string) {
-    return this.goalsService.findWeeklySummaryOfGoalsCompletedByDay(userId);
+  findWeeklySummaryOfCompletedGoals(
+    @ActiveUserId() userId: string,
+    @Query()
+    findWeeklySummaryOfCompletedGoalsDTO: FindWeeklySummaryOfCompletedGoalsDTO,
+  ) {
+    const { weekStartsAt } = findWeeklySummaryOfCompletedGoalsDTO;
+
+    return this.goalsService.findWeeklySummaryOfGoalsCompletedByDay({
+      userId,
+      weekStartsAt,
+    });
   }
 
   @ApiCreatedResponse({

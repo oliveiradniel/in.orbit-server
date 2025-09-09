@@ -7,6 +7,7 @@ import { UsersService } from '../users/users.service';
 import { GoalsRepository } from 'src/shared/contracts/goals.repository.contract';
 
 import { CreateGoalDTO } from './dtos/create-goal.dto';
+import { FindWeeklySummaryOfCompletedGoalsDTO } from './dtos/find-weekly-summary-of-completed-goals.dto';
 
 import { GOALS_REPOSITORY, USERS_SERVICE } from 'src/shared/constants/tokens';
 
@@ -30,9 +31,12 @@ export class GoalsService {
     });
   }
 
-  async findWeeklySummaryOfGoalsCompletedByDay(userId: string) {
-    const firstDayOfWeek = dayjs().startOf('week').toDate();
-    const lastDayOfWeek = dayjs().endOf('week').toDate();
+  async findWeeklySummaryOfGoalsCompletedByDay({
+    userId,
+    weekStartsAt,
+  }: { userId: string } & FindWeeklySummaryOfCompletedGoalsDTO) {
+    const firstDayOfWeek = weekStartsAt;
+    const lastDayOfWeek = dayjs(weekStartsAt).endOf('week').toDate();
 
     await this.usersService.findUserById(userId);
 
