@@ -12,6 +12,8 @@ import { GoalsRepository } from 'src/shared/contracts/goals.repository.contract'
 
 import { CreateGoalCompletedDTO } from './dtos/create-goal-completed.dto';
 
+import { type GoalCompleted } from './entities/goal-completed.entity';
+
 import {
   GOALS_COMPLETED_REPOSITORY,
   GOALS_REPOSITORY,
@@ -25,7 +27,7 @@ export class GoalsCompletedService {
     @Inject(GOALS_REPOSITORY) private readonly goalsRepository: GoalsRepository,
   ) {}
 
-  async create({ goalId }: CreateGoalCompletedDTO) {
+  async create({ goalId }: CreateGoalCompletedDTO): Promise<GoalCompleted> {
     const firstDayOfWeek = dayjs().startOf('week').toDate();
     const lastDayOfWeek = dayjs().endOf('week').toDate();
 

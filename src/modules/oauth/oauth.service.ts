@@ -1,8 +1,9 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
-import { UsersRepository } from 'src/shared/contracts/users-repository.contract';
-import { GitHubIntegration } from './contracts/github.integration.contract';
+import { type UsersRepository } from 'src/shared/contracts/users-repository.contract';
+import { type GitHubIntegration } from './contracts/github.integration.contract';
+import { type AccessTokenResponse } from 'src/shared/interfaces/access-token.interface';
 
 import {
   GITHUB_INTEGRATION,
@@ -19,7 +20,7 @@ export class OAuthService {
     @Inject(JWT_SERVICE) private readonly jwtService: JwtService,
   ) {}
 
-  async githubLogin(code: string) {
+  async githubLogin(code: string): Promise<AccessTokenResponse> {
     const { accessToken: githubAccessToken } =
       await this.githubIntegration.getAccessTokenFromCode(code);
 

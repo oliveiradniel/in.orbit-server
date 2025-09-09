@@ -3,7 +3,7 @@ import { vi } from 'vitest';
 import { GoalsMockFactory } from 'src/shared/__factories__/goals-mock.factory';
 import { FakerFactory } from 'src/shared/__factories__/faker.factory';
 
-import { GoalCompleted } from '../entities/goal-completed.entity';
+import { type GoalCompleted } from '../entities/goal-completed.entity';
 
 export class GoalsCompletedMockFactory {
   static repository = {
@@ -11,9 +11,9 @@ export class GoalsCompletedMockFactory {
   };
 
   static create = {
-    id: (id = FakerFactory.data.uuid()) => id,
+    id: (id = FakerFactory.data.uuid()): string => id,
 
-    goalCompleted: (override: Partial<GoalCompleted> = {}) => ({
+    goalCompleted: (override: Partial<GoalCompleted> = {}): GoalCompleted => ({
       id: GoalsCompletedMockFactory.create.id(),
       goalId: GoalsMockFactory.create.id(),
       createdAt: new Date('2025-08-30T00:00:00.000Z'),

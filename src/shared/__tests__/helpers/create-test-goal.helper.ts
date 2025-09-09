@@ -1,8 +1,7 @@
-import { Goal } from 'src/modules/goals/entities/goal.entity';
-
 import { FakerFactory } from 'src/shared/__factories__/faker.factory';
 
-import { CreateTestGoalParams } from 'src/shared/interfaces/helpers/create-test-goal.interface';
+import { type Goal } from 'src/modules/goals/entities/goal.entity';
+import { type CreateTestGoalParams } from 'src/shared/interfaces/helpers/create-test-goal.interface';
 
 export async function createTestGoal(
   params: Omit<CreateTestGoalParams, 'otherGoals'>,

@@ -1,19 +1,10 @@
-import { JwtService } from '@nestjs/jwt';
-
 import { describe, it } from 'vitest';
 import request from 'supertest';
 
-import { Server } from 'http';
+import { expectUserNotFound } from './expect-errors.helper';
 
-import { expectUserNotFound, SupertestResponse } from './expect-errors.helper';
-
-interface DescribeUserNotExistsParams {
-  getServer: () => Server;
-  getJWTService: () => JwtService;
-  route: string;
-  method?: 'get' | 'post' | 'put' | 'delete';
-  getData?: () => Record<string, string | number>;
-}
+import { type DescribeUserNotExistsParams } from 'src/shared/interfaces/helpers/describe-user-not-exists-params.interface';
+import { type SupertestResponse } from 'src/shared/interfaces/supertest-response.interface';
 
 export function describeUserNotExists({
   getServer,
@@ -21,7 +12,7 @@ export function describeUserNotExists({
   route,
   method = 'get',
   getData,
-}: DescribeUserNotExistsParams) {
+}: DescribeUserNotExistsParams): void {
   describe('User not found', () => {
     it('should to throw NotFound error', async () => {
       const payload = { sub: crypto.randomUUID() };

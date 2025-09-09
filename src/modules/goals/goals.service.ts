@@ -4,10 +4,13 @@ import dayjs from 'dayjs';
 
 import { UsersService } from '../users/users.service';
 
-import { GoalsRepository } from 'src/shared/contracts/goals.repository.contract';
-
 import { CreateGoalDTO } from './dtos/create-goal.dto';
 import { FindWeeklySummaryOfCompletedGoalsDTO } from './dtos/find-weekly-summary-of-completed-goals.dto';
+
+import { type Goal } from './entities/goal.entity';
+import { type GoalsRepository } from 'src/shared/contracts/goals.repository.contract';
+import { type WeeklyGoalsProgress } from 'src/shared/interfaces/goal/weekly-goals-progress.interface';
+import { type WeeklyGoalsSummary } from 'src/shared/interfaces/goal/weekly-goals-summary.interface';
 
 import { GOALS_REPOSITORY, USERS_SERVICE } from 'src/shared/constants/tokens';
 
@@ -18,7 +21,9 @@ export class GoalsService {
     @Inject(USERS_SERVICE) private readonly usersService: UsersService,
   ) {}
 
-  async findWeeklyGoalsWithCompletion(userId: string) {
+  async findWeeklyGoalsWithCompletion(
+    userId: string,
+  ): Promise<WeeklyGoalsProgress[]> {
     const firstDayOfWeek = dayjs().startOf('week').toDate();
     const lastDayOfWeek = dayjs().endOf('week').toDate();
 
@@ -34,7 +39,9 @@ export class GoalsService {
   async findWeeklySummaryOfGoalsCompletedByDay({
     userId,
     weekStartsAt,
-  }: { userId: string } & FindWeeklySummaryOfCompletedGoalsDTO) {
+  }: {
+    userId: string;
+  } & FindWeeklySummaryOfCompletedGoalsDTO): Promise<WeeklyGoalsSummary> {
     const firstDayOfWeek = weekStartsAt;
     const lastDayOfWeek = dayjs(weekStartsAt).endOf('week').toDate();
 
@@ -47,7 +54,7 @@ export class GoalsService {
     });
   }
 
-  async create(userId: string, createGoalDTO: CreateGoalDTO) {
+  async create(userId: string, createGoalDTO: CreateGoalDTO): Promise<Goal> {
     const { title, desiredWeeklyFrequency } = createGoalDTO;
 
     await this.usersService.findUserById(userId);

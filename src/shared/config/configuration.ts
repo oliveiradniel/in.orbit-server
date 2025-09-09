@@ -1,7 +1,7 @@
 import { plainToInstance } from 'class-transformer';
 import { IsNotEmpty, IsString, validateSync } from 'class-validator';
 
-class Environment {
+class EnvironmentVariables {
   @IsString()
   @IsNotEmpty()
   FRONTEND_ORIGIN: string;
@@ -35,8 +35,10 @@ class Environment {
   JWT_SECRET: string;
 }
 
-export function validate(config: Record<string, unknown>) {
-  const validatedConfig = plainToInstance(Environment, config, {
+export function validate(
+  config: Record<string, unknown>,
+): EnvironmentVariables {
+  const validatedConfig = plainToInstance(EnvironmentVariables, config, {
     enableImplicitConversion: true,
   });
 

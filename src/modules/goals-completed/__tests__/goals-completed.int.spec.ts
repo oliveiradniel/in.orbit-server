@@ -7,8 +7,6 @@ import request from 'supertest';
 
 import { Server } from 'http';
 
-import { User } from 'src/modules/users/entities/user.entity';
-
 import { GoalsCompletedSpecModule } from './goals-completed.spec.module';
 
 import { PrismaService } from 'src/shared/database/prisma.service';
@@ -18,6 +16,8 @@ import { createTestGoal } from 'src/shared/__tests__/helpers/create-test-goal.he
 import { createTestGoalCompleted } from 'src/shared/__tests__/helpers/create-test-goal-completed.helper';
 
 import { GoalsCompletedMockFactory } from '../__factories__/goals-completed-mock.factory';
+
+import { type User } from 'src/modules/users/entities/user.entity';
 
 import { JWT_SERVICE, PRISMA_SERVICE } from 'src/shared/constants/tokens';
 
@@ -41,8 +41,8 @@ describe('Goals Completed Module', () => {
 
     server = app.getHttpServer() as Server;
 
-    prismaService = module.get(PRISMA_SERVICE);
-    jwtService = module.get(JWT_SERVICE);
+    prismaService = module.get<PrismaService>(PRISMA_SERVICE);
+    jwtService = module.get<JwtService>(JWT_SERVICE);
   });
 
   beforeEach(async () => {

@@ -1,8 +1,9 @@
 import { NotFoundException } from '@nestjs/common';
 
-import { User } from 'src/modules/users/entities/user.entity';
+import { type User } from 'src/modules/users/entities/user.entity';
 
 import { vi } from 'vitest';
+
 import { FakerFactory } from './faker.factory';
 
 export class UsersMockFactory {

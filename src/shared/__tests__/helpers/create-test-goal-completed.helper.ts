@@ -1,6 +1,5 @@
-import { GoalCompleted } from 'src/modules/goals-completed/entities/goal-completed.entity';
-
-import { CreateTestGoalCompletedParams } from 'src/shared/interfaces/helpers/create-test-goal-completed.interface';
+import { type GoalCompleted } from 'src/modules/goals-completed/entities/goal-completed.entity';
+import { type CreateTestGoalCompletedParams } from 'src/shared/interfaces/helpers/create-test-goal-completed.interface';
 
 export async function createTestGoalCompleted(
   params: Omit<CreateTestGoalCompletedParams, 'otherGoals'>,

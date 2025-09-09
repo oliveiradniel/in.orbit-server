@@ -2,9 +2,9 @@ import { BadRequestException } from '@nestjs/common';
 
 import { vi } from 'vitest';
 
-import { GitHubUser } from '../entities/github-user.entity';
-
 import { FakerFactory } from 'src/shared/__factories__/faker.factory';
+
+import { type GitHubUser } from '../entities/github-user.entity';
 
 export class OAuthMockFactory {
   static github = {
@@ -29,7 +29,7 @@ export class OAuthMockFactory {
       accessToken: (accessToken = FakerFactory.data.token()): string =>
         accessToken,
 
-      avatarURL: () => FakerFactory.github.avatarURL(),
+      avatarURL: (): string => FakerFactory.github.avatarURL(),
     },
 
     responses: {

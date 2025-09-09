@@ -3,9 +3,11 @@ import { ApiResponse } from '@nestjs/swagger';
 
 import { OAuthService } from './oauth.service';
 
+import { IsPublic } from 'src/shared/decorators/is-public.decorator';
+
 import { AuthenticateGitHubDTO } from './dtos/authenticate-github.dto';
 
-import { IsPublic } from 'src/shared/decorators/is-public.decorator';
+import { type AccessTokenResponse } from 'src/shared/interfaces/access-token.interface';
 
 import { OAUTH_SERVICE } from 'src/shared/constants/tokens';
 
@@ -49,7 +51,9 @@ export class OAuthController {
     },
   })
   @Post('github')
-  githubAuthenticate(@Body() authenticateGitHubDTO: AuthenticateGitHubDTO) {
+  githubAuthenticate(
+    @Body() authenticateGitHubDTO: AuthenticateGitHubDTO,
+  ): Promise<AccessTokenResponse> {
     const { code } = authenticateGitHubDTO;
 
     return this.oauthService.githubLogin(code);

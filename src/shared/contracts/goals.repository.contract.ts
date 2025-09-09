@@ -1,33 +1,26 @@
-import { Goal } from 'src/modules/goals/entities/goal.entity';
-
 import { CreateGoalDTO } from 'src/modules/goals/dtos/create-goal.dto';
 
+import { type Goal } from 'src/modules/goals/entities/goal.entity';
 import {
   type GoalDateRangeFilter,
   type UserDateRangeFilter,
-} from '../interfaces/goals/range-filters.interfaces';
-import { type WeeklyGoalsProgress } from 'src/shared/interfaces/goals/weekly-goals-progress.interface';
-import { type WeeklyGoalsSummary } from 'src/shared/interfaces/goals/weekly-goals-summary.interface';
-import { type GoalProgressMetric } from 'src/shared/interfaces/goals/goal-progress-metric.interface';
+} from '../database/interfaces/goal/range-filters.interfaces';
+import { type WeeklyGoalsProgress } from '../interfaces/goal/weekly-goals-progress.interface';
+import { type WeeklyGoalsSummary } from '../interfaces/goal/weekly-goals-summary.interface';
+import { type GoalProgressMetric } from '../interfaces/goal/goal-progress-metric.interface';
 
 export abstract class GoalsRepository {
-  abstract getWeeklyGoalsWithCompletion({
-    userId,
-    lastDayOfWeek,
-    firstDayOfWeek,
-  }: UserDateRangeFilter): Promise<WeeklyGoalsProgress[]>;
+  abstract getWeeklyGoalsWithCompletion(
+    params: UserDateRangeFilter,
+  ): Promise<WeeklyGoalsProgress[]>;
 
-  abstract getWeeklySummaryOfGoalsCompletedByDay({
-    userId,
-    firstDayOfWeek,
-    lastDayOfWeek,
-  }: UserDateRangeFilter): Promise<WeeklyGoalsSummary>;
+  abstract getWeeklySummaryOfGoalsCompletedByDay(
+    params: UserDateRangeFilter,
+  ): Promise<WeeklyGoalsSummary>;
 
-  abstract getWeeklyFrequencyAndCompletionCount({
-    goalId,
-    firstDayOfWeek,
-    lastDayOfWeek,
-  }: GoalDateRangeFilter): Promise<GoalProgressMetric | null>;
+  abstract getWeeklyFrequencyAndCompletionCount(
+    params: GoalDateRangeFilter,
+  ): Promise<GoalProgressMetric | null>;
 
   abstract create(userId: string, createGoalDTO: CreateGoalDTO): Promise<Goal>;
 }

@@ -1,17 +1,17 @@
 import { Inject, Injectable } from '@nestjs/common';
 
-import { GoalsRepository } from 'src/shared/contracts/goals.repository.contract';
-
 import { PrismaService } from '../prisma.service';
-import { type Prisma } from '@prisma/client';
+
+import { type Goal, type Prisma } from '@prisma/client';
+import { type GoalsRepository } from 'src/shared/contracts/goals.repository.contract';
 
 import {
   type GoalDateRangeFilter,
   type UserDateRangeFilter,
-} from 'src/shared/interfaces/goals/range-filters.interfaces';
-import { type WeeklyGoalsProgress } from 'src/shared/interfaces/goals/weekly-goals-progress.interface';
-import { type WeeklyGoalsSummary } from 'src/shared/interfaces/goals/weekly-goals-summary.interface';
-import { type GoalProgressMetric } from 'src/shared/interfaces/goals/goal-progress-metric.interface';
+} from '../interfaces/goal/range-filters.interfaces';
+import { type WeeklyGoalsProgress } from 'src/shared/interfaces/goal/weekly-goals-progress.interface';
+import { type WeeklyGoalsSummary } from 'src/shared/interfaces/goal/weekly-goals-summary.interface';
+import { type GoalProgressMetric } from 'src/shared/interfaces/goal/goal-progress-metric.interface';
 
 import { PRISMA_SERVICE } from 'src/shared/constants/tokens';
 
@@ -57,7 +57,7 @@ export class PrismaGoalsRepository implements GoalsRepository {
       LEFT JOIN count_of_completed_goals c ON c.goal_id = g.id;
     `;
 
-    return this.prismaService.$queryRawUnsafe(
+    return this.prismaService.$queryRawUnsafe<WeeklyGoalsProgress[]>(
       query,
       lastDayOfWeek,
       firstDayOfWeek,
@@ -164,7 +164,10 @@ export class PrismaGoalsRepository implements GoalsRepository {
     };
   }
 
-  create(userId: string, createGoalDTO: Prisma.GoalUncheckedCreateInput) {
+  create(
+    userId: string,
+    createGoalDTO: Prisma.GoalUncheckedCreateInput,
+  ): Promise<Goal> {
     const { title, desiredWeeklyFrequency } = createGoalDTO;
 
     return this.prismaService.goal.create({

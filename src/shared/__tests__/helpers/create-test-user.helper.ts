@@ -1,12 +1,17 @@
 import { FakerFactory } from 'src/shared/__factories__/faker.factory';
 
-import { CreateTestUserParams } from 'src/shared/interfaces/helpers/create-test-user.interface';
+import { type User } from 'src/modules/users/entities/user.entity';
+import { type CreateTestUserParams } from 'src/shared/interfaces/helpers/create-test-user.interface';
+import { type AccessTokenResponse } from 'src/shared/interfaces/access-token.interface';
 
 export async function createTestUser({
   prismaService,
   jwtService,
   override,
-}: CreateTestUserParams) {
+}: CreateTestUserParams): Promise<{
+  user: User;
+  accessToken: AccessTokenResponse['accessToken'];
+}> {
   const user = await prismaService.user.create({
     data: {
       name: FakerFactory.user.name(),

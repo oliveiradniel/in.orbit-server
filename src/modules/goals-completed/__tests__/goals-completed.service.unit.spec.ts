@@ -32,7 +32,9 @@ describe('GoalsCompletedService', () => {
       ],
     }).compile();
 
-    goalsCompletedService = module.get(GoalsCompletedService);
+    goalsCompletedService = module.get<GoalsCompletedService>(
+      GoalsCompletedService,
+    );
   });
 
   afterEach(() => {

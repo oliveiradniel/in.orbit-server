@@ -1,12 +1,8 @@
 import { expect } from 'vitest';
 
-export interface SupertestResponse {
-  statusCode: number;
-  body: any;
-  text: string;
-}
+import { type SupertestResponse } from 'src/shared/interfaces/supertest-response.interface';
 
-function expectUnauthorized(response: SupertestResponse) {
+function expectUnauthorized(response: SupertestResponse): void {
   expect(response.statusCode).toBe(401);
   expect(response.body).toEqual({
     message: 'Unauthorized',
@@ -14,7 +10,7 @@ function expectUnauthorized(response: SupertestResponse) {
   });
 }
 
-function expectUserNotFound(response: SupertestResponse) {
+function expectUserNotFound(response: SupertestResponse): void {
   expect(response.statusCode).toBe(404);
   expect(response.body).toEqual({
     message: 'User not found.',

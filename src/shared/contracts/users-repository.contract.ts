@@ -1,14 +1,14 @@
 import { type User } from 'src/modules/users/entities/user.entity';
-import { type CreateUserDTO } from 'src/modules/users/dtos/create-user.dto';
+import { type UserWithoutExternalAccountId } from '../database/interfaces/user/user-without-external-account-id.interface';
+import { type UserIdentifier } from '../database/interfaces/user/user-identifier.interface';
+import { type DataToCreateUser } from '../database/interfaces/user/data-to-create-user.interface';
 
 export abstract class UsersRepository {
-  abstract getUserById(
-    userId: string,
-  ): Promise<Omit<User, 'externalAccountId'> | null>;
+  abstract getUserById(userId: string): Promise<UserWithoutExternalAccountId>;
 
   abstract getUserByExternalAccountId(
     githubUserId: number,
-  ): Promise<User | null>;
+  ): Promise<UserIdentifier>;
 
-  abstract create(createUserDTO: CreateUserDTO): Promise<User>;
+  abstract create(dataToCreateUser: DataToCreateUser): Promise<User>;
 }

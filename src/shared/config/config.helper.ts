@@ -1,5 +1,6 @@
 import { ConfigService } from '@nestjs/config';
-import { AppConfig } from './config.interface';
+
+import { type AppConfig } from './config.interface';
 
 export function getConfig(configService: ConfigService): AppConfig {
   return {

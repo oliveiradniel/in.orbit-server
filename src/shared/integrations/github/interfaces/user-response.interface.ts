@@ -1,4 +1,4 @@
-export interface UserResponse {
+export interface GitHubUserResponse {
   id: number;
   name: string | null;
   email: string | null;

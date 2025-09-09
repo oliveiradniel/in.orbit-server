@@ -37,7 +37,7 @@ describe('OAuthService', () => {
       ],
     }).compile();
 
-    oauthService = module.get(OAuthService);
+    oauthService = module.get<OAuthService>(OAuthService);
   });
 
   describe('githubLogin', () => {

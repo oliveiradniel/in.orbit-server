@@ -28,7 +28,7 @@ describe('GoalsService', () => {
       ],
     }).compile();
 
-    goalsService = module.get(GoalsService);
+    goalsService = module.get<GoalsService>(GoalsService);
   });
 
   afterEach(() => {

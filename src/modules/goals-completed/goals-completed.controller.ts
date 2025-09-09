@@ -14,6 +14,8 @@ import { CreateGoalCompletedResponseDTO } from './dtos/create-goal-completed-res
 import { UnauthorizedResponseDTO } from 'src/shared/dtos/unauthorized-response.dto';
 import { NotFoundGoalResponseDTO } from 'src/shared/dtos/not-found-goal-response.dto';
 
+import { type GoalCompleted } from './entities/goal-completed.entity';
+
 import { GOALS_COMPLETED_SERVICE } from 'src/shared/constants/tokens';
 
 @ApiBearerAuth()
@@ -37,7 +39,9 @@ export class GoalsCompletedController {
     type: NotFoundGoalResponseDTO,
   })
   @Post()
-  create(@Body() createGoalCompletedDTO: CreateGoalCompletedDTO) {
+  create(
+    @Body() createGoalCompletedDTO: CreateGoalCompletedDTO,
+  ): Promise<GoalCompleted> {
     const { goalId } = createGoalCompletedDTO;
 
     return this.goalsCompletedService.create({ goalId });

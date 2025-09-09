@@ -1,21 +1,15 @@
 import { describe, it } from 'vitest';
 import request from 'supertest';
 
-import { Server } from 'http';
-
 import { expectUnauthorized } from './expect-errors.helper';
 
-interface DescribeAuthGuardParams {
-  getServer: () => Server;
-  route: string;
-  method?: 'get' | 'post' | 'put' | 'delete';
-}
+import { type DescribeAuthGuardParams } from 'src/shared/interfaces/helpers/describe-auth-guard-params.inteface';
 
 export function describeAuthGuard({
   getServer,
   route,
   method = 'get',
-}: DescribeAuthGuardParams) {
+}: DescribeAuthGuardParams): void {
   describe('AuthGuard', () => {
     it(`should throw Unauthorized when token is missing`, async () => {
       const response = await request(getServer())

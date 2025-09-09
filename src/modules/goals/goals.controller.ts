@@ -8,17 +8,21 @@ import {
 
 import { GoalsService } from './goals.service';
 
-import { CreateGoalDTO } from './dtos/create-goal.dto';
-
 import { ActiveUserId } from 'src/shared/decorators/active-user-id.decorator';
+
+import { CreateGoalDTO } from './dtos/create-goal.dto';
+import { FindWeeklySummaryOfCompletedGoalsDTO } from './dtos/find-weekly-summary-of-completed-goals.dto';
 
 import { WeeklyGoalResponseDTO } from './dtos/weekly-goal-response.dto';
 import { WeeklySummaryResponseDTO } from './dtos/weekly-summary-response.dto';
 import { CreateGoalResponseDTO } from './dtos/create-goal-response.dto';
-
 import { UnauthorizedResponseDTO } from 'src/shared/dtos/unauthorized-response.dto';
+
+import { type Goal } from './entities/goal.entity';
+import { type WeeklyGoalsProgress } from 'src/shared/interfaces/goal/weekly-goals-progress.interface';
+import { type WeeklyGoalsSummary } from 'src/shared/interfaces/goal/weekly-goals-summary.interface';
+
 import { GOALS_SERVICE } from 'src/shared/constants/tokens';
-import { FindWeeklySummaryOfCompletedGoalsDTO } from './dtos/find-weekly-summary-of-completed-goals.dto';
 
 @ApiBearerAuth()
 @ApiUnauthorizedResponse({
@@ -37,7 +41,9 @@ export class GoalsController {
     type: [WeeklyGoalResponseDTO],
   })
   @Get()
-  findWeeklyGoalsWithCompletion(@ActiveUserId() userId: string) {
+  findWeeklyGoalsWithCompletion(
+    @ActiveUserId() userId: string,
+  ): Promise<WeeklyGoalsProgress[]> {
     return this.goalsService.findWeeklyGoalsWithCompletion(userId);
   }
 
@@ -49,9 +55,9 @@ export class GoalsController {
   @Get('summary')
   findWeeklySummaryOfCompletedGoals(
     @ActiveUserId() userId: string,
-    @Query()
+    @Query('weekStartsAt')
     findWeeklySummaryOfCompletedGoalsDTO: FindWeeklySummaryOfCompletedGoalsDTO,
-  ) {
+  ): Promise<WeeklyGoalsSummary> {
     const { weekStartsAt } = findWeeklySummaryOfCompletedGoalsDTO;
 
     return this.goalsService.findWeeklySummaryOfGoalsCompletedByDay({
@@ -66,7 +72,10 @@ export class GoalsController {
     type: CreateGoalResponseDTO,
   })
   @Post()
-  create(@ActiveUserId() userId: string, @Body() createGoalDTO: CreateGoalDTO) {
+  create(
+    @ActiveUserId() userId: string,
+    @Body() createGoalDTO: CreateGoalDTO,
+  ): Promise<Goal> {
     const { title, desiredWeeklyFrequency } = createGoalDTO;
 
     return this.goalsService.create(userId, {

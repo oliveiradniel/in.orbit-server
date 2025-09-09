@@ -6,12 +6,15 @@ import {
 } from '@nestjs/swagger';
 
 import { UsersService } from './users.service';
-import { USERS_SERVICE } from 'src/shared/constants/tokens';
 
 import { ActiveUserId } from 'src/shared/decorators/active-user-id.decorator';
 
 import { FindUserByIdResponseDTO } from './dtos/find-user-by-id-response.dto';
 import { UnauthorizedResponseDTO } from 'src/shared/dtos/unauthorized-response.dto';
+
+import { type UserResponse } from './interfaces/user-response.interface';
+
+import { USERS_SERVICE } from 'src/shared/constants/tokens';
 
 @ApiBearerAuth()
 @ApiUnauthorizedResponse({
@@ -29,7 +32,7 @@ export class UsersController {
     type: FindUserByIdResponseDTO,
   })
   @Get()
-  findUserById(@ActiveUserId() userId: string) {
+  findUserById(@ActiveUserId() userId: string): Promise<UserResponse> {
     return this.usersService.findUserById(userId);
   }
 }

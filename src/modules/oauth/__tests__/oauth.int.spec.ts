@@ -8,15 +8,16 @@ import request from 'supertest';
 
 import { Server } from 'http';
 
+import { getConfig } from 'src/shared/config/config.helper';
+
 import { OAuthSpecModule } from './oauth.spec.module';
+
 import { OAuthMockFactory } from '../__factories__/oauth-mock.factory';
 import { UsersMockFactory } from 'src/shared/__factories__/users-mock.factory';
 
-import { UsersRepository } from 'src/shared/contracts/users-repository.contract';
-
 import { PrismaService } from 'src/shared/database/prisma.service';
 
-import { getConfig } from 'src/shared/config/config.helper';
+import { type UsersRepository } from 'src/shared/contracts/users-repository.contract';
 
 import {
   JWT_SERVICE,
@@ -45,9 +46,9 @@ describe('OAuth Module', () => {
 
     server = app.getHttpServer() as Server;
 
-    prismaService = module.get(PRISMA_SERVICE);
-    jwtService = module.get(JWT_SERVICE);
-    configService = module.get(ConfigService);
+    prismaService = module.get<PrismaService>(PRISMA_SERVICE);
+    jwtService = module.get<JwtService>(JWT_SERVICE);
+    configService = module.get<ConfigService>(ConfigService);
 
     usersRepository = module.get(USERS_REPOSITORY);
   });

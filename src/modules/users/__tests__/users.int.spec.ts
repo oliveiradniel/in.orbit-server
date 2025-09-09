@@ -34,8 +34,8 @@ describe('Users Module', () => {
 
     server = app.getHttpServer() as Server;
 
-    prismaService = module.get(PRISMA_SERVICE);
-    jwtService = module.get(JWT_SERVICE);
+    prismaService = module.get<PrismaService>(PRISMA_SERVICE);
+    jwtService = module.get<JwtService>(JWT_SERVICE);
   });
 
   afterAll(async () => {

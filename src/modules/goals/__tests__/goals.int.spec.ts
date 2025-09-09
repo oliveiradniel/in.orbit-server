@@ -10,8 +10,6 @@ import { Server } from 'http';
 
 import dayjs from 'dayjs';
 
-import { User } from 'src/modules/users/entities/user.entity';
-
 import { GoalsSpecModule } from './goals.spec.module';
 
 import { PrismaService } from 'src/shared/database/prisma.service';
@@ -21,10 +19,11 @@ import { createTestGoal } from 'src/shared/__tests__/helpers/create-test-goal.he
 import { describeAuthGuard } from 'src/shared/__tests__/helpers/describe-auth-guard.helper';
 import { describeUserNotExists } from 'src/shared/__tests__/helpers/describe-user-not-exists.helper';
 
-import { JWT_SERVICE, PRISMA_SERVICE } from 'src/shared/constants/tokens';
+import { type User } from 'src/modules/users/entities/user.entity';
+import { type WeeklyGoalsProgress } from 'src/shared/interfaces/goal/weekly-goals-progress.interface';
+import { type WeeklyGoalsSummary } from 'src/shared/interfaces/goal/weekly-goals-summary.interface';
 
-import { WeeklyGoalsProgress } from 'src/shared/interfaces/goals/weekly-goals-progress.interface';
-import { WeeklyGoalsSummary } from 'src/shared/interfaces/goals/weekly-goals-summary.interface';
+import { JWT_SERVICE, PRISMA_SERVICE } from 'src/shared/constants/tokens';
 
 describe('Goals Module', () => {
   let app: NestApplication;
@@ -54,8 +53,8 @@ describe('Goals Module', () => {
 
     server = app.getHttpServer() as Server;
 
-    prismaService = module.get(PRISMA_SERVICE);
-    jwtService = module.get(JWT_SERVICE);
+    prismaService = module.get<PrismaService>(PRISMA_SERVICE);
+    jwtService = module.get<JwtService>(JWT_SERVICE);
   });
 
   afterAll(async () => {
