@@ -12,6 +12,7 @@ model User {
   name              String?
   email             String?
   avatarURL         String  @map("avatar_url")
+  experiencePoints  Int     @default(0) @map("experience_points")
   externalAccountId Int     @unique @map("external_account_id")
 
   goal Goal[]
