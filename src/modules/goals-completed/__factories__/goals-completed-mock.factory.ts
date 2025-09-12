@@ -8,6 +8,7 @@ import { type GoalCompleted } from '../entities/goal-completed.entity';
 export class GoalsCompletedMockFactory {
   static repository = {
     create: vi.fn(),
+    getGoalCompletedByDateAndByGoalId: vi.fn(),
   };
 
   static create = {
@@ -26,6 +27,16 @@ export class GoalsCompletedMockFactory {
       create: {
         success: (override: Partial<GoalCompleted> = {}) =>
           GoalsCompletedMockFactory.repository.create.mockResolvedValue(
+            GoalsCompletedMockFactory.create.goalCompleted(override),
+          ),
+      },
+      getGoalCompletedByDateAndByGoalId: {
+        success: () =>
+          GoalsCompletedMockFactory.repository.getGoalCompletedByDateAndByGoalId.mockResolvedValue(
+            null,
+          ),
+        alreadyCompleted: (override: Partial<GoalCompleted> = {}) =>
+          GoalsCompletedMockFactory.repository.getGoalCompletedByDateAndByGoalId.mockResolvedValue(
             GoalsCompletedMockFactory.create.goalCompleted(override),
           ),
       },

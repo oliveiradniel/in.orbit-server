@@ -1,5 +1,9 @@
 import { Test } from '@nestjs/testing';
-import { ConflictException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  NotFoundException,
+} from '@nestjs/common';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -42,11 +46,14 @@ describe('GoalsCompletedService', () => {
   });
 
   describe('create', () => {
-    it('should be able to create a goal and return it', async () => {
+    it('should to create a goal and return it', async () => {
       const mockGoalCompleted =
         GoalsCompletedMockFactory.create.goalCompleted();
 
+      GoalsCompletedMockFactory.responses.repository.getGoalCompletedByDateAndByGoalId.success();
+
       GoalsMockFactory.responses.repository.getWeeklyFrequencyAndCompletionCount.success();
+
       GoalsCompletedMockFactory.responses.repository.create.success(
         mockGoalCompleted,
       );
@@ -62,6 +69,10 @@ describe('GoalsCompletedService', () => {
           goalId: mockGoalId,
         }),
       );
+
+      expect(
+        GoalsCompletedMockFactory.repository.getGoalCompletedByDateAndByGoalId,
+      ).toHaveBeenCalledWith(expect.objectContaining({ goalId: mockGoalId }));
       expect(GoalsCompletedMockFactory.repository.create).toHaveBeenCalledWith(
         expect.objectContaining({
           goalId: mockGoalId,
@@ -70,26 +81,56 @@ describe('GoalsCompletedService', () => {
       expect(goalCompleted).toEqual(mockGoalCompleted);
     });
 
-    it('should be able to throw an error when the goal does not exists', async () => {
+    it('should to throw NotFound error when the goal does not exists', async () => {
+      GoalsCompletedMockFactory.responses.repository.getGoalCompletedByDateAndByGoalId.success();
+
       GoalsMockFactory.responses.repository.getWeeklyFrequencyAndCompletionCount.null();
 
-      expect(
-        GoalsMockFactory.repository.getWeeklyFrequencyAndCompletionCount,
-      ).not.toHaveBeenCalled();
       await expect(
         goalsCompletedService.create({ goalId: mockGoalId }),
       ).rejects.toThrow(NotFoundException);
+
+      expect(
+        GoalsCompletedMockFactory.repository.getGoalCompletedByDateAndByGoalId,
+      ).toHaveBeenCalled();
+
+      expect(
+        GoalsMockFactory.repository.getWeeklyFrequencyAndCompletionCount,
+      ).toHaveBeenCalled();
     });
 
-    it('should be able to throw an error when the number of completions is equal to or greater than the frequency number', async () => {
-      GoalsMockFactory.responses.repository.getWeeklyFrequencyAndCompletionCount.conflict();
+    it('should to throw BadRequest error when the goal has already been completed today', async () => {
+      GoalsCompletedMockFactory.responses.repository.getGoalCompletedByDateAndByGoalId.alreadyCompleted();
+
+      await expect(
+        goalsCompletedService.create({ goalId: mockGoalId }),
+      ).rejects.toThrow(BadRequestException);
+
+      expect(
+        GoalsCompletedMockFactory.repository.getGoalCompletedByDateAndByGoalId,
+      ).toHaveBeenCalled();
 
       expect(
         GoalsMockFactory.repository.getWeeklyFrequencyAndCompletionCount,
       ).not.toHaveBeenCalled();
+    });
+
+    it('should to throw Conflict error when the number of completions is equal to or greater than the frequency number', async () => {
+      GoalsCompletedMockFactory.responses.repository.getGoalCompletedByDateAndByGoalId.success();
+
+      GoalsMockFactory.responses.repository.getWeeklyFrequencyAndCompletionCount.conflict();
+
       await expect(
         goalsCompletedService.create({ goalId: mockGoalId }),
       ).rejects.toThrow(ConflictException);
+
+      expect(
+        GoalsCompletedMockFactory.repository.getGoalCompletedByDateAndByGoalId,
+      ).toHaveBeenCalled();
+
+      expect(
+        GoalsMockFactory.repository.getWeeklyFrequencyAndCompletionCount,
+      ).toHaveBeenCalled();
     });
   });
 });
