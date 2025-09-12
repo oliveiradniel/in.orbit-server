@@ -1,6 +1,8 @@
 import { Body, Controller, Inject, Post } from '@nestjs/common';
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
+  ApiConflictResponse,
   ApiCreatedResponse,
   ApiNotFoundResponse,
   ApiUnauthorizedResponse,
@@ -13,6 +15,8 @@ import { CreateGoalCompletedResponseDTO } from './dtos/create-goal-completed-res
 
 import { UnauthorizedResponseDTO } from 'src/shared/dtos/unauthorized-response.dto';
 import { NotFoundGoalResponseDTO } from 'src/shared/dtos/not-found-goal-response.dto';
+import { ConflictResponseDTO } from './dtos/conflict-response.dto';
+import { BadRequestResponseDTO } from './dtos/bad-request-response.dto';
 
 import { type GoalCompleted } from './entities/goal-completed.entity';
 
@@ -34,9 +38,17 @@ export class GoalsCompletedController {
     description: 'Returns the newly created goal completion record',
     type: CreateGoalCompletedResponseDTO,
   })
+  @ApiBadRequestResponse({
+    description: 'This goal has already been completed today.',
+    type: BadRequestResponseDTO,
+  })
   @ApiNotFoundResponse({
     description: 'Could not find the goal.',
     type: NotFoundGoalResponseDTO,
+  })
+  @ApiConflictResponse({
+    description: 'This goal has already reached its frequency this week.',
+    type: ConflictResponseDTO,
   })
   @Post()
   create(
