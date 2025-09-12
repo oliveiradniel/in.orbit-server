@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Inject,
   Injectable,
@@ -28,6 +29,20 @@ export class GoalsCompletedService {
   ) {}
 
   async create({ goalId }: CreateGoalCompletedDTO): Promise<GoalCompleted> {
+    const today = new Date();
+
+    const hasThisGoalCompletedToday =
+      await this.goalsCompletedRepository.getGoalCompletedByDateAndByGoalId({
+        goalId,
+        date: today,
+      });
+
+    if (hasThisGoalCompletedToday) {
+      throw new BadRequestException(
+        'This goal has already been completed today.',
+      );
+    }
+
     const firstDayOfWeek = dayjs().startOf('week').toDate();
     const lastDayOfWeek = dayjs().endOf('week').toDate();
 
