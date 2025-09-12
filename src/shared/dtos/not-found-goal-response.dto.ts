@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class NotFoundGoalResponseDTO {
-  @ApiProperty({ example: 'Goal not exists!', description: 'Error message' })
+  @ApiProperty({ example: 'Goal not exists.', description: 'Error message' })
   message: string;
 
   @ApiProperty({ example: 'Not Found', description: 'Error type' })

@@ -54,11 +54,11 @@ export class GoalsCompletedService {
       });
 
     if (!goal) {
-      throw new NotFoundException('Goal not exists!');
+      throw new NotFoundException('Goal not exists.');
     }
 
     if (goal.countCompletion >= goal.desiredWeeklyFrequency) {
-      throw new ConflictException('Goal already completed this week');
+      throw new ConflictException('Goal already completed this week.');
     }
 
     return this.goalsCompletedRepository.create({ goalId });

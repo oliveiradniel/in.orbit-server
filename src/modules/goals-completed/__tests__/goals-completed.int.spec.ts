@@ -11,6 +11,8 @@ import { GoalsCompletedSpecModule } from './goals-completed.spec.module';
 
 import { PrismaService } from 'src/shared/database/prisma.service';
 
+import dayjs from 'dayjs';
+
 import { createTestUser } from 'src/shared/__tests__/helpers/create-test-user.helper';
 import { createTestGoal } from 'src/shared/__tests__/helpers/create-test-goal.helper';
 import { createTestGoalCompleted } from 'src/shared/__tests__/helpers/create-test-goal-completed.helper';
@@ -65,14 +67,12 @@ describe('Goals Completed Module', () => {
         const goal = await createTestGoal({
           prismaService,
           userId: activeUser.id!,
+          override: {
+            desiredWeeklyFrequency: 2,
+          },
         });
 
         const goalId = goal.id!;
-
-        await createTestGoalCompleted({
-          prismaService,
-          goalId,
-        });
 
         const response = await request(server)
           .post('/goals-completed')
@@ -85,26 +85,9 @@ describe('Goals Completed Module', () => {
         });
       });
 
-      it('should to throw NotFound error when goal not exists', async () => {
-        const response = await request(server)
-          .post('/goals-completed')
-          .send({ goalId: GoalsCompletedMockFactory.create.id() })
-          .set('Authorization', `Bearer ${accessToken}`);
-
-        expect(response.statusCode).toBe(404);
-        expect(response.body).toEqual({
-          message: 'Goal not exists!',
-          error: 'Not Found',
-          statusCode: 404,
-        });
-      });
-
-      it('should to throw Conflit error when goal already total completed this week', async () => {
+      it('should to throw BadRequest error when the goal has already been completed today', async () => {
         const goal = await createTestGoal({
           prismaService,
-          override: {
-            desiredWeeklyFrequency: 1,
-          },
           userId: activeUser.id!,
         });
 
@@ -120,9 +103,56 @@ describe('Goals Completed Module', () => {
           .send({ goalId })
           .set('Authorization', `Bearer ${accessToken}`);
 
+        expect(response.statusCode).toBe(400);
+        expect(response.body).toEqual({
+          message: 'This goal has already been completed today.',
+          error: 'Bad Request',
+          statusCode: 400,
+        });
+      });
+
+      it('should to throw NotFound error when goal not exists', async () => {
+        const response = await request(server)
+          .post('/goals-completed')
+          .send({ goalId: GoalsCompletedMockFactory.create.id() })
+          .set('Authorization', `Bearer ${accessToken}`);
+
+        expect(response.statusCode).toBe(404);
+        expect(response.body).toEqual({
+          message: 'Goal not exists.',
+          error: 'Not Found',
+          statusCode: 404,
+        });
+      });
+
+      it('should to throw Conflit error when goal already total completed this week', async () => {
+        const yesterday = dayjs().subtract(1, 'day').toDate();
+
+        const goal = await createTestGoal({
+          prismaService,
+          override: {
+            desiredWeeklyFrequency: 1,
+            createdAt: yesterday,
+          },
+          userId: activeUser.id!,
+        });
+
+        const goalId = goal.id!;
+
+        await createTestGoalCompleted({
+          prismaService,
+          goalId,
+          createdAt: yesterday,
+        });
+
+        const response = await request(server)
+          .post('/goals-completed')
+          .send({ goalId })
+          .set('Authorization', `Bearer ${accessToken}`);
+
         expect(response.statusCode).toBe(409);
         expect(response.body).toEqual({
-          message: 'Goal already completed this week',
+          message: 'Goal already completed this week.',
           error: 'Conflict',
           statusCode: 409,
         });
