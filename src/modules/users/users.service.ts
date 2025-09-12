@@ -1,7 +1,7 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 
-import { type UserResponse } from './interfaces/user-response.interface';
 import { type UsersRepository } from 'src/shared/contracts/users-repository.contract';
+import { type UserWithoutExternalAccountId } from 'src/shared/database/interfaces/user/user-without-external-account-id.interface';
 
 import { USERS_REPOSITORY } from 'src/shared/constants/tokens';
 
@@ -11,7 +11,7 @@ export class UsersService {
     @Inject(USERS_REPOSITORY) private readonly usersRepository: UsersRepository,
   ) {}
 
-  async findUserById(userId: string): Promise<UserResponse> {
+  async findUserById(userId: string): Promise<UserWithoutExternalAccountId> {
     const user = await this.usersRepository.getUserById(userId);
 
     if (!user) {

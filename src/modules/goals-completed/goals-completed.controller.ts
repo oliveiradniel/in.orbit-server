@@ -8,6 +8,8 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 
+import { ActiveUserId } from 'src/shared/decorators/active-user-id.decorator';
+
 import { GoalsCompletedService } from './goals-completed.service';
 
 import { CreateGoalCompletedDTO } from './dtos/create-goal-completed.dto';
@@ -52,10 +54,11 @@ export class GoalsCompletedController {
   })
   @Post()
   create(
+    @ActiveUserId() userId: string,
     @Body() createGoalCompletedDTO: CreateGoalCompletedDTO,
   ): Promise<GoalCompleted> {
     const { goalId } = createGoalCompletedDTO;
 
-    return this.goalsCompletedService.create({ goalId });
+    return this.goalsCompletedService.create({ userId, goalId });
   }
 }

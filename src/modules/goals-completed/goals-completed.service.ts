@@ -11,9 +11,8 @@ import dayjs from 'dayjs';
 import { GoalsCompletedRepository } from './contracts/goals-completed.repository.contract';
 import { GoalsRepository } from 'src/shared/contracts/goals.repository.contract';
 
-import { CreateGoalCompletedDTO } from './dtos/create-goal-completed.dto';
-
 import { type GoalCompleted } from './entities/goal-completed.entity';
+import { type CreateGoalCompletedInput } from './interfaces/create-goal-completed-input.interface';
 
 import {
   GOALS_COMPLETED_REPOSITORY,
@@ -28,7 +27,10 @@ export class GoalsCompletedService {
     @Inject(GOALS_REPOSITORY) private readonly goalsRepository: GoalsRepository,
   ) {}
 
-  async create({ goalId }: CreateGoalCompletedDTO): Promise<GoalCompleted> {
+  async create({
+    userId,
+    goalId,
+  }: CreateGoalCompletedInput): Promise<GoalCompleted> {
     const today = new Date();
 
     const hasThisGoalCompletedToday =
@@ -57,10 +59,20 @@ export class GoalsCompletedService {
       throw new NotFoundException('Goal not exists.');
     }
 
-    if (goal.countCompletion >= goal.desiredWeeklyFrequency) {
+    const { countCompletion, desiredWeeklyFrequency } = goal;
+
+    if (countCompletion >= desiredWeeklyFrequency) {
       throw new ConflictException('Goal already completed this week.');
     }
 
-    return this.goalsCompletedRepository.create({ goalId });
+    const isLastCompletionFromGoal =
+      countCompletion + 1 === desiredWeeklyFrequency;
+    const earnedExperiencePoints = isLastCompletionFromGoal ? 7 : 5;
+
+    return this.goalsCompletedRepository.create({
+      userId,
+      goalId,
+      experiencePoints: earnedExperiencePoints,
+    });
   }
 }

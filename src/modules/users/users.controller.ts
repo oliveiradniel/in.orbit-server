@@ -12,7 +12,7 @@ import { ActiveUserId } from 'src/shared/decorators/active-user-id.decorator';
 import { FindUserByIdResponseDTO } from './dtos/find-user-by-id-response.dto';
 import { UnauthorizedResponseDTO } from 'src/shared/dtos/unauthorized-response.dto';
 
-import { type UserResponse } from './interfaces/user-response.interface';
+import { type UserWithoutExternalAccountId } from 'src/shared/database/interfaces/user/user-without-external-account-id.interface';
 
 import { USERS_SERVICE } from 'src/shared/constants/tokens';
 
@@ -32,7 +32,9 @@ export class UsersController {
     type: FindUserByIdResponseDTO,
   })
   @Get()
-  findUserById(@ActiveUserId() userId: string): Promise<UserResponse> {
+  findUserById(
+    @ActiveUserId() userId: string,
+  ): Promise<UserWithoutExternalAccountId> {
     return this.usersService.findUserById(userId);
   }
 }

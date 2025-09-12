@@ -5,6 +5,7 @@ import { PrismaService } from '../prisma.service';
 import { type GoalCompleted } from '@prisma/client';
 import { type GoalsCompletedRepository } from 'src/modules/goals-completed/contracts/goals-completed.repository.contract';
 import { type GoalCompletedDateFilter } from '../interfaces/goal-completed/goal-completed-date-filter.interface';
+import { type CreateGoalCompleted } from '../interfaces/goal-completed/create-goal-completed.interface';
 
 import { PRISMA_SERVICE } from 'src/shared/constants/tokens';
 
@@ -37,11 +38,33 @@ export class PrismaGoalsCompletedRepository
     });
   }
 
-  create({ goalId }: { goalId: string }): Promise<GoalCompleted> {
-    return this.prismaService.goalCompleted.create({
+  async create({
+    userId,
+    goalId,
+    experiencePoints,
+  }: CreateGoalCompleted): Promise<GoalCompleted> {
+    const updateUserExperiencePoints = this.prismaService.user.update({
+      where: {
+        id: userId,
+      },
+      data: {
+        experiencePoints: {
+          increment: experiencePoints,
+        },
+      },
+    });
+
+    const createGoalCompleted = this.prismaService.goalCompleted.create({
       data: {
         goalId,
       },
     });
+
+    const [goalCompleted] = await this.prismaService.$transaction([
+      createGoalCompleted,
+      updateUserExperiencePoints,
+    ]);
+
+    return goalCompleted;
   }
 }

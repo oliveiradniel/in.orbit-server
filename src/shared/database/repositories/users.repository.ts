@@ -25,6 +25,7 @@ export class PrismaUsersRepository implements UsersRepository {
         name: true,
         email: true,
         avatarURL: true,
+        experiencePoints: true,
       },
     });
   }
@@ -40,9 +41,12 @@ export class PrismaUsersRepository implements UsersRepository {
     });
   }
 
-  create(createUserDTO: Prisma.UserCreateInput): Promise<User> {
-    const { name, email, avatarURL, externalAccountId } = createUserDTO;
-
+  create({
+    name,
+    email,
+    avatarURL,
+    externalAccountId,
+  }: Prisma.UserCreateInput): Promise<User> {
     return this.prismaService.user.create({
       data: {
         name,
