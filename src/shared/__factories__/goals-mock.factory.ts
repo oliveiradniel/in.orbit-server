@@ -129,11 +129,12 @@ export class GoalsMockFactory {
           ),
       },
       getWeeklyFrequencyAndCompletionCount: {
-        success: () =>
+        success: (override: Partial<GoalProgressMetric> = {}) =>
           GoalsMockFactory.repository.getWeeklyFrequencyAndCompletionCount.mockResolvedValue(
             GoalsMockFactory.create.goalProgressMetric({
               desiredWeeklyFrequency: 7,
               countCompletion: 3,
+              ...override,
             }),
           ),
         null: () =>

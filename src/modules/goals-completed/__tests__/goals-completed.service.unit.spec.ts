@@ -11,6 +11,7 @@ import { GoalsCompletedService } from '../goals-completed.service';
 
 import { GoalsCompletedMockFactory } from '../__factories__/goals-completed-mock.factory';
 import { GoalsMockFactory } from 'src/shared/__factories__/goals-mock.factory';
+import { UsersMockFactory } from 'src/shared/__factories__/users-mock.factory';
 
 import {
   GOALS_COMPLETED_REPOSITORY,
@@ -20,10 +21,12 @@ import {
 describe('GoalsCompletedService', () => {
   let goalsCompletedService: GoalsCompletedService;
 
-  let mockGoalId: ReturnType<typeof GoalsMockFactory.create.id>;
+  let mockUserId: ReturnType<typeof UsersMockFactory.create.id>;
+  let mockGoal: ReturnType<typeof GoalsMockFactory.create.goal>;
 
   beforeEach(async () => {
-    mockGoalId = GoalsMockFactory.create.id();
+    mockUserId = UsersMockFactory.create.id();
+    mockGoal = GoalsMockFactory.create.goal({ userId: mockUserId });
 
     const module = await Test.createTestingModule({
       providers: [
@@ -59,26 +62,109 @@ describe('GoalsCompletedService', () => {
       );
 
       const goalCompleted = await goalsCompletedService.create({
-        goalId: mockGoalId,
+        userId: mockGoal.userId,
+        goalId: mockGoal.id!,
       });
 
       expect(
         GoalsMockFactory.repository.getWeeklyFrequencyAndCompletionCount,
       ).toHaveBeenCalledWith(
         expect.objectContaining({
-          goalId: mockGoalId,
+          goalId: mockGoal.id!,
         }),
       );
 
       expect(
         GoalsCompletedMockFactory.repository.getGoalCompletedByDateAndByGoalId,
-      ).toHaveBeenCalledWith(expect.objectContaining({ goalId: mockGoalId }));
+      ).toHaveBeenCalledWith(expect.objectContaining({ goalId: mockGoal.id! }));
       expect(GoalsCompletedMockFactory.repository.create).toHaveBeenCalledWith(
         expect.objectContaining({
-          goalId: mockGoalId,
+          userId: mockGoal.userId,
+          goalId: mockGoal.id!,
+          experiencePoints: 5,
         }),
       );
       expect(goalCompleted).toEqual(mockGoalCompleted);
+    });
+
+    it('should add 5 XP when there is still 1 or more completions left in the week', async () => {
+      const desiredWeeklyFrequency = 6;
+      const countCompletion = 4;
+
+      const mockGoal2 = GoalsMockFactory.create.goal({
+        userId: mockUserId,
+        desiredWeeklyFrequency,
+      });
+
+      const mockGoalCompleted = GoalsCompletedMockFactory.create.goalCompleted({
+        goalId: mockGoal2.id!,
+      });
+
+      GoalsCompletedMockFactory.responses.repository.getGoalCompletedByDateAndByGoalId.success();
+
+      GoalsMockFactory.responses.repository.getWeeklyFrequencyAndCompletionCount.success(
+        {
+          desiredWeeklyFrequency,
+          countCompletion,
+        },
+      );
+
+      GoalsCompletedMockFactory.responses.repository.create.success(
+        mockGoalCompleted,
+      );
+
+      await goalsCompletedService.create({
+        userId: mockGoal2.userId,
+        goalId: mockGoal2.id!,
+      });
+
+      expect(GoalsCompletedMockFactory.repository.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: mockGoal2.userId,
+          goalId: mockGoal2.id!,
+          experiencePoints: 5,
+        }),
+      );
+    });
+
+    it('should add 7 XP when this completion reaches the weekly frequency', async () => {
+      const desiredWeeklyFrequency = 6;
+      const countCompletion = 5;
+
+      const mockGoal2 = GoalsMockFactory.create.goal({
+        userId: mockUserId,
+        desiredWeeklyFrequency,
+      });
+
+      const mockGoalCompleted = GoalsCompletedMockFactory.create.goalCompleted({
+        goalId: mockGoal2.id!,
+      });
+
+      GoalsCompletedMockFactory.responses.repository.getGoalCompletedByDateAndByGoalId.success();
+
+      GoalsMockFactory.responses.repository.getWeeklyFrequencyAndCompletionCount.success(
+        {
+          desiredWeeklyFrequency,
+          countCompletion,
+        },
+      );
+
+      GoalsCompletedMockFactory.responses.repository.create.success(
+        mockGoalCompleted,
+      );
+
+      await goalsCompletedService.create({
+        userId: mockGoal2.userId,
+        goalId: mockGoal2.id!,
+      });
+
+      expect(GoalsCompletedMockFactory.repository.create).toHaveBeenCalledWith(
+        expect.objectContaining({
+          userId: mockGoal2.userId,
+          goalId: mockGoal2.id!,
+          experiencePoints: 7,
+        }),
+      );
     });
 
     it('should to throw NotFound error when the goal does not exists', async () => {
@@ -87,7 +173,10 @@ describe('GoalsCompletedService', () => {
       GoalsMockFactory.responses.repository.getWeeklyFrequencyAndCompletionCount.null();
 
       await expect(
-        goalsCompletedService.create({ goalId: mockGoalId }),
+        goalsCompletedService.create({
+          userId: mockGoal.userId,
+          goalId: mockGoal.id!,
+        }),
       ).rejects.toThrow(NotFoundException);
 
       expect(
@@ -103,7 +192,10 @@ describe('GoalsCompletedService', () => {
       GoalsCompletedMockFactory.responses.repository.getGoalCompletedByDateAndByGoalId.alreadyCompleted();
 
       await expect(
-        goalsCompletedService.create({ goalId: mockGoalId }),
+        goalsCompletedService.create({
+          userId: mockGoal.userId,
+          goalId: mockGoal.id!,
+        }),
       ).rejects.toThrow(BadRequestException);
 
       expect(
@@ -121,7 +213,10 @@ describe('GoalsCompletedService', () => {
       GoalsMockFactory.responses.repository.getWeeklyFrequencyAndCompletionCount.conflict();
 
       await expect(
-        goalsCompletedService.create({ goalId: mockGoalId }),
+        goalsCompletedService.create({
+          userId: mockGoal.userId,
+          goalId: mockGoal.id!,
+        }),
       ).rejects.toThrow(ConflictException);
 
       expect(
