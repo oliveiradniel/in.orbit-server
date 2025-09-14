@@ -4,4 +4,5 @@ export interface User {
   email?: string | null;
   avatarURL: string;
   externalAccountId: number;
+  experiencePoints: number;
 }

@@ -38,7 +38,7 @@ import {
     {
       provide: APP_GUARD,
       useFactory: (jwt: JwtService, config: ConfigService) => {
-        new AuthGuard(config, jwt, new Reflector());
+        return new AuthGuard(config, jwt, new Reflector());
       },
       inject: [JwtService, ConfigService],
     },

@@ -2,7 +2,15 @@ import { Test } from '@nestjs/testing';
 import { type NestApplication } from '@nestjs/core';
 import { JwtService } from '@nestjs/jwt';
 
-import { afterAll, beforeAll, beforeEach, describe, expect, it } from 'vitest';
+import {
+  afterAll,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest';
 import request from 'supertest';
 
 import { Server } from 'http';
@@ -45,6 +53,9 @@ describe('Goals Completed Module', () => {
 
     prismaService = module.get<PrismaService>(PRISMA_SERVICE);
     jwtService = module.get<JwtService>(JWT_SERVICE);
+
+    vi.useFakeTimers();
+    vi.setSystemTime(new Date('2025-09-10T10:00:00Z'));
   });
 
   beforeEach(async () => {
@@ -58,6 +69,7 @@ describe('Goals Completed Module', () => {
   });
 
   afterAll(async () => {
+    vi.useRealTimers();
     await app.close();
   });
 
@@ -85,9 +97,73 @@ describe('Goals Completed Module', () => {
         });
       });
 
+      it('should add 5 XP when there is still 1 or more completions left in the week', async () => {
+        const userId = activeUser.id!;
+
+        const goal1 = await createTestGoal({
+          prismaService,
+          userId,
+          override: {
+            desiredWeeklyFrequency: 2,
+          },
+        });
+
+        const goalId = goal1.id!;
+
+        const initialXP = activeUser.experiencePoints;
+
+        const response = await request(server)
+          .post('/goals-completed')
+          .send({ goalId: goalId })
+          .set('Authorization', `Bearer ${accessToken}`);
+
+        expect(response.statusCode).toBe(201);
+
+        const updatedUser = await prismaService.user.findUnique({
+          where: { id: userId },
+        });
+
+        expect(updatedUser?.experiencePoints).toBe(initialXP + 5);
+      });
+
+      it('should add 7 XP when this completion reaches the weekly frequency', async () => {
+        const userId = activeUser.id!;
+
+        const goal1 = await createTestGoal({
+          prismaService,
+          userId,
+          override: {
+            desiredWeeklyFrequency: 1,
+          },
+        });
+
+        const goalId = goal1.id!;
+
+        const initialXP = activeUser.experiencePoints;
+
+        const response = await request(server)
+          .post('/goals-completed')
+          .send({ goalId: goalId })
+          .set('Authorization', `Bearer ${accessToken}`);
+
+        expect(response.statusCode).toBe(201);
+
+        const updatedUser = await prismaService.user.findUnique({
+          where: { id: userId },
+        });
+
+        expect(updatedUser?.experiencePoints).toBe(initialXP + 7);
+      });
+
       it('should to throw BadRequest error when the goal has already been completed today', async () => {
+        const yesterday = dayjs().subtract(1, 'day').toDate();
+
         const goal = await createTestGoal({
           prismaService,
+          override: {
+            desiredWeeklyFrequency: 2,
+            createdAt: yesterday,
+          },
           userId: activeUser.id!,
         });
 
@@ -96,6 +172,13 @@ describe('Goals Completed Module', () => {
         await createTestGoalCompleted({
           prismaService,
           goalId,
+          createdAt: yesterday,
+        });
+
+        await createTestGoalCompleted({
+          prismaService,
+          goalId,
+          createdAt: dayjs().toDate(),
         });
 
         const response = await request(server)
