@@ -3,6 +3,7 @@ import { describe, expect, test } from 'vitest';
 import {
   calculateExperienceToLevel,
   calculateLevelFrom,
+  calculateTotalExperienceForLevel,
 } from 'src/shared/utils/gamification.util';
 
 describe('Gamification functions', () => {
@@ -14,6 +15,18 @@ describe('Gamification functions', () => {
     expect(exp1).toEqual(0);
     expect(exp2).toEqual(26);
     expect(exp3).toEqual(33);
+  });
+
+  test('total experience to level', () => {
+    const lev1 = calculateTotalExperienceForLevel(1);
+    const lev2 = calculateTotalExperienceForLevel(2);
+    const lev3 = calculateTotalExperienceForLevel(3);
+    const lev4 = calculateTotalExperienceForLevel(4);
+
+    expect(lev1).toEqual(0);
+    expect(lev2).toEqual(26);
+    expect(lev3).toEqual(26 + 33);
+    expect(lev4).toEqual(26 + 33 + 43);
   });
 
   test('level from experience', () => {
