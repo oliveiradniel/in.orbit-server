@@ -1,5 +1,5 @@
 export interface GamificationInfo {
-  experiencePoints: number;
   level: number;
+  experiencePoints: number;
   experienceToNextLevel: number;
 }

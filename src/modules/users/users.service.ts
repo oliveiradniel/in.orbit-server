@@ -40,8 +40,8 @@ export class UsersService {
     const experienceToNextLevel = calculateTotalExperienceForLevel(level + 1);
 
     return {
-      experiencePoints,
       level,
+      experiencePoints,
       experienceToNextLevel,
     };
   }

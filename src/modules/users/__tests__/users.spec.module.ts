@@ -19,9 +19,10 @@ import {
   USERS_REPOSITORY,
   USERS_SERVICE,
 } from 'src/shared/constants/tokens';
+import { GoalsCompletedSpecModule } from 'src/modules/goals-completed/__tests__/goals-completed.spec.module';
 
 @Module({
-  imports: [AuthModule],
+  imports: [AuthModule, GoalsCompletedSpecModule],
   controllers: [UsersController],
   providers: [
     ConfigService,

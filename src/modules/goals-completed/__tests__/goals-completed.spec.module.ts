@@ -43,5 +43,11 @@ import {
       inject: [JwtService, ConfigService],
     },
   ],
+  exports: [
+    GOALS_COMPLETED_SERVICE,
+    GOALS_COMPLETED_REPOSITORY,
+    GOALS_REPOSITORY,
+    PRISMA_SERVICE,
+  ],
 })
 export class GoalsCompletedSpecModule {}
