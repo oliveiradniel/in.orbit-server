@@ -1,6 +1,7 @@
 import { NotFoundException } from '@nestjs/common';
 
 import { type User } from 'src/modules/users/entities/user.entity';
+import { type UserExperience } from '../database/interfaces/user/user-experience.interface';
 
 import { vi } from 'vitest';
 
@@ -10,6 +11,7 @@ export class UsersMockFactory {
   static repository = {
     getUserById: vi.fn(),
     getUserByExternalAccountId: vi.fn(),
+    getUserExperience: vi.fn(),
     create: vi.fn(),
   };
 
@@ -20,6 +22,14 @@ export class UsersMockFactory {
   static create = {
     id: (id = FakerFactory.data.uuid()): string => id,
 
+    experiencePoints: (XP = 0) => XP,
+
+    userWithExperiencePoints: (XP = 0): UserExperience => {
+      return {
+        experiencePoints: UsersMockFactory.create.experiencePoints(XP),
+      };
+    },
+
     user: (override: Partial<User> = {}): User => {
       return {
         id: UsersMockFactory.create.id(),
@@ -27,7 +37,7 @@ export class UsersMockFactory {
         email: FakerFactory.user.email(),
         avatarURL: FakerFactory.github.avatarURL(),
         externalAccountId: FakerFactory.github.id(),
-        experiencePoints: 0,
+        experiencePoints: UsersMockFactory.create.experiencePoints(),
         ...override,
       };
     },
@@ -54,6 +64,15 @@ export class UsersMockFactory {
             null,
           );
         },
+      },
+
+      getUserExperience: {
+        sucess: (XP = 0) =>
+          UsersMockFactory.repository.getUserExperience.mockResolvedValue(
+            UsersMockFactory.create.userWithExperiencePoints(XP),
+          ),
+        null: () =>
+          UsersMockFactory.repository.getUserExperience.mockResolvedValue(null),
       },
 
       create: {
