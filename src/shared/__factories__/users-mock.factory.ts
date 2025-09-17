@@ -27,6 +27,7 @@ export class UsersMockFactory {
         email: FakerFactory.user.email(),
         avatarURL: FakerFactory.github.avatarURL(),
         externalAccountId: FakerFactory.github.id(),
+        experiencePoints: 0,
         ...override,
       };
     },

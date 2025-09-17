@@ -13,6 +13,7 @@ import { FindUserByIdResponseDTO } from './dtos/find-user-by-id-response.dto';
 import { UnauthorizedResponseDTO } from 'src/shared/dtos/unauthorized-response.dto';
 
 import { type UserWithoutExternalAccountId } from 'src/shared/database/interfaces/user/user-without-external-account-id.interface';
+import { type GamificationInfo } from './interfaces/gamification-info.interface';
 
 import { USERS_SERVICE } from 'src/shared/constants/tokens';
 
@@ -36,5 +37,12 @@ export class UsersController {
     @ActiveUserId() userId: string,
   ): Promise<UserWithoutExternalAccountId> {
     return this.usersService.findUserById(userId);
+  }
+
+  @Get('/gamification')
+  findUserLevelAndExperience(
+    @ActiveUserId() userId: string,
+  ): Promise<GamificationInfo> {
+    return this.usersService.findUserLevelAndExperience(userId);
   }
 }
