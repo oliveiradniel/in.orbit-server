@@ -1,0 +1,57 @@
+name: inOrbit CI
+
+on:
+  push:
+    branches:
+      - 'main'
+
+jobs:
+  ci:
+    name: Run CI
+    runs-on: ubuntu-latest
+
+    env:
+      POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+      POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+      DATABASE_URL: postgresql://${{ secrets.POSTGRES_USER }}:${{ secrets.POSTGRES_PASSWORD }}@localhost:5432/inorbit_test?schema=public
+
+    services:
+      postgres:
+        image: postgres:17.5
+        ports:
+          - '5432:5432'
+        env:
+          POSTGRES_USER: ${{ secrets.POSTGRES_USER }}
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
+          POSTGRES_DB: inorbit_test
+
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Use Node.js 20.x
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+          cache: 'yarn'
+
+      - name: Install dependencies (frozen lockfile)
+        run: yarn --frozen-lockfile
+
+      - name: Linting
+        run: yarn lint
+
+      - name: Type checking
+        run: yarn typecheck
+
+      - name: Run unitary tests
+        run: yarn test:unit
+
+      - name: Run integration tests
+        run: yarn test:int
