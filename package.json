@@ -21,7 +21,8 @@
     "test:int": "vitest run --config vitest.int.config.ts",
     "test:watch": "vitest",
     "pretest": "yarn db:migrate:test",
-    "test": "vitest run"
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
