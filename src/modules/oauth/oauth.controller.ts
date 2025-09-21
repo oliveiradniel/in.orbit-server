@@ -13,14 +13,14 @@ import { AuthenticateGitHubDTO } from './dtos/authenticate-github.dto';
 
 import { type GitHubAuthenticateResponse } from './interfaces/github-authenticate-response.interface';
 
-import { OAUTH_SERVICE } from 'src/shared/constants/tokens';
+import { CONFIG_SERVICE, OAUTH_SERVICE } from 'src/shared/constants/tokens';
 
 @IsPublic()
 @Controller('oauth')
 export class OAuthController {
   constructor(
     @Inject(OAUTH_SERVICE) private readonly oauthService: OAuthService,
-    private readonly configService: ConfigService,
+    @Inject(CONFIG_SERVICE) private readonly configService: ConfigService,
   ) {}
 
   @ApiResponse({
@@ -65,6 +65,10 @@ export class OAuthController {
     const { accessToken } = await this.oauthService.githubLogin(code);
 
     const { NODE_ENV } = getConfig(this.configService);
+
+    if (NODE_ENV === 'test') {
+      return { accessToken: accessToken };
+    }
 
     response.cookie('token', accessToken, {
       httpOnly: true,

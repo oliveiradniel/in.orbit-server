@@ -13,3 +13,4 @@ export const GITHUB_INTEGRATION = Symbol('GITHUB_INTEGRATION');
 
 export const JWT_SERVICE = Symbol('JWT_SERVICE');
 export const PRISMA_SERVICE = Symbol('PRISMA_SERVICE');
+export const CONFIG_SERVICE = Symbol('CONFIG_SERVICE');

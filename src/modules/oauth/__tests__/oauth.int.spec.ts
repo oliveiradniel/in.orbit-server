@@ -20,6 +20,7 @@ import { PrismaService } from 'src/shared/database/prisma.service';
 import { type UsersRepository } from 'src/shared/contracts/users-repository.contract';
 
 import {
+  CONFIG_SERVICE,
   JWT_SERVICE,
   PRISMA_SERVICE,
   USERS_REPOSITORY,
@@ -48,7 +49,7 @@ describe('OAuth Module', () => {
 
     prismaService = module.get<PrismaService>(PRISMA_SERVICE);
     jwtService = module.get<JwtService>(JWT_SERVICE);
-    configService = module.get<ConfigService>(ConfigService);
+    configService = module.get<ConfigService>(CONFIG_SERVICE);
 
     usersRepository = module.get(USERS_REPOSITORY);
   });

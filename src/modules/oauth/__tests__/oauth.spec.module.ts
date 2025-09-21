@@ -14,6 +14,7 @@ import { OAuthMockFactory } from '../__factories__/oauth-mock.factory';
 import { getConfig } from 'src/shared/config/config.helper';
 
 import {
+  CONFIG_SERVICE,
   GITHUB_INTEGRATION,
   JWT_SERVICE,
   OAUTH_SERVICE,
@@ -24,7 +25,7 @@ import {
 @Module({
   controllers: [OAuthController],
   providers: [
-    ConfigService,
+    { provide: CONFIG_SERVICE, useClass: ConfigService },
     { provide: OAUTH_SERVICE, useClass: OAuthService },
     {
       provide: GITHUB_INTEGRATION,
@@ -39,7 +40,7 @@ import {
 
         return new JwtService({ privateKey: JWT_SECRET });
       },
-      inject: [ConfigService],
+      inject: [CONFIG_SERVICE],
     },
   ],
 })

@@ -1,3 +1,4 @@
 export interface GitHubAuthenticateResponse {
-  message: string;
+  message?: string;
+  accessToken?: string;
 }
