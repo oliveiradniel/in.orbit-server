@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 
 import { type UsersRepository } from 'src/shared/contracts/users-repository.contract';
@@ -28,6 +28,10 @@ export class OAuthService {
       await this.githubIntegration.getUserFromGitHubAccessToken(
         githubAccessToken,
       );
+
+    if (!githubUser?.id) {
+      throw new BadRequestException('GitHub user ID not found');
+    }
 
     const user = await this.usersRepository.getUserByExternalAccountId(
       githubUser.id,
