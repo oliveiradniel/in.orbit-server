@@ -153,6 +153,28 @@ describe('OAuth Module', () => {
           });
         });
 
+        it('should to throw BadRequest error when github user ID not found', async () => {
+          OAuthMockFactory.github.responses.integration.getUserFromGitHubAccessToken.failure();
+
+          const response = await request(server)
+            .post('/oauth/github')
+            .send({ code: mockCode });
+
+          expect(
+            OAuthMockFactory.github.integration.getAccessTokenFromCode,
+          ).toHaveBeenCalled();
+          expect(
+            OAuthMockFactory.github.integration.getUserFromGitHubAccessToken,
+          ).toHaveBeenCalled();
+
+          expect(response.statusCode).toBe(400);
+          expect(response.body).toEqual({
+            message: 'GitHub user ID not found.',
+            error: 'Bad Request',
+            statusCode: 400,
+          });
+        });
+
         it('should to throw BadRequest error when request failure', async () => {
           OAuthMockFactory.github.responses.integration.getAccessTokenFromCode.failure();
 
