@@ -1,13 +1,17 @@
-import { Body, Controller, Inject, Post } from '@nestjs/common';
+import { Body, Controller, Inject, Post, Res } from '@nestjs/common';
 import { ApiResponse } from '@nestjs/swagger';
+import { ConfigService } from '@nestjs/config';
+
+import { Response } from 'express';
 
 import { OAuthService } from './oauth.service';
 
 import { IsPublic } from 'src/shared/decorators/is-public.decorator';
+import { getConfig } from 'src/shared/config/config.helper';
 
 import { AuthenticateGitHubDTO } from './dtos/authenticate-github.dto';
 
-import { type AccessTokenResponse } from 'src/shared/interfaces/access-token.interface';
+import { type GitHubAuthenticateResponse } from './interfaces/github-authenticate-response.interface';
 
 import { OAUTH_SERVICE } from 'src/shared/constants/tokens';
 
@@ -16,6 +20,7 @@ import { OAUTH_SERVICE } from 'src/shared/constants/tokens';
 export class OAuthController {
   constructor(
     @Inject(OAUTH_SERVICE) private readonly oauthService: OAuthService,
+    private readonly configService: ConfigService,
   ) {}
 
   @ApiResponse({
@@ -51,11 +56,23 @@ export class OAuthController {
     },
   })
   @Post('github')
-  githubAuthenticate(
+  async githubAuthenticate(
     @Body() authenticateGitHubDTO: AuthenticateGitHubDTO,
-  ): Promise<AccessTokenResponse> {
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<GitHubAuthenticateResponse> {
     const { code } = authenticateGitHubDTO;
 
-    return this.oauthService.githubLogin(code);
+    const { accessToken } = await this.oauthService.githubLogin(code);
+
+    const { NODE_ENV } = getConfig(this.configService);
+
+    response.cookie('token', accessToken, {
+      httpOnly: true,
+      secure: NODE_ENV === 'prod',
+      sameSite: 'strict',
+      maxAge: 2 * 24 * 60 * 60 * 1000, // 2 days
+    });
+
+    return { message: 'Login successful' };
   }
 }
