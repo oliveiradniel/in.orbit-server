@@ -1,3 +1,5 @@
+export type AmbientMode = 'dev' | 'prod' | 'test';
+
 export interface AppConfig {
   FRONTEND_ORIGIN: string;
   POSTGRES_USER: string;
@@ -7,4 +9,5 @@ export interface AppConfig {
   GITHUB_CLIENT_ID: string;
   GITHUB_CLIENT_SECRET: string;
   JWT_SECRET: string;
+  NODE_ENV: AmbientMode;
 }

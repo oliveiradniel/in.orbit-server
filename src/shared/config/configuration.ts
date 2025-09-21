@@ -1,6 +1,8 @@
 import { plainToInstance } from 'class-transformer';
 import { IsNotEmpty, IsString, validateSync } from 'class-validator';
 
+import { AmbientMode } from './config.interface';
+
 class EnvironmentVariables {
   @IsString()
   @IsNotEmpty()
@@ -33,6 +35,10 @@ class EnvironmentVariables {
   @IsString()
   @IsNotEmpty()
   JWT_SECRET: string;
+
+  @IsString()
+  @IsNotEmpty()
+  NODE_ENV: AmbientMode;
 }
 
 export function validate(

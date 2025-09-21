@@ -1,6 +1,6 @@
 import { ConfigService } from '@nestjs/config';
 
-import { type AppConfig } from './config.interface';
+import { AmbientMode, type AppConfig } from './config.interface';
 
 export function getConfig(configService: ConfigService): AppConfig {
   return {
@@ -12,5 +12,6 @@ export function getConfig(configService: ConfigService): AppConfig {
     GITHUB_CLIENT_ID: configService.get<string>('GITHUB_CLIENT_ID')!,
     GITHUB_CLIENT_SECRET: configService.get<string>('GITHUB_CLIENT_SECRET')!,
     JWT_SECRET: configService.get<string>('JWT_SECRET')!,
+    NODE_ENV: configService.get<AmbientMode>('NODE_ENV')!,
   };
 }
