@@ -156,6 +156,15 @@ describe('OAuthService', () => {
     });
 
     describe('error', () => {
+      it('should throw BadRequest error when github ID not found', async () => {
+        OAuthMockFactory.github.responses.integration.getUserFromGitHubAccessToken.failure();
+
+        const result = oauthService.githubLogin(mockCode);
+
+        await expect(result).rejects.toThrow(BadRequestException);
+        await expect(result).rejects.toThrow('GitHub user ID not found.');
+      });
+
       it('should throw BadRequest error when request fails', async () => {
         OAuthMockFactory.github.responses.integration.getAccessTokenFromCode.failure();
 

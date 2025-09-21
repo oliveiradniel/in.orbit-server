@@ -65,6 +65,12 @@ export class OAuthMockFactory {
               OAuthMockFactory.github.create.user(override),
             );
           },
+          failure: () => {
+            OAuthMockFactory.github.responses.integration.getAccessTokenFromCode.success();
+            OAuthMockFactory.github.integration.getUserFromGitHubAccessToken.mockResolvedValue(
+              null,
+            );
+          },
         },
       },
     },

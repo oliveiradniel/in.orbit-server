@@ -30,7 +30,7 @@ export class OAuthService {
       );
 
     if (!githubUser?.id) {
-      throw new BadRequestException('GitHub user ID not found');
+      throw new BadRequestException('GitHub user ID not found.');
     }
 
     const user = await this.usersRepository.getUserByExternalAccountId(
