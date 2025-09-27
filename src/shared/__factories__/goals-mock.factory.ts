@@ -5,6 +5,7 @@ import { type Goal } from 'src/modules/goals/entities/goal.entity';
 import { type WeeklyGoalsProgress } from '../interfaces/goal/weekly-goals-progress.interface';
 import { type WeeklyGoalsSummary } from '../interfaces/goal/weekly-goals-summary.interface';
 import { type GoalProgressMetric } from '../interfaces/goal/goal-progress-metric.interface';
+import { type GoalWithoutUserId } from '../interfaces/goal/goal-without-user-id.interface';
 
 import { vi } from 'vitest';
 
@@ -15,6 +16,7 @@ export class GoalsMockFactory {
     getWeeklyGoalsWithCompletion: vi.fn(),
     getWeeklySummaryOfGoalsCompletedByDay: vi.fn(),
     getWeeklyFrequencyAndCompletionCount: vi.fn(),
+    getAllByUserId: vi.fn(),
     create: vi.fn(),
   };
 
@@ -22,6 +24,7 @@ export class GoalsMockFactory {
     findWeeklyGoalsWithCompletion: vi.fn(),
     findWeeklySummaryOfGoalsCompletedByDay: vi.fn(),
     findWeeklyFrequencyAndCompletionCount: vi.fn(),
+    findAllByUserId: vi.fn(),
     create: vi.fn(),
   };
 
@@ -42,6 +45,13 @@ export class GoalsMockFactory {
       desiredWeeklyFrequency: GoalsMockFactory.create.desiredWeeklyFrequency(),
       createdAt: new Date('2025-08-30T00:00:00.000Z'),
       ...override,
+    }),
+
+    goalWithoutUserId: (): GoalWithoutUserId => ({
+      id: GoalsMockFactory.create.id(),
+      title: GoalsMockFactory.create.title(),
+      desiredWeeklyFrequency: GoalsMockFactory.create.desiredWeeklyFrequency(),
+      createdAt: new Date('2025-08-30T00:00:00.000Z'),
     }),
 
     weeklyGoalsProgress: (
@@ -148,6 +158,22 @@ export class GoalsMockFactory {
               countCompletion: 7,
             }),
           ),
+      },
+      getAllByUserId: {
+        success: () =>
+          GoalsMockFactory.repository.getAllByUserId.mockResolvedValue({
+            goals: [
+              GoalsMockFactory.create.goalWithoutUserId(),
+              GoalsMockFactory.create.goalWithoutUserId(),
+              GoalsMockFactory.create.goalWithoutUserId(),
+            ],
+            total: 3,
+          }),
+        empty: () =>
+          GoalsMockFactory.repository.getAllByUserId.mockResolvedValue({
+            goals: [],
+            total: 0,
+          }),
       },
       create: {
         success: (override: Partial<Goal> = {}) =>

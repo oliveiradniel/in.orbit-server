@@ -10,6 +10,8 @@ import { GoalsService } from '../goals.service';
 import { UsersMockFactory } from 'src/shared/__factories__/users-mock.factory';
 import { GoalsMockFactory } from 'src/shared/__factories__/goals-mock.factory';
 
+import { type GoalsWithTotal } from 'src/shared/interfaces/goal/goal-without-user-id.interface';
+
 import { GOALS_REPOSITORY, USERS_SERVICE } from 'src/shared/constants/tokens';
 
 describe('GoalsService', () => {
@@ -36,7 +38,7 @@ describe('GoalsService', () => {
   });
 
   describe('findWeeklyGoalsWithCompletion', () => {
-    it('should be able to return a goal with completion count', async () => {
+    it('should to return a goal with completion count', async () => {
       const mockGoals = [
         {
           id: GoalsMockFactory.create.id(),
@@ -80,7 +82,7 @@ describe('GoalsService', () => {
       expect(goal).toEqual(weeklyGoalsProgress);
     });
 
-    it('should be able to throw an error when the user does not exist', async () => {
+    it('should to throw an error when the user does not exist', async () => {
       UsersMockFactory.responses.service.findUserById.failure();
 
       expect(
@@ -93,7 +95,7 @@ describe('GoalsService', () => {
   });
 
   describe('findWeeklySummaryOfGoalsCompletedByDay', () => {
-    it('should be able to return a weekly summary of completed goals', async () => {
+    it('should to return a weekly summary of completed goals', async () => {
       const mockGoals = [
         {
           id: GoalsMockFactory.create.id(),
@@ -138,7 +140,7 @@ describe('GoalsService', () => {
       expect(goal).toEqual(weeklyGoalsSummary);
     });
 
-    it('should be able to throw an error when the user does not exist', async () => {
+    it('should to throw an error when the user does not exist', async () => {
       UsersMockFactory.responses.service.findUserById.failure();
 
       expect(
@@ -153,6 +155,41 @@ describe('GoalsService', () => {
     });
   });
 
+  describe('findAllByUserId', () => {
+    it('should to return all goals by active user when goals exists', async () => {
+      GoalsMockFactory.responses.repository.getAllByUserId.success();
+
+      const listGoals: GoalsWithTotal =
+        await goalsService.findAllByUserId(mockUserId);
+
+      expect(GoalsMockFactory.repository.getAllByUserId).toHaveBeenCalled();
+
+      expect(listGoals.total).toBe(3);
+      expect(listGoals.goals).toHaveLength(3);
+
+      listGoals.goals.forEach((goal) => {
+        expect(typeof goal.id).toBe('string');
+        expect(typeof goal.title).toBe('string');
+        expect(typeof goal.desiredWeeklyFrequency).toBe('number');
+        expect(goal.createdAt).toBeInstanceOf(Date);
+      });
+    });
+
+    it('should to return all goals by active user when not exists goals', async () => {
+      GoalsMockFactory.responses.repository.getAllByUserId.empty();
+
+      const listGoals: GoalsWithTotal =
+        await goalsService.findAllByUserId(mockUserId);
+
+      expect(GoalsMockFactory.repository.getAllByUserId).toHaveBeenCalled();
+
+      expect(listGoals.total).toBe(0);
+      expect(listGoals.goals).toHaveLength(0);
+
+      expect(listGoals.goals).toEqual([]);
+    });
+  });
+
   describe('create', () => {
     let mockGoalTitle: ReturnType<typeof GoalsMockFactory.create.title>;
     let mockGoalFrequency: ReturnType<
@@ -164,7 +201,7 @@ describe('GoalsService', () => {
       mockGoalFrequency = GoalsMockFactory.create.desiredWeeklyFrequency();
     });
 
-    it('should be able to create a goal and return it', async () => {
+    it('should to create a goal and return it', async () => {
       const mockGoal = GoalsMockFactory.create.goal({
         title: mockGoalTitle,
         desiredWeeklyFrequency: mockGoalFrequency,
@@ -192,7 +229,7 @@ describe('GoalsService', () => {
       expect(goal).toEqual(mockGoal);
     });
 
-    it('should be able to throw an error when the user does not exist', async () => {
+    it('should to throw an error when the user does not exist', async () => {
       UsersMockFactory.responses.service.findUserById.failure();
 
       expect(GoalsMockFactory.repository.create).not.toHaveBeenCalled();

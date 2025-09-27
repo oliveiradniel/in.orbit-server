@@ -12,7 +12,7 @@ import {
 import { type WeeklyGoalsProgress } from 'src/shared/interfaces/goal/weekly-goals-progress.interface';
 import { type WeeklyGoalsSummary } from 'src/shared/interfaces/goal/weekly-goals-summary.interface';
 import { type GoalProgressMetric } from 'src/shared/interfaces/goal/goal-progress-metric.interface';
-import { type GoalWithTotal } from 'src/shared/interfaces/goal/goal-without-user-id.interface';
+import { type GoalsWithTotal } from 'src/shared/interfaces/goal/goal-without-user-id.interface';
 
 import { PRISMA_SERVICE } from 'src/shared/constants/tokens';
 
@@ -165,7 +165,7 @@ export class PrismaGoalsRepository implements GoalsRepository {
     };
   }
 
-  async getAllByUserId(userId: string): Promise<GoalWithTotal> {
+  async getAllByUserId(userId: string): Promise<GoalsWithTotal> {
     const [goals, total] = await Promise.all([
       this.prismaService.goal.findMany({
         where: {

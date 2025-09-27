@@ -25,7 +25,7 @@ import { FindAllResponseDTO } from './dtos/find-all-response.dto';
 import { type Goal } from './entities/goal.entity';
 import { type WeeklyGoalsProgress } from 'src/shared/interfaces/goal/weekly-goals-progress.interface';
 import { type WeeklyGoalsSummary } from 'src/shared/interfaces/goal/weekly-goals-summary.interface';
-import { type GoalWithTotal } from 'src/shared/interfaces/goal/goal-without-user-id.interface';
+import { type GoalsWithTotal } from 'src/shared/interfaces/goal/goal-without-user-id.interface';
 
 import { GOALS_SERVICE } from 'src/shared/constants/tokens';
 
@@ -87,7 +87,7 @@ export class GoalsController {
     type: FindAllResponseDTO,
   })
   @Get('all')
-  findAll(@ActiveUserId() userId: string): Promise<GoalWithTotal> {
+  findAll(@ActiveUserId() userId: string): Promise<GoalsWithTotal> {
     return this.goalsService.findAllByUserId(userId);
   }
 
