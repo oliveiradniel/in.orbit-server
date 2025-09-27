@@ -24,6 +24,7 @@ import { UnauthorizedResponseDTO } from 'src/shared/dtos/unauthorized-response.d
 import { type Goal } from './entities/goal.entity';
 import { type WeeklyGoalsProgress } from 'src/shared/interfaces/goal/weekly-goals-progress.interface';
 import { type WeeklyGoalsSummary } from 'src/shared/interfaces/goal/weekly-goals-summary.interface';
+import { type GoalWithTotal } from 'src/shared/interfaces/goal/goal-without-user-id.interface';
 
 import { GOALS_SERVICE } from 'src/shared/constants/tokens';
 
@@ -77,6 +78,11 @@ export class GoalsController {
       userId,
       weekStartsAt,
     });
+  }
+
+  @Get('all')
+  findAll(@ActiveUserId() userId: string): Promise<GoalWithTotal> {
+    return this.goalsService.findAllByUserId(userId);
   }
 
   @ApiCreatedResponse({
