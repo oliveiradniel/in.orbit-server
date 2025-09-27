@@ -20,6 +20,7 @@ import { WeeklyGoalResponseDTO } from './dtos/weekly-goal-response.dto';
 import { WeeklySummaryResponseDTO } from './dtos/weekly-summary-response.dto';
 import { CreateGoalResponseDTO } from './dtos/create-goal-response.dto';
 import { UnauthorizedResponseDTO } from 'src/shared/dtos/unauthorized-response.dto';
+import { FindAllResponseDTO } from './dtos/find-all-response.dto';
 
 import { type Goal } from './entities/goal.entity';
 import { type WeeklyGoalsProgress } from 'src/shared/interfaces/goal/weekly-goals-progress.interface';
@@ -80,6 +81,11 @@ export class GoalsController {
     });
   }
 
+  @ApiOkResponse({
+    description:
+      'Returns a list of all goals for the authenticated user along with the total count',
+    type: FindAllResponseDTO,
+  })
   @Get('all')
   findAll(@ActiveUserId() userId: string): Promise<GoalWithTotal> {
     return this.goalsService.findAllByUserId(userId);
