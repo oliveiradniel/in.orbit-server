@@ -11,6 +11,7 @@ import { type Goal } from './entities/goal.entity';
 import { type GoalsRepository } from 'src/shared/contracts/goals.repository.contract';
 import { type WeeklyGoalsProgress } from 'src/shared/interfaces/goal/weekly-goals-progress.interface';
 import { type WeeklyGoalsSummary } from 'src/shared/interfaces/goal/weekly-goals-summary.interface';
+import { type GoalWithTotal } from 'src/shared/interfaces/goal/goal-without-user-id.interface';
 
 import { GOALS_REPOSITORY, USERS_SERVICE } from 'src/shared/constants/tokens';
 
@@ -52,6 +53,10 @@ export class GoalsService {
       firstDayOfWeek,
       lastDayOfWeek,
     });
+  }
+
+  findAllByUserId(userId: string): Promise<GoalWithTotal> {
+    return this.goalsRepository.getAllByUserId(userId);
   }
 
   async create(userId: string, createGoalDTO: CreateGoalDTO): Promise<Goal> {
