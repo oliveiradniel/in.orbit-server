@@ -23,6 +23,7 @@ import { GoalsMockFactory } from 'src/shared/__factories__/goals-mock.factory';
 import { type User } from 'src/modules/users/entities/user.entity';
 import { type WeeklyGoalsProgress } from 'src/shared/interfaces/goal/weekly-goals-progress.interface';
 import { type WeeklyGoalsSummary } from 'src/shared/interfaces/goal/weekly-goals-summary.interface';
+import { type GoalsWithTotal } from 'src/shared/interfaces/goal/goal-without-user-id.interface';
 
 import { JWT_SERVICE, PRISMA_SERVICE } from 'src/shared/constants/tokens';
 
@@ -245,6 +246,67 @@ describe('Goals Module', () => {
       describeAuthGuard({
         getServer: () => server,
         route: '/goals/summary',
+      });
+    });
+
+    describe('/goals/all', () => {
+      it('should to return all goals by active user when goals exists', async () => {
+        await createTestGoal({
+          prismaService,
+          userId: activeUser.id!,
+          otherGoals: [
+            {
+              title: GoalsMockFactory.create.title(),
+              desiredWeeklyFrequency: 1,
+            },
+            {
+              title: GoalsMockFactory.create.title(),
+              desiredWeeklyFrequency: 1,
+            },
+          ],
+        });
+
+        const response = await request(server)
+          .get('/goals/all')
+          .set('Authorization', `Bearer ${accessToken}`);
+
+        const goalsWithTotal = response.body as GoalsWithTotal;
+
+        expect(response.statusCode).toBe(200);
+        expect(goalsWithTotal.total).toBe(3);
+        expect(goalsWithTotal.goals).toHaveLength(3);
+
+        goalsWithTotal.goals.forEach((goal) => {
+          expect(typeof goal.id).toBe('string');
+          expect(typeof goal.title).toBe('string');
+          expect(typeof goal.desiredWeeklyFrequency).toBe('number');
+          expect(typeof goal.createdAt).toBe('string');
+        });
+      });
+
+      it('should to return all goals by active user when not exists goals', async () => {
+        const response = await request(server)
+          .get('/goals/all')
+          .set('Authorization', `Bearer ${accessToken}`);
+
+        const goalsWithTotal = response.body as GoalsWithTotal;
+
+        expect(response.statusCode).toBe(200);
+        expect(goalsWithTotal.total).toBe(0);
+        expect(goalsWithTotal.goals).toHaveLength(0);
+
+        expect(goalsWithTotal.goals).toStrictEqual([]);
+      });
+
+      describeUserNotExists({
+        getServer: () => server,
+        getJWTService: () => jwtService,
+        route: '/goals/all',
+      });
+
+      describeAuthGuard({
+        getServer: () => server,
+        route: '/goals/all',
       });
     });
   });
