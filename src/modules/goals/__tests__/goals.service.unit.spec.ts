@@ -157,11 +157,13 @@ describe('GoalsService', () => {
 
   describe('findAllByUserId', () => {
     it('should to return all goals by active user when goals exists', async () => {
+      UsersMockFactory.responses.service.findUserById.success();
       GoalsMockFactory.responses.repository.getAllByUserId.success();
 
       const listGoals: GoalsWithTotal =
         await goalsService.findAllByUserId(mockUserId);
 
+      expect(UsersMockFactory.service.findUserById).toHaveBeenCalled();
       expect(GoalsMockFactory.repository.getAllByUserId).toHaveBeenCalled();
 
       expect(listGoals.total).toBe(3);
@@ -176,17 +178,29 @@ describe('GoalsService', () => {
     });
 
     it('should to return all goals by active user when not exists goals', async () => {
+      UsersMockFactory.responses.service.findUserById.success();
       GoalsMockFactory.responses.repository.getAllByUserId.empty();
 
       const listGoals: GoalsWithTotal =
         await goalsService.findAllByUserId(mockUserId);
 
+      expect(UsersMockFactory.service.findUserById).toHaveBeenCalled();
       expect(GoalsMockFactory.repository.getAllByUserId).toHaveBeenCalled();
 
       expect(listGoals.total).toBe(0);
       expect(listGoals.goals).toHaveLength(0);
 
       expect(listGoals.goals).toEqual([]);
+    });
+
+    it('should to throw an error when the user does not exist', async () => {
+      UsersMockFactory.responses.service.findUserById.failure();
+
+      expect(UsersMockFactory.repository.getUserById).not.toHaveBeenCalled();
+      expect(GoalsMockFactory.repository.create).not.toHaveBeenCalled();
+      await expect(goalsService.findAllByUserId(mockUserId)).rejects.toThrow(
+        NotFoundException,
+      );
     });
   });
 
@@ -232,6 +246,7 @@ describe('GoalsService', () => {
     it('should to throw an error when the user does not exist', async () => {
       UsersMockFactory.responses.service.findUserById.failure();
 
+      expect(UsersMockFactory.service.findUserById).not.toHaveBeenCalled();
       expect(GoalsMockFactory.repository.create).not.toHaveBeenCalled();
       await expect(
         goalsService.create(mockUserId, {
