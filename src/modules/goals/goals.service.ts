@@ -55,7 +55,9 @@ export class GoalsService {
     });
   }
 
-  findAllByUserId(userId: string): Promise<GoalsWithTotal> {
+  async findAllByUserId(userId: string): Promise<GoalsWithTotal> {
+    await this.usersService.findUserById(userId);
+
     return this.goalsRepository.getAllByUserId(userId);
   }
 
