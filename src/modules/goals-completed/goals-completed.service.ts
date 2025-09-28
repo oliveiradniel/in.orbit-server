@@ -56,7 +56,7 @@ export class GoalsCompletedService {
       });
 
     if (!goal) {
-      throw new NotFoundException('Goal not exists.');
+      throw new NotFoundException('Goal not found.');
     }
 
     const { countCompletion, desiredWeeklyFrequency } = goal;

@@ -202,7 +202,7 @@ describe('Goals Completed Module', () => {
 
         expect(response.statusCode).toBe(404);
         expect(response.body).toEqual({
-          message: 'Goal not exists.',
+          message: 'Goal not found.',
           error: 'Not Found',
           statusCode: 404,
         });

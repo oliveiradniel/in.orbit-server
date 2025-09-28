@@ -11,6 +11,7 @@ import {
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
+  ApiNotFoundResponse,
   ApiOkResponse,
   ApiQuery,
   ApiUnauthorizedResponse,
@@ -31,6 +32,7 @@ import { CreateGoalResponseDTO } from './dtos/create-goal-response.dto';
 import { UnauthorizedResponseDTO } from 'src/shared/dtos/unauthorized-response.dto';
 import { FindAllResponseDTO } from './dtos/find-all-response.dto';
 import { UpdateGoalDTO } from './dtos/update-goal.dto';
+import { NotFoundGoalResponseDTO } from 'src/shared/dtos/not-found-goal-response.dto';
 
 import { GoalIdParam } from './params/goal-id.param';
 
@@ -121,6 +123,14 @@ export class GoalsController {
     });
   }
 
+  @ApiOkResponse({
+    description: 'Returns the updated goal after a successful update',
+    type: CreateGoalResponseDTO,
+  })
+  @ApiNotFoundResponse({
+    description: 'Could not find the goal.',
+    type: NotFoundGoalResponseDTO,
+  })
   @Patch(':goalId')
   update(
     @ActiveUserId() userId: string,
