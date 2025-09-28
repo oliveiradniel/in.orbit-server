@@ -12,6 +12,8 @@ import { type GoalsWithTotal } from '../interfaces/goal/goal-without-user-id.int
 import { type DataToUpdateGoal } from '../database/interfaces/goal/data-to-update.interface';
 
 export abstract class GoalsRepository {
+  abstract getGoalById(goalId: string): Promise<Goal | null>;
+
   abstract getWeeklyGoalsWithCompletion(
     params: UserDateRangeFilter,
   ): Promise<WeeklyGoalsProgress[]>;

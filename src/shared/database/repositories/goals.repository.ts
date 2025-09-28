@@ -23,6 +23,12 @@ export class PrismaGoalsRepository implements GoalsRepository {
     @Inject(PRISMA_SERVICE) private readonly prismaService: PrismaService,
   ) {}
 
+  getGoalById(goalId: string): Promise<Goal | null> {
+    return this.prismaService.goal.findUnique({
+      where: { id: goalId },
+    });
+  }
+
   async getWeeklyGoalsWithCompletion({
     userId,
     lastDayOfWeek,
