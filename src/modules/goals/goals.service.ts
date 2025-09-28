@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { Inject, Injectable, NotFoundException } from '@nestjs/common';
 
 import dayjs from 'dayjs';
 
@@ -24,6 +24,16 @@ export class GoalsService {
     @Inject(GOALS_REPOSITORY) private readonly goalsRepository: GoalsRepository,
     @Inject(USERS_SERVICE) private readonly usersService: UsersService,
   ) {}
+
+  async findGoalById(goalId: string): Promise<Goal> {
+    const goal = await this.goalsRepository.getGoalById(goalId);
+
+    if (!goal) {
+      throw new NotFoundException('Goal not found.');
+    }
+
+    return goal;
+  }
 
   async findWeeklyGoalsWithCompletion(
     userId: string,
