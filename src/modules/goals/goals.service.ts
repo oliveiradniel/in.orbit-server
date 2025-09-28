@@ -6,6 +6,9 @@ import { UsersService } from '../users/users.service';
 
 import { CreateGoalDTO } from './dtos/create-goal.dto';
 import { FindWeeklySummaryOfCompletedGoalsDTO } from './dtos/find-weekly-summary-of-completed-goals.dto';
+import { UpdateGoalDTO } from './dtos/update-goal.dto';
+
+import { GoalIdParam } from './params/goal-id.param';
 
 import { type Goal } from './entities/goal.entity';
 import { type GoalsRepository } from 'src/shared/contracts/goals.repository.contract';
@@ -68,6 +71,23 @@ export class GoalsService {
 
     return this.goalsRepository.create(userId, {
       title,
+      desiredWeeklyFrequency,
+    });
+  }
+
+  async update(
+    userId: string,
+    updateGoalParam: GoalIdParam,
+    updateGoalDTO: UpdateGoalDTO,
+  ): Promise<Goal> {
+    const { goalId } = updateGoalParam;
+    const { desiredWeeklyFrequency } = updateGoalDTO;
+
+    await this.usersService.findUserById(userId);
+
+    return this.goalsRepository.update({
+      userId,
+      goalId,
       desiredWeeklyFrequency,
     });
   }
