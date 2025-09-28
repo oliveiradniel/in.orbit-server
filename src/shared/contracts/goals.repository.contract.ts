@@ -9,6 +9,7 @@ import { type WeeklyGoalsProgress } from '../interfaces/goal/weekly-goals-progre
 import { type WeeklyGoalsSummary } from '../interfaces/goal/weekly-goals-summary.interface';
 import { type GoalProgressMetric } from '../interfaces/goal/goal-progress-metric.interface';
 import { type GoalsWithTotal } from '../interfaces/goal/goal-without-user-id.interface';
+import { type DataToUpdateGoal } from '../database/interfaces/goal/data-to-update.interface';
 
 export abstract class GoalsRepository {
   abstract getWeeklyGoalsWithCompletion(
@@ -26,4 +27,6 @@ export abstract class GoalsRepository {
   abstract getAllByUserId(userId: string): Promise<GoalsWithTotal>;
 
   abstract create(userId: string, createGoalDTO: CreateGoalDTO): Promise<Goal>;
+
+  abstract update(updateGoal: DataToUpdateGoal): Promise<Goal>;
 }

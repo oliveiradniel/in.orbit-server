@@ -13,6 +13,7 @@ import { type WeeklyGoalsProgress } from 'src/shared/interfaces/goal/weekly-goal
 import { type WeeklyGoalsSummary } from 'src/shared/interfaces/goal/weekly-goals-summary.interface';
 import { type GoalProgressMetric } from 'src/shared/interfaces/goal/goal-progress-metric.interface';
 import { type GoalsWithTotal } from 'src/shared/interfaces/goal/goal-without-user-id.interface';
+import { type DataToUpdateGoal } from '../interfaces/goal/data-to-update.interface';
 
 import { PRISMA_SERVICE } from 'src/shared/constants/tokens';
 
@@ -198,6 +199,15 @@ export class PrismaGoalsRepository implements GoalsRepository {
         title,
         desiredWeeklyFrequency,
       },
+    });
+  }
+
+  update(dataToUpdateGoal: DataToUpdateGoal): Promise<Goal> {
+    const { userId, goalId, desiredWeeklyFrequency } = dataToUpdateGoal;
+
+    return this.prismaService.goal.update({
+      where: { userId, id: goalId },
+      data: { desiredWeeklyFrequency },
     });
   }
 }
