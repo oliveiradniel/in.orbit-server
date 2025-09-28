@@ -1,10 +1,11 @@
 import { Test } from '@nestjs/testing';
-import { NotFoundException } from '@nestjs/common';
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 
 import { UsersService } from '../users.service';
 import { UsersMockFactory } from 'src/shared/__factories__/users-mock.factory';
+
+import { describeUserNotExistsInUsers } from 'src/shared/__tests__/helpers/unit/describe-user-not-exists-in-users.helper';
 
 import { USERS_REPOSITORY } from 'src/shared/constants/tokens';
 
@@ -47,16 +48,12 @@ describe('UsersService', () => {
       expect(user).toEqual(mockUser);
     });
 
-    it('should to throw an error when the user does not exist', async () => {
-      UsersMockFactory.responses.repository.getUserById.null();
-
-      await expect(usersService.findUserById(mockUserId)).rejects.toThrow(
-        NotFoundException,
-      );
-
-      expect(UsersMockFactory.repository.getUserById).toHaveBeenCalledWith(
-        mockUserId,
-      );
+    describeUserNotExistsInUsers({
+      request: () => usersService.findUserById(mockUserId),
+      classMethod: 'findUserById',
+      repositorySpy: UsersMockFactory.repository.getUserById,
+      repositoryMethod: UsersMockFactory.responses.repository.getUserById,
+      userId: () => mockUserId,
     });
   });
 
@@ -101,16 +98,12 @@ describe('UsersService', () => {
       });
     });
 
-    it('should to throw an error when the user does not exist', async () => {
-      UsersMockFactory.responses.repository.getUserExperience.null();
-
-      await expect(
-        usersService.findUserLevelAndExperience(mockUserId),
-      ).rejects.toThrow(NotFoundException);
-
-      expect(
-        UsersMockFactory.repository.getUserExperience,
-      ).toHaveBeenCalledWith(mockUserId);
+    describeUserNotExistsInUsers({
+      request: () => usersService.findUserLevelAndExperience(mockUserId),
+      classMethod: 'findUserLevelAndExperience',
+      repositorySpy: UsersMockFactory.repository.getUserExperience,
+      repositoryMethod: UsersMockFactory.responses.repository.getUserExperience,
+      userId: () => mockUserId,
     });
   });
 });

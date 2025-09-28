@@ -332,7 +332,7 @@ describe('Goals Module', () => {
         getJWTService: () => jwtService,
         getData: () => ({ title: 'Acordar cedo', desiredWeeklyFrequency: 7 }),
         route: '/goals',
-        method: 'post',
+        httpMethod: 'post',
       });
 
       describeAuthGuard({

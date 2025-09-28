@@ -1,5 +1,4 @@
 import { Test } from '@nestjs/testing';
-import { NotFoundException } from '@nestjs/common';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -9,6 +8,8 @@ import { GoalsService } from '../goals.service';
 
 import { UsersMockFactory } from 'src/shared/__factories__/users-mock.factory';
 import { GoalsMockFactory } from 'src/shared/__factories__/goals-mock.factory';
+
+import { describeUserNotExistsInGoals } from 'src/shared/__tests__/helpers/unit/describe-user-not-exists-in-goals.helper';
 
 import { type GoalsWithTotal } from 'src/shared/interfaces/goal/goal-without-user-id.interface';
 
@@ -82,15 +83,9 @@ describe('GoalsService', () => {
       expect(goal).toEqual(weeklyGoalsProgress);
     });
 
-    it('should to throw an error when the user does not exist', async () => {
-      UsersMockFactory.responses.service.findUserById.failure();
-
-      expect(
-        GoalsMockFactory.repository.getWeeklyGoalsWithCompletion,
-      ).not.toHaveBeenCalled();
-      await expect(
-        goalsService.findWeeklyGoalsWithCompletion(mockUserId),
-      ).rejects.toThrow(NotFoundException);
+    describeUserNotExistsInGoals({
+      request: () => goalsService.findWeeklyGoalsWithCompletion(mockUserId),
+      classMethod: 'findWeeklyGoalsWithCompletion',
     });
   });
 
@@ -140,18 +135,13 @@ describe('GoalsService', () => {
       expect(goal).toEqual(weeklyGoalsSummary);
     });
 
-    it('should to throw an error when the user does not exist', async () => {
-      UsersMockFactory.responses.service.findUserById.failure();
-
-      expect(
-        GoalsMockFactory.repository.getWeeklySummaryOfGoalsCompletedByDay,
-      ).not.toHaveBeenCalled();
-      await expect(
+    describeUserNotExistsInGoals({
+      request: () =>
         goalsService.findWeeklySummaryOfGoalsCompletedByDay({
           userId: mockUserId,
           weekStartsAt: GoalsMockFactory.create.weekStartsAt().toDate(),
         }),
-      ).rejects.toThrow(NotFoundException);
+      classMethod: 'findWeeklySummaryOfGoalsCompletedByDay',
     });
   });
 
@@ -193,14 +183,9 @@ describe('GoalsService', () => {
       expect(listGoals.goals).toEqual([]);
     });
 
-    it('should to throw an error when the user does not exist', async () => {
-      UsersMockFactory.responses.service.findUserById.failure();
-
-      expect(UsersMockFactory.repository.getUserById).not.toHaveBeenCalled();
-      expect(GoalsMockFactory.repository.create).not.toHaveBeenCalled();
-      await expect(goalsService.findAllByUserId(mockUserId)).rejects.toThrow(
-        NotFoundException,
-      );
+    describeUserNotExistsInGoals({
+      request: () => goalsService.findAllByUserId(mockUserId),
+      classMethod: 'findAllByUserId',
     });
   });
 
@@ -243,17 +228,13 @@ describe('GoalsService', () => {
       expect(goal).toEqual(mockGoal);
     });
 
-    it('should to throw an error when the user does not exist', async () => {
-      UsersMockFactory.responses.service.findUserById.failure();
-
-      expect(UsersMockFactory.service.findUserById).not.toHaveBeenCalled();
-      expect(GoalsMockFactory.repository.create).not.toHaveBeenCalled();
-      await expect(
+    describeUserNotExistsInGoals({
+      request: () =>
         goalsService.create(mockUserId, {
           title: mockGoalTitle,
           desiredWeeklyFrequency: mockGoalFrequency,
         }),
-      ).rejects.toThrow(NotFoundException);
+      classMethod: 'create',
     });
   });
 });
