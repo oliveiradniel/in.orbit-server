@@ -1,4 +1,13 @@
-import { Body, Controller, Get, Inject, Post, Query } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Param,
+  Patch,
+  Post,
+  Query,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
@@ -21,6 +30,9 @@ import { WeeklySummaryResponseDTO } from './dtos/weekly-summary-response.dto';
 import { CreateGoalResponseDTO } from './dtos/create-goal-response.dto';
 import { UnauthorizedResponseDTO } from 'src/shared/dtos/unauthorized-response.dto';
 import { FindAllResponseDTO } from './dtos/find-all-response.dto';
+import { UpdateGoalDTO } from './dtos/update-goal.dto';
+
+import { GoalIdParam } from './params/goal-id.param';
 
 import { type Goal } from './entities/goal.entity';
 import { type WeeklyGoalsProgress } from 'src/shared/interfaces/goal/weekly-goals-progress.interface';
@@ -107,5 +119,22 @@ export class GoalsController {
       title,
       desiredWeeklyFrequency,
     });
+  }
+
+  @Patch(':goalId')
+  update(
+    @ActiveUserId() userId: string,
+    @Param() { goalId }: GoalIdParam,
+    @Body() updateGoalDTO: UpdateGoalDTO,
+  ): Promise<Goal> {
+    const { desiredWeeklyFrequency } = updateGoalDTO;
+
+    return this.goalsService.update(
+      userId,
+      { goalId },
+      {
+        desiredWeeklyFrequency,
+      },
+    );
   }
 }
