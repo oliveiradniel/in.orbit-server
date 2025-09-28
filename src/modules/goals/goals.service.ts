@@ -94,6 +94,7 @@ export class GoalsService {
     const { desiredWeeklyFrequency } = updateGoalDTO;
 
     await this.usersService.findUserById(userId);
+    await this.findGoalById(goalId);
 
     return this.goalsRepository.update({
       userId,
