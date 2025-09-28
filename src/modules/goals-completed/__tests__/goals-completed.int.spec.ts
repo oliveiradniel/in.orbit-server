@@ -21,9 +21,9 @@ import { PrismaService } from 'src/shared/database/prisma.service';
 
 import dayjs from 'dayjs';
 
-import { createTestUser } from 'src/shared/__tests__/helpers/create-test-user.helper';
-import { createTestGoal } from 'src/shared/__tests__/helpers/create-test-goal.helper';
-import { createTestGoalCompleted } from 'src/shared/__tests__/helpers/create-test-goal-completed.helper';
+import { createTestUser } from 'src/shared/__tests__/helpers/int/create-test-user.helper';
+import { createTestGoal } from 'src/shared/__tests__/helpers/int/create-test-goal.helper';
+import { createTestGoalCompleted } from 'src/shared/__tests__/helpers/int/create-test-goal-completed.helper';
 
 import { GoalsCompletedMockFactory } from '../__factories__/goals-completed-mock.factory';
 

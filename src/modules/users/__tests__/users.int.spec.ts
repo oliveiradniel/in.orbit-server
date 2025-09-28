@@ -11,10 +11,10 @@ import { UsersSpecModule } from './users.spec.module';
 
 import { PrismaService } from 'src/shared/database/prisma.service';
 
-import { createTestUser } from 'src/shared/__tests__/helpers/create-test-user.helper';
-import { createTestGoal } from 'src/shared/__tests__/helpers/create-test-goal.helper';
-import { describeAuthGuard } from 'src/shared/__tests__/helpers/describe-auth-guard.helper';
-import { describeUserNotExists } from 'src/shared/__tests__/helpers/describe-user-not-exists.helper';
+import { createTestUser } from 'src/shared/__tests__/helpers/int/create-test-user.helper';
+import { createTestGoal } from 'src/shared/__tests__/helpers/int/create-test-goal.helper';
+import { describeAuthGuard } from 'src/shared/__tests__/helpers/int/describe-auth-guard.helper';
+import { describeUserNotExists } from 'src/shared/__tests__/helpers/int/describe-user-not-exists.helper';
 
 import { type User } from '../entities/user.entity';
 
