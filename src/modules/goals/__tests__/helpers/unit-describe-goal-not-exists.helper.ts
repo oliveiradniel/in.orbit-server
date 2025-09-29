@@ -7,7 +7,7 @@ import { GoalsMockFactory } from 'src/shared/__factories__/goals-mock.factory';
 
 import { type UnitDescribeGoalNotExistsParams } from '../../interfaces/unit-describe-goal-not-exists-params.interface';
 
-export function describeGoalNotExistsInGoals({
+export function unitDescribeGoalNotExists({
   request,
   classMethod,
   mockNotCalled,

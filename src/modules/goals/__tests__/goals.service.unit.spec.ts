@@ -17,7 +17,7 @@ import { GoalsService } from '../goals.service';
 import { UsersMockFactory } from 'src/shared/__factories__/users-mock.factory';
 import { GoalsMockFactory } from 'src/shared/__factories__/goals-mock.factory';
 
-import { describeGoalNotExistsInGoals } from './helpers/describe-goal-not-exists-in-goals.helper';
+import { unitDescribeGoalNotExists } from './helpers/unit-describe-goal-not-exists.helper';
 import { describeUserNotExistsInGoals } from 'src/shared/__tests__/helpers/unit/describe-user-not-exists-in-goals.helper';
 
 import { type GoalsWithTotal } from 'src/shared/interfaces/goal/goal-without-user-id.interface';
@@ -288,7 +288,7 @@ describe('GoalsService', () => {
       });
     });
 
-    describeGoalNotExistsInGoals({
+    unitDescribeGoalNotExists({
       request: () =>
         goalsService.update(
           mockUserId,
@@ -337,7 +337,7 @@ describe('GoalsService', () => {
       });
     });
 
-    describeGoalNotExistsInGoals({
+    unitDescribeGoalNotExists({
       request: () =>
         goalsService.delete(mockUserId, { goalsId: [goalId1, goalId2] }),
       classMethod: 'delete',

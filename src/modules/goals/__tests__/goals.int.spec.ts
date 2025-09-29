@@ -26,6 +26,7 @@ import { type WeeklyGoalsSummary } from 'src/shared/interfaces/goal/weekly-goals
 import { type GoalsWithTotal } from 'src/shared/interfaces/goal/goal-without-user-id.interface';
 
 import { JWT_SERVICE, PRISMA_SERVICE } from 'src/shared/constants/tokens';
+import { intDescribeGoalNotExists } from './helpers/int-describe-goal-not-exists.helper';
 
 describe('Goals Module', () => {
   let app: NestApplication;
@@ -344,6 +345,12 @@ describe('Goals Module', () => {
   });
 
   describe('PATCH', () => {
+    let fakeGoalId: ReturnType<typeof GoalsMockFactory.create.id>;
+
+    beforeAll(() => {
+      fakeGoalId = GoalsMockFactory.create.id();
+    });
+
     describe('/goals/:goalId', () => {
       it('should to update goal and return it', async () => {
         const goal = await createTestGoal({
@@ -356,32 +363,26 @@ describe('Goals Module', () => {
 
         const goalId = goal.id!;
 
-        const updatedGoal = await request(server)
+        const response = await request(server)
           .patch(`/goals/${goalId}`)
           .send({ desiredWeeklyFrequency: 7 })
           .set('Authorization', `Bearer ${accessToken}`);
 
-        expect(updatedGoal.statusCode).toBe(200);
-        expect(updatedGoal.body).toMatchObject({
+        expect(response.statusCode).toBe(200);
+        expect(response.body).toMatchObject({
           id: goalId,
           desiredWeeklyFrequency: 7,
         });
       });
 
-      it('should to throw NotFound an error when goal does not exists', async () => {
-        const goalId = GoalsMockFactory.create.id();
-
-        const updatedGoal = await request(server)
-          .patch(`/goals/${goalId}`)
-          .send({ desiredWeeklyFrequency: 7 })
-          .set('Authorization', `Bearer ${accessToken}`);
-
-        expect(updatedGoal.statusCode).toBe(404);
-        expect(updatedGoal.body).toEqual({
-          message: 'Goal not found.',
-          error: 'Not Found',
-          statusCode: 404,
-        });
+      intDescribeGoalNotExists({
+        request: () =>
+          request(server)
+            .patch(`/goals/${fakeGoalId}`)
+            .send({ desiredWeeklyFrequency: 7 })
+            .set('Authorization', `Bearer ${accessToken}`),
+        httpMethod: 'patch',
+        route: '/goals/:goalId',
       });
 
       describeUserNotExists({
@@ -401,6 +402,12 @@ describe('Goals Module', () => {
   });
 
   describe('DELETE', () => {
+    let fakeGoalId: ReturnType<typeof GoalsMockFactory.create.id>;
+
+    beforeAll(() => {
+      fakeGoalId = GoalsMockFactory.create.id();
+    });
+
     describe('/goals', () => {
       it('should to delete goal', async () => {
         const goals = await createTestGoal({
@@ -417,41 +424,22 @@ describe('Goals Module', () => {
 
         const goalsId = goals.map((goal) => goal.id!);
 
-        const updatedGoal = await request(server)
+        const response = await request(server)
           .delete('/goals')
           .send({ goalsId })
           .set('Authorization', `Bearer ${accessToken}`);
 
-        expect(updatedGoal.statusCode).toBe(204);
+        expect(response.statusCode).toBe(204);
       });
 
-      it('should to throw NotFound an error when goal does not exists', async () => {
-        const goals = await createTestGoal({
-          prismaService,
-          userId: activeUser.id!,
-          override: {
-            desiredWeeklyFrequency: 5,
-          },
-          otherGoals: [
-            { title: 'Estudar', desiredWeeklyFrequency: 4 },
-            { title: 'Acordar cedo', desiredWeeklyFrequency: 3 },
-          ],
-        });
-
-        const goalsId = goals.map((goal) => goal.id!);
-        const goalId3 = GoalsMockFactory.create.id();
-
-        const updatedGoal = await request(server)
-          .delete('/goals')
-          .send({ goalsId: [...goalsId, goalId3] })
-          .set('Authorization', `Bearer ${accessToken}`);
-
-        expect(updatedGoal.statusCode).toBe(404);
-        expect(updatedGoal.body).toEqual({
-          message: 'Goal not found.',
-          error: 'Not Found',
-          statusCode: 404,
-        });
+      intDescribeGoalNotExists({
+        request: () =>
+          request(server)
+            .delete('/goals')
+            .send({ goalsId: [fakeGoalId] })
+            .set('Authorization', `Bearer ${accessToken}`),
+        httpMethod: 'delete',
+        route: '/goals',
       });
 
       describeUserNotExists({
