@@ -1,7 +1,14 @@
 import { Test } from '@nestjs/testing';
-import { NotFoundException } from '@nestjs/common';
 
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import {
+  afterEach,
+  beforeAll,
+  beforeEach,
+  describe,
+  expect,
+  it,
+  vi,
+} from 'vitest';
 
 import dayjs from 'dayjs';
 
@@ -10,6 +17,7 @@ import { GoalsService } from '../goals.service';
 import { UsersMockFactory } from 'src/shared/__factories__/users-mock.factory';
 import { GoalsMockFactory } from 'src/shared/__factories__/goals-mock.factory';
 
+import { describeGoalNotExistsInGoals } from './helpers/describe-goal-not-exists-in-goals.helper';
 import { describeUserNotExistsInGoals } from 'src/shared/__tests__/helpers/unit/describe-user-not-exists-in-goals.helper';
 
 import { type GoalsWithTotal } from 'src/shared/interfaces/goal/goal-without-user-id.interface';
@@ -240,15 +248,22 @@ describe('GoalsService', () => {
   });
 
   describe('update', () => {
+    let goal: ReturnType<typeof GoalsMockFactory.create.goal>;
+    let newDesiredWeeklyFrequency: number;
+
+    beforeAll(() => {
+      newDesiredWeeklyFrequency = 7;
+    });
+
+    beforeEach(() => {
+      goal = GoalsMockFactory.create.goal({
+        desiredWeeklyFrequency: 5,
+      });
+    });
+
     it('should to update a goal and return it', async () => {
       UsersMockFactory.responses.service.findUserById.success();
       GoalsMockFactory.responses.repository.getGoalById.success();
-
-      const newDesiredWeeklyFrequency = 7;
-
-      const goal = GoalsMockFactory.create.goal({
-        desiredWeeklyFrequency: 5,
-      });
 
       GoalsMockFactory.responses.repository.update.success({
         id: goal.id!,
@@ -273,27 +288,15 @@ describe('GoalsService', () => {
       });
     });
 
-    it('should to throw NotFound error when the goal does not exists', async () => {
-      UsersMockFactory.responses.service.findUserById.success();
-      GoalsMockFactory.responses.repository.getGoalById.null();
-
-      const newDesiredWeeklyFrequency = 7;
-
-      const goal = GoalsMockFactory.create.goal({
-        desiredWeeklyFrequency: 5,
-      });
-
-      await expect(
+    describeGoalNotExistsInGoals({
+      request: () =>
         goalsService.update(
           mockUserId,
           { goalId: goal.id! },
           { desiredWeeklyFrequency: newDesiredWeeklyFrequency },
         ),
-      ).rejects.toThrow(NotFoundException);
-
-      expect(UsersMockFactory.service.findUserById).toHaveBeenCalled();
-      expect(GoalsMockFactory.repository.getGoalById).toHaveBeenCalled();
-      expect(GoalsMockFactory.repository.update).not.toHaveBeenCalled();
+      classMethod: 'update',
+      mockNotCalled: GoalsMockFactory.repository.update,
     });
 
     describeUserNotExistsInGoals({
@@ -334,17 +337,11 @@ describe('GoalsService', () => {
       });
     });
 
-    it('should to throw NotFound error when the goal does not exists', async () => {
-      UsersMockFactory.responses.service.findUserById.success();
-      GoalsMockFactory.responses.repository.getGoalById.null();
-
-      await expect(
+    describeGoalNotExistsInGoals({
+      request: () =>
         goalsService.delete(mockUserId, { goalsId: [goalId1, goalId2] }),
-      ).rejects.toThrow(NotFoundException);
-
-      expect(UsersMockFactory.service.findUserById).toHaveBeenCalled();
-      expect(GoalsMockFactory.repository.getGoalById).toHaveBeenCalled();
-      expect(GoalsMockFactory.repository.deleteGoals).not.toHaveBeenCalled();
+      classMethod: 'delete',
+      mockNotCalled: GoalsMockFactory.repository.deleteGoals,
     });
 
     describeUserNotExistsInGoals({
