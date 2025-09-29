@@ -1,7 +1,10 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
+  HttpStatus,
   Inject,
   Param,
   Patch,
@@ -25,6 +28,7 @@ import { ActiveUserId } from 'src/shared/decorators/active-user-id.decorator';
 
 import { CreateGoalDTO } from './dtos/create-goal.dto';
 import { UpdateGoalDTO } from './dtos/update-goal.dto';
+import { DeleteGoalsDTO } from './dtos/delete-goals.dto';
 
 import { WeekStartsAtQuery } from './queries/week-starts-at.query';
 
@@ -154,5 +158,14 @@ export class GoalsController {
         desiredWeeklyFrequency,
       },
     );
+  }
+
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Delete()
+  async delete(
+    @ActiveUserId() userId: string,
+    @Body() deleteGoalsDTO: DeleteGoalsDTO,
+  ) {
+    await this.goalsService.delete(userId, deleteGoalsDTO);
   }
 }
