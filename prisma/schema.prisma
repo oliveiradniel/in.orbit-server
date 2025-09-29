@@ -39,7 +39,7 @@ model GoalCompleted {
   goalId    String   @map("goal_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
 
-  goal Goal @relation(fields: [goalId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  goal Goal @relation(fields: [goalId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("goals_completed")
 }
