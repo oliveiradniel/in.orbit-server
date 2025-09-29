@@ -8,7 +8,7 @@ import { type HTTPMethods } from '../http-methods.interface';
 export interface IntDescribeUserNotExistsParams {
   getServer: () => Server;
   getJWTService: () => JwtService;
-  getData?: () => Record<string, string | number>;
+  getData?: () => Record<string, string | number | string[]>;
   route: string;
   httpMethod?: HTTPMethods;
 }

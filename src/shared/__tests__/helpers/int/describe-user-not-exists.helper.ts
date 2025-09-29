@@ -9,9 +9,9 @@ import { type SupertestResponse } from 'src/shared/interfaces/supertest-response
 export function describeUserNotExists({
   getServer,
   getJWTService,
+  getData,
   route,
   httpMethod = 'get',
-  getData,
 }: IntDescribeUserNotExistsParams): void {
   describe('User not found', () => {
     it('should to throw NotFound error', async () => {
@@ -20,7 +20,7 @@ export function describeUserNotExists({
 
       let response: SupertestResponse;
 
-      if (httpMethod === 'get' || httpMethod === 'delete') {
+      if (httpMethod === 'get') {
         response = await request(getServer())
           [httpMethod](route)
           .set('Authorization', `Bearer ${token}`);

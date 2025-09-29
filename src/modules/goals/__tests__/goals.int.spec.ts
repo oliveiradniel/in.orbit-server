@@ -399,4 +399,74 @@ describe('Goals Module', () => {
       });
     });
   });
+
+  describe('DELETE', () => {
+    describe('/goals', () => {
+      it('should to delete goal', async () => {
+        const goals = await createTestGoal({
+          prismaService,
+          userId: activeUser.id!,
+          override: {
+            desiredWeeklyFrequency: 5,
+          },
+          otherGoals: [
+            { title: 'Estudar', desiredWeeklyFrequency: 4 },
+            { title: 'Acordar cedo', desiredWeeklyFrequency: 3 },
+          ],
+        });
+
+        const goalsId = goals.map((goal) => goal.id!);
+
+        const updatedGoal = await request(server)
+          .delete('/goals')
+          .send({ goalsId })
+          .set('Authorization', `Bearer ${accessToken}`);
+
+        expect(updatedGoal.statusCode).toBe(204);
+      });
+
+      it('should to throw NotFound an error when goal does not exists', async () => {
+        const goals = await createTestGoal({
+          prismaService,
+          userId: activeUser.id!,
+          override: {
+            desiredWeeklyFrequency: 5,
+          },
+          otherGoals: [
+            { title: 'Estudar', desiredWeeklyFrequency: 4 },
+            { title: 'Acordar cedo', desiredWeeklyFrequency: 3 },
+          ],
+        });
+
+        const goalsId = goals.map((goal) => goal.id!);
+        const goalId3 = GoalsMockFactory.create.id();
+
+        const updatedGoal = await request(server)
+          .delete('/goals')
+          .send({ goalsId: [...goalsId, goalId3] })
+          .set('Authorization', `Bearer ${accessToken}`);
+
+        expect(updatedGoal.statusCode).toBe(404);
+        expect(updatedGoal.body).toEqual({
+          message: 'Goal not found.',
+          error: 'Not Found',
+          statusCode: 404,
+        });
+      });
+
+      describeUserNotExists({
+        getServer: () => server,
+        getJWTService: () => jwtService,
+        getData: () => ({ goalsId: [GoalsMockFactory.create.id()] }),
+        route: '/goals',
+        httpMethod: 'delete',
+      });
+
+      describeAuthGuard({
+        getServer: () => server,
+        route: '/goals',
+        httpMethod: 'delete',
+      });
+    });
+  });
 });
