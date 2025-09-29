@@ -1,3 +1,5 @@
+import { NotFoundException } from '@nestjs/common';
+
 import { UsersMockFactory } from './users-mock.factory';
 import { FakerFactory } from './faker.factory';
 
@@ -16,6 +18,7 @@ export class GoalsMockFactory {
     getWeeklyGoalsWithCompletion: vi.fn(),
     getWeeklySummaryOfGoalsCompletedByDay: vi.fn(),
     getWeeklyFrequencyAndCompletionCount: vi.fn(),
+    getGoalById: vi.fn(),
     getAllByUserId: vi.fn(),
     create: vi.fn(),
   };
@@ -24,6 +27,7 @@ export class GoalsMockFactory {
     findWeeklyGoalsWithCompletion: vi.fn(),
     findWeeklySummaryOfGoalsCompletedByDay: vi.fn(),
     findWeeklyFrequencyAndCompletionCount: vi.fn(),
+    findGoalById: vi.fn(),
     findAllByUserId: vi.fn(),
     create: vi.fn(),
   };
@@ -159,6 +163,14 @@ export class GoalsMockFactory {
             }),
           ),
       },
+      getGoalById: {
+        success: () =>
+          GoalsMockFactory.repository.getGoalById.mockResolvedValue(
+            GoalsMockFactory.create.goal,
+          ),
+        null: () =>
+          GoalsMockFactory.repository.getGoalById.mockResolvedValue(null),
+      },
       getAllByUserId: {
         success: () =>
           GoalsMockFactory.repository.getAllByUserId.mockResolvedValue({
@@ -197,6 +209,20 @@ export class GoalsMockFactory {
           GoalsMockFactory.responses.repository.getWeeklySummaryOfGoalsCompletedByDay.success();
           GoalsMockFactory.service.findWeeklySummaryOfGoalsCompletedByDay.mockResolvedValue(
             GoalsMockFactory.create.weeklyGoalsSummary(),
+          );
+        },
+      },
+      findGoalById: {
+        success: () => {
+          GoalsMockFactory.responses.repository.getGoalById.success();
+          GoalsMockFactory.service.findGoalById.mockResolvedValue(
+            GoalsMockFactory.create.goal(),
+          );
+        },
+        failure: () => {
+          GoalsMockFactory.responses.repository.getGoalById.null();
+          GoalsMockFactory.service.findGoalById.mockRejectedValue(
+            new NotFoundException(),
           );
         },
       },

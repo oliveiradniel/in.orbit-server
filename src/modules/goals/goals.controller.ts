@@ -37,6 +37,7 @@ import { FindAllResponseDOCS } from './responses/docs/find-all-response.docs';
 
 import { UnauthorizedResponseDOCS } from 'src/shared/responses/docs/unauthorized-response.docs';
 import { NotFoundUserResponseDOCS } from 'src/shared/responses/docs/not-found-user-response.docs';
+import { NotFoundUserOrGoalResponseDOCS } from 'src/shared/responses/docs/not-found-user-or-goal-response.docs';
 
 import { type Goal } from './entities/goal.entity';
 import { type WeeklyGoalsProgress } from 'src/shared/interfaces/goal/weekly-goals-progress.interface';
@@ -44,7 +45,6 @@ import { type WeeklyGoalsSummary } from 'src/shared/interfaces/goal/weekly-goals
 import { type GoalsWithTotal } from 'src/shared/interfaces/goal/goal-without-user-id.interface';
 
 import { GOALS_SERVICE } from 'src/shared/constants/tokens';
-import { NotFoundUserOrGoalResponseDOCS } from 'src/shared/responses/docs/not-found-user-or-goal-response.docs';
 
 @ApiBearerAuth()
 @ApiUnauthorizedResponse({

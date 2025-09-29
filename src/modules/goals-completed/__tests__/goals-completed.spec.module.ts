@@ -10,16 +10,22 @@ import { GoalsCompletedController } from '../goals-completed.controller';
 
 import { GoalsCompletedService } from '../goals-completed.service';
 import { PrismaService } from 'src/shared/database/prisma.service';
+import { UsersService } from 'src/modules/users/users.service';
+import { GoalsService } from 'src/modules/goals/goals.service';
 
 import { PrismaGoalsCompletedRepository } from 'src/shared/database/repositories/goals-completed.repository';
 import { PrismaGoalsRepository } from 'src/shared/database/repositories/goals.repository';
+import { PrismaUsersRepository } from 'src/shared/database/repositories/users.repository';
 
 import {
   GOALS_COMPLETED_REPOSITORY,
   GOALS_COMPLETED_SERVICE,
   GOALS_REPOSITORY,
+  GOALS_SERVICE,
   JWT_SERVICE,
   PRISMA_SERVICE,
+  USERS_REPOSITORY,
+  USERS_SERVICE,
 } from 'src/shared/constants/tokens';
 
 @Module({
@@ -33,6 +39,9 @@ import {
       useClass: PrismaGoalsCompletedRepository,
     },
     { provide: GOALS_REPOSITORY, useClass: PrismaGoalsRepository },
+    { provide: USERS_SERVICE, useClass: UsersService },
+    { provide: USERS_REPOSITORY, useClass: PrismaUsersRepository },
+    { provide: GOALS_SERVICE, useClass: GoalsService },
     { provide: PRISMA_SERVICE, useClass: PrismaService },
     { provide: JWT_SERVICE, useClass: JwtService },
     {

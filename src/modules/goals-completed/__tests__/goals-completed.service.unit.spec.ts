@@ -16,6 +16,8 @@ import { UsersMockFactory } from 'src/shared/__factories__/users-mock.factory';
 import {
   GOALS_COMPLETED_REPOSITORY,
   GOALS_REPOSITORY,
+  GOALS_SERVICE,
+  USERS_SERVICE,
 } from 'src/shared/constants/tokens';
 
 describe('GoalsCompletedService', () => {
@@ -36,6 +38,8 @@ describe('GoalsCompletedService', () => {
           useValue: GoalsCompletedMockFactory.repository,
         },
         { provide: GOALS_REPOSITORY, useValue: GoalsMockFactory.repository },
+        { provide: USERS_SERVICE, useValue: UsersMockFactory.service },
+        { provide: GOALS_SERVICE, useValue: GoalsMockFactory.service },
       ],
     }).compile();
 
@@ -53,6 +57,9 @@ describe('GoalsCompletedService', () => {
       const mockGoalCompleted =
         GoalsCompletedMockFactory.create.goalCompleted();
 
+      UsersMockFactory.responses.service.findUserById.success();
+      GoalsMockFactory.responses.service.findGoalById.success();
+
       GoalsCompletedMockFactory.responses.repository.getGoalCompletedByDateAndByGoalId.success();
 
       GoalsMockFactory.responses.repository.getWeeklyFrequencyAndCompletionCount.success();
@@ -65,6 +72,9 @@ describe('GoalsCompletedService', () => {
         userId: mockGoal.userId,
         goalId: mockGoal.id!,
       });
+
+      expect(UsersMockFactory.service.findUserById).toHaveBeenCalled();
+      expect(GoalsMockFactory.service.findGoalById).toHaveBeenCalled();
 
       expect(
         GoalsMockFactory.repository.getWeeklyFrequencyAndCompletionCount,
@@ -100,6 +110,9 @@ describe('GoalsCompletedService', () => {
         goalId: mockGoal2.id!,
       });
 
+      UsersMockFactory.responses.service.findUserById.success();
+      GoalsMockFactory.responses.service.findGoalById.success();
+
       GoalsCompletedMockFactory.responses.repository.getGoalCompletedByDateAndByGoalId.success();
 
       GoalsMockFactory.responses.repository.getWeeklyFrequencyAndCompletionCount.success(
@@ -117,6 +130,9 @@ describe('GoalsCompletedService', () => {
         userId: mockGoal2.userId,
         goalId: mockGoal2.id!,
       });
+
+      expect(UsersMockFactory.service.findUserById).toHaveBeenCalled();
+      expect(GoalsMockFactory.service.findGoalById).toHaveBeenCalled();
 
       expect(GoalsCompletedMockFactory.repository.create).toHaveBeenCalledWith(
         expect.objectContaining({
@@ -140,6 +156,9 @@ describe('GoalsCompletedService', () => {
         goalId: mockGoal2.id!,
       });
 
+      UsersMockFactory.responses.service.findUserById.success();
+      GoalsMockFactory.responses.service.findGoalById.success();
+
       GoalsCompletedMockFactory.responses.repository.getGoalCompletedByDateAndByGoalId.success();
 
       GoalsMockFactory.responses.repository.getWeeklyFrequencyAndCompletionCount.success(
@@ -158,6 +177,9 @@ describe('GoalsCompletedService', () => {
         goalId: mockGoal2.id!,
       });
 
+      expect(UsersMockFactory.service.findUserById).toHaveBeenCalled();
+      expect(GoalsMockFactory.service.findGoalById).toHaveBeenCalled();
+
       expect(GoalsCompletedMockFactory.repository.create).toHaveBeenCalledWith(
         expect.objectContaining({
           userId: mockGoal2.userId,
@@ -168,9 +190,8 @@ describe('GoalsCompletedService', () => {
     });
 
     it('should to throw NotFound error when the goal does not exists', async () => {
-      GoalsCompletedMockFactory.responses.repository.getGoalCompletedByDateAndByGoalId.success();
-
-      GoalsMockFactory.responses.repository.getWeeklyFrequencyAndCompletionCount.null();
+      UsersMockFactory.responses.service.findUserById.success();
+      GoalsMockFactory.responses.service.findGoalById.failure();
 
       await expect(
         goalsCompletedService.create({
@@ -179,16 +200,22 @@ describe('GoalsCompletedService', () => {
         }),
       ).rejects.toThrow(NotFoundException);
 
+      expect(UsersMockFactory.service.findUserById).toHaveBeenCalled();
+      expect(GoalsMockFactory.service.findGoalById).toHaveBeenCalled();
+
       expect(
         GoalsCompletedMockFactory.repository.getGoalCompletedByDateAndByGoalId,
-      ).toHaveBeenCalled();
+      ).not.toHaveBeenCalled();
 
       expect(
         GoalsMockFactory.repository.getWeeklyFrequencyAndCompletionCount,
-      ).toHaveBeenCalled();
+      ).not.toHaveBeenCalled();
     });
 
     it('should to throw BadRequest error when the goal has already been completed today', async () => {
+      UsersMockFactory.responses.service.findUserById.success();
+      GoalsMockFactory.responses.service.findGoalById.success();
+
       GoalsCompletedMockFactory.responses.repository.getGoalCompletedByDateAndByGoalId.alreadyCompleted();
 
       await expect(
@@ -197,6 +224,9 @@ describe('GoalsCompletedService', () => {
           goalId: mockGoal.id!,
         }),
       ).rejects.toThrow(BadRequestException);
+
+      expect(UsersMockFactory.service.findUserById).toHaveBeenCalled();
+      expect(GoalsMockFactory.service.findGoalById).toHaveBeenCalled();
 
       expect(
         GoalsCompletedMockFactory.repository.getGoalCompletedByDateAndByGoalId,
@@ -208,6 +238,9 @@ describe('GoalsCompletedService', () => {
     });
 
     it('should to throw Conflict error when the number of completions is equal to or greater than the frequency number', async () => {
+      UsersMockFactory.responses.service.findUserById.success();
+      GoalsMockFactory.responses.service.findGoalById.success();
+
       GoalsCompletedMockFactory.responses.repository.getGoalCompletedByDateAndByGoalId.success();
 
       GoalsMockFactory.responses.repository.getWeeklyFrequencyAndCompletionCount.conflict();
@@ -219,6 +252,9 @@ describe('GoalsCompletedService', () => {
         }),
       ).rejects.toThrow(ConflictException);
 
+      expect(UsersMockFactory.service.findUserById).toHaveBeenCalled();
+      expect(GoalsMockFactory.service.findGoalById).toHaveBeenCalled();
+
       expect(
         GoalsCompletedMockFactory.repository.getGoalCompletedByDateAndByGoalId,
       ).toHaveBeenCalled();
@@ -226,6 +262,27 @@ describe('GoalsCompletedService', () => {
       expect(
         GoalsMockFactory.repository.getWeeklyFrequencyAndCompletionCount,
       ).toHaveBeenCalled();
+    });
+
+    it('should to throw an error when the user does not exist', async () => {
+      UsersMockFactory.responses.service.findUserById.failure();
+
+      await expect(
+        goalsCompletedService.create({
+          userId: mockGoal.userId,
+          goalId: mockGoal.id!,
+        }),
+      ).rejects.toThrow(NotFoundException);
+
+      expect(GoalsMockFactory.service.findGoalById).not.toHaveBeenCalled();
+
+      expect(
+        GoalsCompletedMockFactory.repository.getGoalCompletedByDateAndByGoalId,
+      ).not.toHaveBeenCalled();
+
+      expect(
+        GoalsMockFactory.repository.getWeeklyFrequencyAndCompletionCount,
+      ).not.toHaveBeenCalled();
     });
   });
 });
