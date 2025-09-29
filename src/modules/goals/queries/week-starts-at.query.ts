@@ -1,7 +1,8 @@
 import { Transform } from 'class-transformer';
 import { IsDate, IsOptional } from 'class-validator';
 
-export class FindWeeklySummaryOfCompletedGoalsDTO {
+//FindWeeklySummaryOfCompletedGoalsQuery
+export class WeekStartsAtQuery {
   @IsDate()
   @IsOptional()
   @Transform(({ value }: { value: string }) =>

@@ -24,17 +24,19 @@ import { GoalsService } from './goals.service';
 import { ActiveUserId } from 'src/shared/decorators/active-user-id.decorator';
 
 import { CreateGoalDTO } from './dtos/create-goal.dto';
-import { FindWeeklySummaryOfCompletedGoalsDTO } from './dtos/find-weekly-summary-of-completed-goals.dto';
-
-import { WeeklyGoalResponseDTO } from './dtos/weekly-goal-response.dto';
-import { WeeklySummaryResponseDTO } from './dtos/weekly-summary-response.dto';
-import { CreateGoalResponseDTO } from './dtos/create-goal-response.dto';
-import { UnauthorizedResponseDTO } from 'src/shared/dtos/unauthorized-response.dto';
-import { FindAllResponseDTO } from './dtos/find-all-response.dto';
 import { UpdateGoalDTO } from './dtos/update-goal.dto';
-import { NotFoundGoalResponseDTO } from 'src/shared/dtos/not-found-goal-response.dto';
+
+import { WeekStartsAtQuery } from './queries/week-starts-at.query';
 
 import { GoalIdParam } from './params/goal-id.param';
+
+import { WeeklyGoalResponseDOCS } from './responses/docs/weekly-goal-response.docs';
+import { WeeklySummaryResponseDOCS } from './responses/docs/weekly-summary-response.docs';
+import { CreateGoalResponseDOCS } from './responses/docs/create-goal-response.docs';
+import { FindAllResponseDOCS } from './responses/docs/find-all-response.docs';
+
+import { UnauthorizedResponseDOCS } from 'src/shared/responses/docs/unauthorized-response.docs';
+import { NotFoundUserResponseDOCS } from 'src/shared/responses/docs/not-found-user-response.docs';
 
 import { type Goal } from './entities/goal.entity';
 import { type WeeklyGoalsProgress } from 'src/shared/interfaces/goal/weekly-goals-progress.interface';
@@ -42,11 +44,16 @@ import { type WeeklyGoalsSummary } from 'src/shared/interfaces/goal/weekly-goals
 import { type GoalsWithTotal } from 'src/shared/interfaces/goal/goal-without-user-id.interface';
 
 import { GOALS_SERVICE } from 'src/shared/constants/tokens';
+import { NotFoundUserOrGoalResponseDOCS } from 'src/shared/responses/docs/not-found-user-or-goal-response.docs';
 
 @ApiBearerAuth()
 @ApiUnauthorizedResponse({
   description: 'Unauthorized request.',
-  type: UnauthorizedResponseDTO,
+  type: UnauthorizedResponseDOCS,
+})
+@ApiNotFoundResponse({
+  description: 'Could not find the user.',
+  type: NotFoundUserResponseDOCS,
 })
 @Controller('goals')
 export class GoalsController {
@@ -56,8 +63,8 @@ export class GoalsController {
 
   @ApiOkResponse({
     description:
-      'Returns a list of all goals with their weekly completion count',
-    type: [WeeklyGoalResponseDTO],
+      'Returns a list of all goals with their weekly completion count.',
+    type: [WeeklyGoalResponseDOCS],
   })
   @Get()
   findWeeklyGoalsWithCompletion(
@@ -69,7 +76,7 @@ export class GoalsController {
   @ApiOkResponse({
     description:
       'Returns the weekly progress summary, including the total goals and the list of goals completed per day.',
-    type: WeeklySummaryResponseDTO,
+    type: WeeklySummaryResponseDOCS,
   })
   @ApiQuery({
     name: 'weekStartsAt',
@@ -85,7 +92,7 @@ export class GoalsController {
   findWeeklySummaryOfCompletedGoals(
     @ActiveUserId() userId: string,
     @Query()
-    queryParams: FindWeeklySummaryOfCompletedGoalsDTO,
+    queryParams: WeekStartsAtQuery,
   ): Promise<WeeklyGoalsSummary> {
     const { weekStartsAt } = queryParams;
 
@@ -97,8 +104,8 @@ export class GoalsController {
 
   @ApiOkResponse({
     description:
-      'Returns a list of all goals for the authenticated user along with the total count',
-    type: FindAllResponseDTO,
+      'Returns a list of all goals for the authenticated user along with the total count.',
+    type: FindAllResponseDOCS,
   })
   @Get('all')
   findAll(@ActiveUserId() userId: string): Promise<GoalsWithTotal> {
@@ -107,8 +114,8 @@ export class GoalsController {
 
   @ApiCreatedResponse({
     description:
-      'Successfully creates a new goal and returns the created goal object',
-    type: CreateGoalResponseDTO,
+      'Successfully creates a new goal and returns the created goal object.',
+    type: CreateGoalResponseDOCS,
   })
   @Post()
   create(
@@ -124,12 +131,12 @@ export class GoalsController {
   }
 
   @ApiOkResponse({
-    description: 'Returns the updated goal after a successful update',
-    type: CreateGoalResponseDTO,
+    description: 'Returns the updated goal after a successful update.',
+    type: CreateGoalResponseDOCS,
   })
   @ApiNotFoundResponse({
-    description: 'Could not find the goal.',
-    type: NotFoundGoalResponseDTO,
+    description: 'Could not find the user or goal.',
+    type: NotFoundUserOrGoalResponseDOCS,
   })
   @Patch(':goalId')
   update(

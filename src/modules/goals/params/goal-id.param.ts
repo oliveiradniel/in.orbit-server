@@ -6,7 +6,7 @@ export class GoalIdParam {
     type: 'string',
     format: 'uuid',
     example: '0d935d96-e5cd-4633-8246-4df16d96190e',
-    description: 'Unique identifier of the goal to update',
+    description: 'Unique identifier of the goal to update.',
   })
   @IsUUID()
   @IsNotEmpty()

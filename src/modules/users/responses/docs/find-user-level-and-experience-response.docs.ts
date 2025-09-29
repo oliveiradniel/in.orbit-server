@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class FindUserLevelAndExperienceResponseDTO {
+export class FindUserLevelAndExperienceResponseDOCS {
   @ApiProperty({
     type: 'number',
     example: '2',

@@ -1,5 +1,5 @@
 import { Body, Controller, Inject, Post, Res } from '@nestjs/common';
-import { ApiResponse } from '@nestjs/swagger';
+import { ApiBadRequestResponse, ApiOkResponse } from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 
 import { Response } from 'express';
@@ -10,6 +10,9 @@ import { IsPublic } from 'src/shared/decorators/is-public.decorator';
 import { getConfig } from 'src/shared/config/config.helper';
 
 import { AuthenticateGitHubDTO } from './dtos/authenticate-github.dto';
+
+import { BadRequestResponseDOCS } from './responses/docs/bad-request-response.docs';
+import { GitHubAuthenticateResponseDOCS } from './responses/docs/github-authenticate-response.docs';
 
 import { type GitHubAuthenticateResponse } from './interfaces/github-authenticate-response.interface';
 
@@ -23,37 +26,13 @@ export class OAuthController {
     @Inject(CONFIG_SERVICE) private readonly configService: ConfigService,
   ) {}
 
-  @ApiResponse({
-    status: 201,
-    description: 'Authenticate user from GitHub code',
-    schema: {
-      type: 'object',
-      properties: {
-        accessToken: {
-          type: 'string',
-          description: 'JWT code.',
-        },
-      },
-      example: {
-        accessToken:
-          'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJjZTkzYmI0Ni05MGVjLTRhNjEtYTM3Zi1lMTEyOTA4OTMzZTciLCJpYXQiOjE3NTYxMjU3ODYsImV4cCI6MTc1NjI5ODU4Nn0.cPKtrNqY7-nEaCeWisupna9aF3MaC0E3Egmt6cOIhYo',
-      },
-    },
+  @ApiOkResponse({
+    description: 'Successful authentication with GitHub code.',
+    type: GitHubAuthenticateResponseDOCS,
   })
-  @ApiResponse({
-    status: 400,
-    description: 'Invalid GitHub code or token not received',
-    schema: {
-      type: 'object',
-      properties: {
-        message: {
-          type: 'string',
-          example: 'Invalid GitHub code or token not received',
-        },
-        error: { type: 'string', example: 'Bad request' },
-        statusCode: { type: 'number', example: 400 },
-      },
-    },
+  @ApiBadRequestResponse({
+    description: 'Invalid GitHub code or missing token.',
+    type: BadRequestResponseDOCS,
   })
   @Post('github')
   async githubAuthenticate(

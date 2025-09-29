@@ -10,10 +10,11 @@ import { UsersService } from './users.service';
 
 import { ActiveUserId } from 'src/shared/decorators/active-user-id.decorator';
 
-import { FindUserByIdResponseDTO } from './dtos/find-user-by-id-response.dto';
-import { UnauthorizedResponseDTO } from 'src/shared/dtos/unauthorized-response.dto';
-import { NotFoundUserResponseDTO } from 'src/shared/dtos/not-found-user-response.dto ';
-import { FindUserLevelAndExperienceResponseDTO } from './dtos/find-user-level-and-experience-response.dto';
+import { FindUserByIdResponseDOCS } from './responses/docs/find-user-by-id-response.docs';
+import { FindUserLevelAndExperienceResponseDOCS } from './responses/docs/find-user-level-and-experience-response.docs';
+
+import { UnauthorizedResponseDOCS } from 'src/shared/responses/docs/unauthorized-response.docs';
+import { NotFoundUserResponseDOCS } from 'src/shared/responses/docs/not-found-user-response.docs';
 
 import { type UserWithoutExternalAccountId } from 'src/shared/database/interfaces/user/user-without-external-account-id.interface';
 import { type GamificationInfo } from './interfaces/gamification-info.interface';
@@ -23,11 +24,11 @@ import { USERS_SERVICE } from 'src/shared/constants/tokens';
 @ApiBearerAuth()
 @ApiUnauthorizedResponse({
   description: 'Unauthorized request.',
-  type: UnauthorizedResponseDTO,
+  type: UnauthorizedResponseDOCS,
 })
 @ApiNotFoundResponse({
   description: 'User not found.',
-  type: NotFoundUserResponseDTO,
+  type: NotFoundUserResponseDOCS,
 })
 @Controller('users')
 export class UsersController {
@@ -37,7 +38,7 @@ export class UsersController {
 
   @ApiOkResponse({
     description: 'Returns the currently authenticated user.',
-    type: FindUserByIdResponseDTO,
+    type: FindUserByIdResponseDOCS,
   })
   @Get()
   findUserById(
@@ -49,7 +50,7 @@ export class UsersController {
   @ApiOkResponse({
     description:
       'Returns the level, experience points and total points needed to reach the next level.',
-    type: FindUserLevelAndExperienceResponseDTO,
+    type: FindUserLevelAndExperienceResponseDOCS,
   })
   @Get('/gamification')
   findUserLevelAndExperience(

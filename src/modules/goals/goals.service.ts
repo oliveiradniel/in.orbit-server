@@ -5,8 +5,9 @@ import dayjs from 'dayjs';
 import { UsersService } from '../users/users.service';
 
 import { CreateGoalDTO } from './dtos/create-goal.dto';
-import { FindWeeklySummaryOfCompletedGoalsDTO } from './dtos/find-weekly-summary-of-completed-goals.dto';
 import { UpdateGoalDTO } from './dtos/update-goal.dto';
+
+import { WeekStartsAtQuery } from './queries/week-starts-at.query';
 
 import { GoalIdParam } from './params/goal-id.param';
 
@@ -55,7 +56,7 @@ export class GoalsService {
     weekStartsAt,
   }: {
     userId: string;
-  } & FindWeeklySummaryOfCompletedGoalsDTO): Promise<WeeklyGoalsSummary> {
+  } & WeekStartsAtQuery): Promise<WeeklyGoalsSummary> {
     const firstDayOfWeek = dayjs(weekStartsAt).startOf('week').toDate();
     const lastDayOfWeek = dayjs(weekStartsAt).endOf('week').toDate();
 

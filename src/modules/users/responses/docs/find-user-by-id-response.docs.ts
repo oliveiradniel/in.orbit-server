@@ -1,18 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class FindUserByIdResponseDTO {
+export class FindUserByIdResponseDOCS {
   @ApiProperty({
     type: 'string',
     format: 'uuid',
     example: 'ce93bb46-90ec-4a61-a37f-e112908933e7',
-    description: 'Unique identifier of the user',
+    description: 'Unique identifier of the user.',
   })
   id: string;
 
   @ApiProperty({
     type: 'string',
     example: 'Daniel Oliveira',
-    description: 'User name',
+    description: 'User name.',
   })
   name: string;
 
@@ -20,7 +20,7 @@ export class FindUserByIdResponseDTO {
     type: 'string',
     format: 'email',
     example: 'kadadniel@gmail.com',
-    description: 'User email',
+    description: 'User email.',
   })
   email: string;
 
@@ -28,7 +28,7 @@ export class FindUserByIdResponseDTO {
     type: 'string',
     format: 'url',
     example: 'https://avatars.githubusercontent.com/u/189175871?v=4',
-    description: 'Avatar URL of the user',
+    description: 'Avatar URL of the user.',
   })
   avatarURL: string;
 }

@@ -2,7 +2,7 @@ import { ApiProperty } from '@nestjs/swagger';
 
 import { type GoalWithoutUserId } from 'src/shared/interfaces/goal/goal-without-user-id.interface';
 
-export class FindAllResponseDTO {
+export class FindAllResponseDOCS {
   @ApiProperty({
     example: [
       {
@@ -18,13 +18,13 @@ export class FindAllResponseDTO {
         createdAt: '2025-09-13T22:56:14.656Z',
       },
     ],
-    description: 'List of goals that belong to the authenticated user',
+    description: 'List of goals that belong to the authenticated user.',
   })
   goals: GoalWithoutUserId[];
 
   @ApiProperty({
     example: 2,
-    description: 'Total number of goals found for the authenticated user',
+    description: 'Total number of goals found for the authenticated user.',
   })
   total: number;
 }

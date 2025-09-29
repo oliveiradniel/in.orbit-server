@@ -1,6 +1,6 @@
 import { ApiProperty, getSchemaPath } from '@nestjs/swagger';
 
-export class GoalCompletedPerDayResponseDTO {
+export class GoalCompletedPerDayResponseDOCS {
   @ApiProperty({ type: 'string', format: 'uuid' })
   id: string;
 
@@ -11,21 +11,20 @@ export class GoalCompletedPerDayResponseDTO {
   completedAt: string;
 }
 
-export class WeeklySummaryResponseDTO {
+export class WeeklySummaryResponseDOCS {
   @ApiProperty({
     example: 1,
-    description: 'Total number of goals completed in the week',
+    description: 'Total number of goals completed in the week.',
   })
   completed: number;
 
   @ApiProperty({
     example: 7,
-    description: 'Total number of goals available in the week',
+    description: 'Total number of goals available in the week.',
   })
   total: number;
 
   @ApiProperty({
-    description: 'Mapping of each day to its completed goals',
     example: {
       '2025-08-26': [
         {
@@ -35,10 +34,11 @@ export class WeeklySummaryResponseDTO {
         },
       ],
     },
+    description: 'Mapping of each day to its completed goals.',
     additionalProperties: {
       type: 'array',
-      items: { $ref: getSchemaPath(GoalCompletedPerDayResponseDTO) },
+      items: { $ref: getSchemaPath(GoalCompletedPerDayResponseDOCS) },
     },
   })
-  goalsPerDay: Record<string, GoalCompletedPerDayResponseDTO[]>;
+  goalsPerDay: Record<string, GoalCompletedPerDayResponseDOCS[]>;
 }
