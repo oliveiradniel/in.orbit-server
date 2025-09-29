@@ -167,7 +167,7 @@ describe('GoalsService', () => {
       });
     });
 
-    it('should to return all goals by active user when not exists goals', async () => {
+    it('should to return empty goals by active user when not exists goals', async () => {
       UsersMockFactory.responses.service.findUserById.success();
       GoalsMockFactory.responses.repository.getAllByUserId.empty();
 

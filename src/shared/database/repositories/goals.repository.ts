@@ -13,7 +13,8 @@ import { type WeeklyGoalsProgress } from 'src/shared/interfaces/goal/weekly-goal
 import { type WeeklyGoalsSummary } from 'src/shared/interfaces/goal/weekly-goals-summary.interface';
 import { type GoalProgressMetric } from 'src/shared/interfaces/goal/goal-progress-metric.interface';
 import { type GoalsWithTotal } from 'src/shared/interfaces/goal/goal-without-user-id.interface';
-import { type DataToUpdateGoal } from '../interfaces/goal/data-to-update.interface';
+import { type DataToUpdateGoal } from '../interfaces/goal/data-to-update-goal.interface';
+import { type DataToDeleteGoals } from '../interfaces/goal/data-to-delete-goals.interface';
 
 import { PRISMA_SERVICE } from 'src/shared/constants/tokens';
 
@@ -215,5 +216,13 @@ export class PrismaGoalsRepository implements GoalsRepository {
       where: { userId, id: goalId },
       data: { desiredWeeklyFrequency },
     });
+  }
+
+  async deleteGoals({ userId, goalsId }: DataToDeleteGoals): Promise<void> {
+    const goalsToBeDeleted = goalsId.map((goalId) =>
+      this.prismaService.goal.delete({ where: { userId, id: goalId } }),
+    );
+
+    await Promise.all(goalsToBeDeleted);
   }
 }

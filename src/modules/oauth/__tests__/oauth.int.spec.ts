@@ -49,7 +49,7 @@ describe('OAuth Module', () => {
 
     prismaService = module.get<PrismaService>(PRISMA_SERVICE);
     jwtService = module.get<JwtService>(JWT_SERVICE);
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+
     configService = module.get<ConfigService>(CONFIG_SERVICE);
 
     usersRepository = module.get(USERS_REPOSITORY);

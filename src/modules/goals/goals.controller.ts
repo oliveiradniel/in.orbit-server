@@ -141,9 +141,10 @@ export class GoalsController {
   @Patch(':goalId')
   update(
     @ActiveUserId() userId: string,
-    @Param() { goalId }: GoalIdParam,
+    @Param() params: GoalIdParam,
     @Body() updateGoalDTO: UpdateGoalDTO,
   ): Promise<Goal> {
+    const { goalId } = params;
     const { desiredWeeklyFrequency } = updateGoalDTO;
 
     return this.goalsService.update(
