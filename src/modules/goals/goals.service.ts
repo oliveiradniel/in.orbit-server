@@ -6,6 +6,7 @@ import { UsersService } from '../users/users.service';
 
 import { CreateGoalDTO } from './dtos/create-goal.dto';
 import { UpdateGoalDTO } from './dtos/update-goal.dto';
+import { DeleteGoalsDTO } from './dtos/delete-goals.dto';
 
 import { WeekStartsAtQuery } from './queries/week-starts-at.query';
 
@@ -102,5 +103,19 @@ export class GoalsService {
       goalId,
       desiredWeeklyFrequency,
     });
+  }
+
+  async delete(userId: string, deleteGoalDTO: DeleteGoalsDTO) {
+    const { goalsId } = deleteGoalDTO;
+
+    await this.usersService.findUserById(userId);
+
+    const goalsToBeValidated = goalsId.map((goalId) =>
+      this.findGoalById(goalId),
+    );
+
+    await Promise.all(goalsToBeValidated);
+
+    return this.goalsRepository.deleteGoals({ userId, goalsId });
   }
 }
