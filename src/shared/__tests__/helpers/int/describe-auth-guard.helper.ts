@@ -8,12 +8,12 @@ import { type DescribeAuthGuardParams } from 'src/shared/interfaces/helpers/desc
 export function describeAuthGuard({
   getServer,
   route,
-  method = 'get',
+  httpMethod = 'get',
 }: DescribeAuthGuardParams): void {
   describe('AuthGuard', () => {
     it(`should throw Unauthorized when token is missing`, async () => {
       const response = await request(getServer())
-        [method](route)
+        [httpMethod](route)
         .set('Authorization', 'Bearer');
 
       expectUnauthorized(response);
@@ -21,7 +21,7 @@ export function describeAuthGuard({
 
     it(`should throw Unauthorized when is token is signed with a different secret`, async () => {
       const response = await request(getServer())
-        [method](route)
+        [httpMethod](route)
         .set(
           'Authorization',
           'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IkpvaG4gRG9lIiwiYWRtaW4iOnRydWUsImlhdCI6MTUxNjIzOTAyMn0.KMUFsIDTnFmyG3nMiGM6H9FNFUROf3wh7SmqJp-QV30',

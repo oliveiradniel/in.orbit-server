@@ -313,7 +313,7 @@ describe('Goals Module', () => {
 
   describe('POST', () => {
     describe('/goals', () => {
-      it('should to create a goal', async () => {
+      it('should to create a goal and return it', async () => {
         const response = await request(server)
           .post('/goals')
           .send({ title: 'Estudar', desiredWeeklyFrequency: 5 })
@@ -338,7 +338,64 @@ describe('Goals Module', () => {
       describeAuthGuard({
         getServer: () => server,
         route: '/goals',
-        method: 'post',
+        httpMethod: 'post',
+      });
+    });
+  });
+
+  describe('PATCH', () => {
+    describe('/goals/:goalId', () => {
+      it('should to update goal and return it', async () => {
+        const goal = await createTestGoal({
+          prismaService,
+          userId: activeUser.id!,
+          override: {
+            desiredWeeklyFrequency: 5,
+          },
+        });
+
+        const goalId = goal.id!;
+
+        const updatedGoal = await request(server)
+          .patch(`/goals/${goalId}`)
+          .send({ desiredWeeklyFrequency: 7 })
+          .set('Authorization', `Bearer ${accessToken}`);
+
+        expect(updatedGoal.statusCode).toBe(200);
+        expect(updatedGoal.body).toMatchObject({
+          id: goalId,
+          desiredWeeklyFrequency: 7,
+        });
+      });
+
+      it('should to throw NotFound an error when goal does not exists', async () => {
+        const goalId = GoalsMockFactory.create.id();
+
+        const updatedGoal = await request(server)
+          .patch(`/goals/${goalId}`)
+          .send({ desiredWeeklyFrequency: 7 })
+          .set('Authorization', `Bearer ${accessToken}`);
+
+        expect(updatedGoal.statusCode).toBe(404);
+        expect(updatedGoal.body).toEqual({
+          message: 'Goal not found.',
+          error: 'Not Found',
+          statusCode: 404,
+        });
+      });
+
+      describeUserNotExists({
+        getServer: () => server,
+        getJWTService: () => jwtService,
+        getData: () => ({ desiredWeeklyFrequency: 7 }),
+        route: '/goals/:goalId',
+        httpMethod: 'patch',
+      });
+
+      describeAuthGuard({
+        getServer: () => server,
+        route: '/goals/:goalId',
+        httpMethod: 'patch',
       });
     });
   });
