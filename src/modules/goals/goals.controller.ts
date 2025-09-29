@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiConflictResponse,
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiNotFoundResponse,
@@ -50,6 +51,7 @@ import { type WeeklyGoalsSummary } from 'src/shared/interfaces/goal/weekly-goals
 import { type GoalsWithTotal } from 'src/shared/interfaces/goal/goal-without-user-id.interface';
 
 import { GOALS_SERVICE } from 'src/shared/constants/tokens';
+import { ConflictResponseDOCS } from './responses/docs/conflict-response.docs';
 
 @ApiBearerAuth()
 @ApiUnauthorizedResponse({
@@ -121,6 +123,10 @@ export class GoalsController {
     description:
       'Successfully creates a new goal and returns the created goal object.',
     type: CreateGoalResponseDOCS,
+  })
+  @ApiConflictResponse({
+    description: 'A goal with the same title already exists for this user.',
+    type: ConflictResponseDOCS,
   })
   @Post()
   create(

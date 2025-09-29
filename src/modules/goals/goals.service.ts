@@ -1,5 +1,5 @@
 import {
-  BadRequestException,
+  ConflictException,
   Inject,
   Injectable,
   NotFoundException,
@@ -91,7 +91,7 @@ export class GoalsService {
       title,
     );
     if (titleAlreadyInUse) {
-      throw new BadRequestException('This title already in use.');
+      throw new ConflictException('This title already in use.');
     }
 
     return this.goalsRepository.create(userId, {
