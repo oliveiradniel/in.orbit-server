@@ -1,4 +1,5 @@
 import { Test } from '@nestjs/testing';
+import { NotFoundException } from '@nestjs/common';
 
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
@@ -235,6 +236,74 @@ describe('GoalsService', () => {
           desiredWeeklyFrequency: mockGoalFrequency,
         }),
       classMethod: 'create',
+    });
+  });
+
+  describe('update', () => {
+    it('should update a goal and return it', async () => {
+      UsersMockFactory.responses.service.findUserById.success();
+      GoalsMockFactory.responses.repository.getGoalById.success();
+
+      const newDesiredWeeklyFrequency = 7;
+
+      const goal = GoalsMockFactory.create.goal({
+        desiredWeeklyFrequency: 5,
+      });
+
+      GoalsMockFactory.responses.repository.update.success({
+        id: goal.id!,
+        userId: mockUserId,
+        desiredWeeklyFrequency: newDesiredWeeklyFrequency,
+      });
+
+      const updatedGoal = await goalsService.update(
+        mockUserId,
+        { goalId: goal.id! },
+        { desiredWeeklyFrequency: newDesiredWeeklyFrequency },
+      );
+
+      expect(UsersMockFactory.service.findUserById).toHaveBeenCalled();
+      expect(GoalsMockFactory.repository.getGoalById).toHaveBeenCalled();
+      expect(GoalsMockFactory.repository.update).toHaveBeenCalled();
+
+      expect(updatedGoal).toMatchObject({
+        id: goal.id!,
+        userId: mockUserId,
+        desiredWeeklyFrequency: newDesiredWeeklyFrequency,
+      });
+    });
+
+    it('should to throw NotFound error when the goal does not exists', async () => {
+      UsersMockFactory.responses.service.findUserById.success();
+      GoalsMockFactory.responses.repository.getGoalById.null();
+
+      const newDesiredWeeklyFrequency = 7;
+
+      const goal = GoalsMockFactory.create.goal({
+        desiredWeeklyFrequency: 5,
+      });
+
+      await expect(
+        goalsService.update(
+          mockUserId,
+          { goalId: goal.id! },
+          { desiredWeeklyFrequency: newDesiredWeeklyFrequency },
+        ),
+      ).rejects.toThrow(NotFoundException);
+
+      expect(UsersMockFactory.service.findUserById).toHaveBeenCalled();
+      expect(GoalsMockFactory.repository.getGoalById).toHaveBeenCalled();
+      expect(GoalsMockFactory.repository.update).not.toHaveBeenCalled();
+    });
+
+    describeUserNotExistsInGoals({
+      request: () =>
+        goalsService.update(
+          mockUserId,
+          { goalId: GoalsMockFactory.create.id() },
+          { desiredWeeklyFrequency: 7 },
+        ),
+      classMethod: 'update',
     });
   });
 });

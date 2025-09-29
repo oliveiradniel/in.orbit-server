@@ -21,6 +21,7 @@ export class GoalsMockFactory {
     getGoalById: vi.fn(),
     getAllByUserId: vi.fn(),
     create: vi.fn(),
+    update: vi.fn(),
   };
 
   static service = {
@@ -30,6 +31,7 @@ export class GoalsMockFactory {
     findGoalById: vi.fn(),
     findAllByUserId: vi.fn(),
     create: vi.fn(),
+    update: vi.fn(),
   };
 
   static create = {
@@ -191,6 +193,20 @@ export class GoalsMockFactory {
         success: (override: Partial<Goal> = {}) =>
           GoalsMockFactory.repository.create.mockResolvedValue(
             GoalsMockFactory.create.goal(override),
+          ),
+      },
+      update: {
+        success: ({
+          id,
+          userId,
+          desiredWeeklyFrequency,
+        }: Pick<Goal, 'id' | 'userId' | 'desiredWeeklyFrequency'>) =>
+          GoalsMockFactory.repository.update.mockResolvedValue(
+            GoalsMockFactory.create.goal({
+              id,
+              userId,
+              desiredWeeklyFrequency,
+            }),
           ),
       },
     },
