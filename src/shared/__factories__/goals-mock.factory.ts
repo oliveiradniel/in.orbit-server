@@ -19,6 +19,7 @@ export class GoalsMockFactory {
     getWeeklySummaryOfGoalsCompletedByDay: vi.fn(),
     getWeeklyFrequencyAndCompletionCount: vi.fn(),
     getGoalById: vi.fn(),
+    getGoalByTitle: vi.fn(),
     getAllByUserId: vi.fn(),
     create: vi.fn(),
     update: vi.fn(),
@@ -172,6 +173,14 @@ export class GoalsMockFactory {
           ),
         null: () =>
           GoalsMockFactory.repository.getGoalById.mockResolvedValue(null),
+      },
+      getGoalByTitle: {
+        found: () =>
+          GoalsMockFactory.repository.getGoalByTitle.mockResolvedValue(
+            GoalsMockFactory.create.goal(),
+          ),
+        notFound: () =>
+          GoalsMockFactory.repository.getGoalByTitle.mockResolvedValue(null),
       },
       getAllByUserId: {
         success: () =>

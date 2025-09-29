@@ -23,6 +23,7 @@ import { describeUserNotExistsInGoals } from 'src/shared/__tests__/helpers/unit/
 import { type GoalsWithTotal } from 'src/shared/interfaces/goal/goal-without-user-id.interface';
 
 import { GOALS_REPOSITORY, USERS_SERVICE } from 'src/shared/constants/tokens';
+import { ConflictException } from '@nestjs/common';
 
 describe('GoalsService', () => {
   let goalsService: GoalsService;
@@ -217,6 +218,7 @@ describe('GoalsService', () => {
 
       UsersMockFactory.responses.service.findUserById.success();
       GoalsMockFactory.responses.repository.create.success(mockGoal);
+      GoalsMockFactory.responses.repository.getGoalByTitle.notFound();
 
       const goal = await goalsService.create(mockUserId, {
         title: mockGoalTitle,
@@ -235,6 +237,24 @@ describe('GoalsService', () => {
       );
 
       expect(goal).toEqual(mockGoal);
+    });
+
+    it('should throw Conflict error when title already in use', async () => {
+      UsersMockFactory.responses.service.findUserById.success();
+      GoalsMockFactory.responses.repository.getGoalByTitle.found();
+
+      await expect(
+        goalsService.create(mockUserId, {
+          title: mockGoalTitle,
+          desiredWeeklyFrequency: mockGoalFrequency,
+        }),
+      ).rejects.toThrow(ConflictException);
+
+      expect(UsersMockFactory.service.findUserById).toHaveBeenCalledWith(
+        mockUserId,
+      );
+      expect(GoalsMockFactory.repository.create).not.toHaveBeenCalled();
+      expect(GoalsMockFactory.service.create).not.toHaveBeenCalled();
     });
 
     describeUserNotExistsInGoals({
