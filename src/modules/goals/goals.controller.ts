@@ -14,6 +14,7 @@ import {
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
+  ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiQuery,
@@ -160,6 +161,13 @@ export class GoalsController {
     );
   }
 
+  @ApiNoContentResponse({
+    description: 'Goals successfully deleted.',
+  })
+  @ApiNotFoundResponse({
+    description: 'Could not find the user or goal.',
+    type: NotFoundUserOrGoalResponseDOCS,
+  })
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete()
   async delete(
