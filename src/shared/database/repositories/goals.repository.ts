@@ -30,6 +30,18 @@ export class PrismaGoalsRepository implements GoalsRepository {
     });
   }
 
+  getGoalByTitle(userId: string, title: string): Promise<Goal | null> {
+    return this.prismaService.goal.findFirst({
+      where: {
+        userId,
+        title: {
+          equals: title,
+          mode: 'insensitive',
+        },
+      },
+    });
+  }
+
   async getWeeklyGoalsWithCompletion({
     userId,
     lastDayOfWeek,

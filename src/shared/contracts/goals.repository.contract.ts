@@ -15,6 +15,8 @@ import { type DataToDeleteGoals } from '../database/interfaces/goal/data-to-dele
 export abstract class GoalsRepository {
   abstract getGoalById(goalId: string): Promise<Goal | null>;
 
+  abstract getGoalByTitle(userId: string, title: string): Promise<Goal | null>;
+
   abstract getWeeklyGoalsWithCompletion(
     params: UserDateRangeFilter,
   ): Promise<WeeklyGoalsProgress[]>;
