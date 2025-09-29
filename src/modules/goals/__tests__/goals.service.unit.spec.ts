@@ -240,7 +240,7 @@ describe('GoalsService', () => {
   });
 
   describe('update', () => {
-    it('should update a goal and return it', async () => {
+    it('should to update a goal and return it', async () => {
       UsersMockFactory.responses.service.findUserById.success();
       GoalsMockFactory.responses.repository.getGoalById.success();
 
@@ -304,6 +304,55 @@ describe('GoalsService', () => {
           { desiredWeeklyFrequency: 7 },
         ),
       classMethod: 'update',
+    });
+  });
+
+  describe('delete', () => {
+    let goalId1: ReturnType<typeof GoalsMockFactory.create.id>;
+    let goalId2: ReturnType<typeof GoalsMockFactory.create.id>;
+
+    beforeEach(() => {
+      const goal1 = GoalsMockFactory.create.goal();
+      const goal2 = GoalsMockFactory.create.goal();
+
+      goalId1 = goal1.id!;
+      goalId2 = goal2.id!;
+    });
+
+    it('should to delete a goal with success', async () => {
+      UsersMockFactory.responses.service.findUserById.success();
+      GoalsMockFactory.responses.repository.getGoalById.success();
+      GoalsMockFactory.responses.repository.deleteGoals.success();
+
+      await goalsService.delete(mockUserId, {
+        goalsId: [goalId1, goalId2],
+      });
+
+      expect(GoalsMockFactory.repository.deleteGoals).toHaveBeenCalledWith({
+        userId: mockUserId,
+        goalsId: [goalId1, goalId2],
+      });
+    });
+
+    it('should to throw NotFound error when the goal does not exists', async () => {
+      UsersMockFactory.responses.service.findUserById.success();
+      GoalsMockFactory.responses.repository.getGoalById.null();
+
+      await expect(
+        goalsService.delete(mockUserId, { goalsId: [goalId1, goalId2] }),
+      ).rejects.toThrow(NotFoundException);
+
+      expect(UsersMockFactory.service.findUserById).toHaveBeenCalled();
+      expect(GoalsMockFactory.repository.getGoalById).toHaveBeenCalled();
+      expect(GoalsMockFactory.repository.deleteGoals).not.toHaveBeenCalled();
+    });
+
+    describeUserNotExistsInGoals({
+      request: () =>
+        goalsService.delete(mockUserId, {
+          goalsId: [goalId1, goalId2],
+        }),
+      classMethod: 'delete',
     });
   });
 });

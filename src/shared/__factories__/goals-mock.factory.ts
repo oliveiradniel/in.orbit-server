@@ -22,6 +22,7 @@ export class GoalsMockFactory {
     getAllByUserId: vi.fn(),
     create: vi.fn(),
     update: vi.fn(),
+    deleteGoals: vi.fn(),
   };
 
   static service = {
@@ -31,7 +32,6 @@ export class GoalsMockFactory {
     findGoalById: vi.fn(),
     findAllByUserId: vi.fn(),
     create: vi.fn(),
-    update: vi.fn(),
   };
 
   static create = {
@@ -208,6 +208,10 @@ export class GoalsMockFactory {
               desiredWeeklyFrequency,
             }),
           ),
+      },
+      deleteGoals: {
+        success: () =>
+          GoalsMockFactory.repository.deleteGoals.mockResolvedValue(undefined),
       },
     },
 
