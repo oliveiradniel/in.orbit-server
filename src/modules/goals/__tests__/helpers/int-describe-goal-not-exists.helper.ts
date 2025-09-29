@@ -8,7 +8,7 @@ export function intDescribeGoalNotExists({
   route,
 }: IntDescribeGoalNotExistsParams): void {
   describe(`Goal not found - ${httpMethod} - ${route}`, () => {
-    it('should to throw NotFound an error when goal does not exists', async () => {
+    it('should to throw NotFound error when goal does not exists', async () => {
       const response = await request();
 
       expect(response.statusCode).toBe(404);

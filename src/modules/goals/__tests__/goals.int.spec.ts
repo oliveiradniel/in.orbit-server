@@ -328,6 +328,28 @@ describe('Goals Module', () => {
         });
       });
 
+      it('should throw Conflict error when title already in use', async () => {
+        await createTestGoal({
+          prismaService,
+          userId: activeUser.id!,
+          override: {
+            title: 'Acordar cedo',
+          },
+        });
+
+        const response = await request(server)
+          .post('/goals')
+          .send({ title: 'Acordar cedo', desiredWeeklyFrequency: 5 })
+          .set('Authorization', `Bearer ${accessToken}`);
+
+        expect(response.statusCode).toBe(409);
+        expect(response.body).toMatchObject({
+          message: 'This title already in use.',
+          error: 'Conflict',
+          statusCode: 409,
+        });
+      });
+
       describeUserNotExists({
         getServer: () => server,
         getJWTService: () => jwtService,
