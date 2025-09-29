@@ -1,4 +1,9 @@
-import { Inject, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 
 import dayjs from 'dayjs';
 
@@ -80,6 +85,14 @@ export class GoalsService {
     const { title, desiredWeeklyFrequency } = createGoalDTO;
 
     await this.usersService.findUserById(userId);
+
+    const titleAlreadyInUse = await this.goalsRepository.getGoalByTitle(
+      userId,
+      title,
+    );
+    if (titleAlreadyInUse) {
+      throw new BadRequestException('This title already in use.');
+    }
 
     return this.goalsRepository.create(userId, {
       title,
