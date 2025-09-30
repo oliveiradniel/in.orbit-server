@@ -33,7 +33,7 @@ export abstract class GoalsRepository {
 
   abstract create(userId: string, createGoalDTO: CreateGoalDTO): Promise<Goal>;
 
-  abstract update(dataToUpdateGoal: DataToUpdateGoal): Promise<Goal>;
+  abstract update(dataToUpdateGoal: DataToUpdateGoal): Promise<Goal | null>;
 
   abstract deleteGoals(dataToDeleteGoals: DataToDeleteGoals): Promise<void>;
 }

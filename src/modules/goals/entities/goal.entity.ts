@@ -3,5 +3,6 @@ export interface Goal {
   userId: string;
   title: string;
   desiredWeeklyFrequency: number;
+  isDeleted: boolean;
   createdAt: Date;
 }

@@ -1,5 +1,6 @@
 import {
   ConflictException,
+  GoneException,
   Inject,
   Injectable,
   NotFoundException,
@@ -111,11 +112,17 @@ export class GoalsService {
     await this.usersService.findUserById(userId);
     await this.findGoalById(goalId);
 
-    return this.goalsRepository.update({
+    const updatedGoal = await this.goalsRepository.update({
       userId,
       goalId,
       desiredWeeklyFrequency,
     });
+
+    if (!updatedGoal) {
+      throw new GoneException('Goal not found or already deleted');
+    }
+
+    return updatedGoal;
   }
 
   async delete(userId: string, deleteGoalDTO: DeleteGoalsDTO) {

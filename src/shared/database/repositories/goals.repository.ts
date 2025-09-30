@@ -25,8 +25,8 @@ export class PrismaGoalsRepository implements GoalsRepository {
   ) {}
 
   getGoalById(goalId: string): Promise<Goal | null> {
-    return this.prismaService.goal.findUnique({
-      where: { id: goalId },
+    return this.prismaService.goal.findFirst({
+      where: { id: goalId, isDeleted: false },
     });
   }
 
@@ -38,6 +38,7 @@ export class PrismaGoalsRepository implements GoalsRepository {
           equals: title,
           mode: 'insensitive',
         },
+        isDeleted: false,
       },
     });
   }
@@ -51,7 +52,7 @@ export class PrismaGoalsRepository implements GoalsRepository {
       goals_created_up_to_week AS (
         SELECT id, title, desired_weekly_frequency AS "desiredWeeklyFrequency", created_at AS "createdAt"
         FROM goals
-        WHERE created_at <= $1 AND user_id = $3::uuid
+        WHERE created_at <= $1 AND user_id = $3::uuid AND is_deleted = false
       )
     `;
 
@@ -93,7 +94,10 @@ export class PrismaGoalsRepository implements GoalsRepository {
   }: UserDateRangeFilter): Promise<WeeklyGoalsSummary> {
     const cteGoalsCreatedUpToWeek = `
       goals_created_up_to_week AS (
-        SELECT id, title, desired_weekly_frequency AS "desiredWeeklyFrequency", created_at AS "createdAt"
+        SELECT id,
+                title,
+                desired_weekly_frequency AS "desiredWeeklyFrequency", created_at AS "createdAt",
+                is_deleted AS "isDeleted"
         FROM goals
         WHERE created_at <= $1 AND user_id = $3::uuid
       )
@@ -103,10 +107,11 @@ export class PrismaGoalsRepository implements GoalsRepository {
       goals_completed_in_week AS (
         SELECT gc.id,
                 g.title,
+                g.is_deleted AS "isDeleted",
                 gc.created_at AS "completedAt",
                 DATE(gc.created_at) AS "completedAtDate"
         FROM goals_completed gc
-        INNER JOIN goals g ON g.id = gc.goal_id
+        LEFT JOIN goals g ON g.id = gc.goal_id
         WHERE gc.created_at BETWEEN $2 AND $1 AND user_id = $3::uuid
         ORDER BY gc.created_at DESC
       )
@@ -119,6 +124,7 @@ export class PrismaGoalsRepository implements GoalsRepository {
                   JSON_BUILD_OBJECT(
                     'id', gcw.id,
                     'title',  gcw.title,
+                    'isDeleted', gcw."isDeleted",
                     'completedAt', gcw."completedAt"
                   )
                 ) AS "completions"
@@ -135,9 +141,11 @@ export class PrismaGoalsRepository implements GoalsRepository {
         ${cteGoalsCompletedByWeekDay}
       SELECT
         (SELECT COUNT(*)::int FROM goals_completed_in_week) AS completed,
-        (SELECT SUM(
-                  gcuw."desiredWeeklyFrequency"
-                )::int FROM goals_created_up_to_week gcuw
+        (SELECT COALESCE(SUM(
+                  gcuw."desiredWeeklyFrequency"), 0
+                )::int
+                FROM goals_created_up_to_week gcuw
+                WHERE gcuw."isDeleted" = false
         ) AS total,
         (SELECT JSON_OBJECT_AGG(
                 gcbd."completedAtDate",
@@ -190,6 +198,7 @@ export class PrismaGoalsRepository implements GoalsRepository {
       this.prismaService.goal.findMany({
         where: {
           userId,
+          isDeleted: false,
         },
         select: {
           id: true,
@@ -199,7 +208,7 @@ export class PrismaGoalsRepository implements GoalsRepository {
         },
       }),
       this.prismaService.goal.count({
-        where: { userId },
+        where: { userId, isDeleted: false },
       }),
     ]);
 
@@ -221,18 +230,27 @@ export class PrismaGoalsRepository implements GoalsRepository {
     });
   }
 
-  update(dataToUpdateGoal: DataToUpdateGoal): Promise<Goal> {
+  async update(dataToUpdateGoal: DataToUpdateGoal): Promise<Goal | null> {
     const { userId, goalId, desiredWeeklyFrequency } = dataToUpdateGoal;
 
+    const goal = await this.prismaService.goal.findFirst({
+      where: { id: goalId, userId, isDeleted: false },
+    });
+
+    if (!goal) return null;
+
     return this.prismaService.goal.update({
-      where: { userId, id: goalId },
+      where: { id: goalId },
       data: { desiredWeeklyFrequency },
     });
   }
 
   async deleteGoals({ userId, goalsId }: DataToDeleteGoals): Promise<void> {
     const goalsToBeDeleted = goalsId.map((goalId) =>
-      this.prismaService.goal.delete({ where: { userId, id: goalId } }),
+      this.prismaService.goal.updateMany({
+        where: { userId, id: goalId, isDeleted: false },
+        data: { isDeleted: true },
+      }),
     );
 
     await Promise.all(goalsToBeDeleted);

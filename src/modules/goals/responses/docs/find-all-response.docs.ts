@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-import { type GoalWithoutUserId } from 'src/shared/interfaces/goal/goal-without-user-id.interface';
+import { type GoalWithoutUserIdAndIsDeleted } from 'src/shared/interfaces/goal/goal-without-user-id.interface';
 
 export class FindAllResponseDOCS {
   @ApiProperty({
@@ -20,7 +20,7 @@ export class FindAllResponseDOCS {
     ],
     description: 'List of goals that belong to the authenticated user.',
   })
-  goals: GoalWithoutUserId[];
+  goals: GoalWithoutUserIdAndIsDeleted[];
 
   @ApiProperty({
     example: 2,

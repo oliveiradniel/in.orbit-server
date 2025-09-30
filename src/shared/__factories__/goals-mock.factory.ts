@@ -7,7 +7,7 @@ import { type Goal } from 'src/modules/goals/entities/goal.entity';
 import { type WeeklyGoalsProgress } from '../interfaces/goal/weekly-goals-progress.interface';
 import { type WeeklyGoalsSummary } from '../interfaces/goal/weekly-goals-summary.interface';
 import { type GoalProgressMetric } from '../interfaces/goal/goal-progress-metric.interface';
-import { type GoalWithoutUserId } from '../interfaces/goal/goal-without-user-id.interface';
+import { type GoalWithoutUserIdAndIsDeleted } from '../interfaces/goal/goal-without-user-id.interface';
 
 import { vi } from 'vitest';
 
@@ -51,10 +51,11 @@ export class GoalsMockFactory {
       title: GoalsMockFactory.create.title(),
       desiredWeeklyFrequency: GoalsMockFactory.create.desiredWeeklyFrequency(),
       createdAt: new Date('2025-08-30T00:00:00.000Z'),
+      isDeleted: false,
       ...override,
     }),
 
-    goalWithoutUserId: (): GoalWithoutUserId => ({
+    goalWithoutUserId: (): GoalWithoutUserIdAndIsDeleted => ({
       id: GoalsMockFactory.create.id(),
       title: GoalsMockFactory.create.title(),
       desiredWeeklyFrequency: GoalsMockFactory.create.desiredWeeklyFrequency(),

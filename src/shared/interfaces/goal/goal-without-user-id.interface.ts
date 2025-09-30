@@ -1,8 +1,8 @@
 import { Goal } from 'src/modules/goals/entities/goal.entity';
 
-export type GoalWithoutUserId = Omit<Goal, 'userId'>;
+export type GoalWithoutUserIdAndIsDeleted = Omit<Goal, 'userId' | 'isDeleted'>;
 
 export interface GoalsWithTotal {
-  goals: GoalWithoutUserId[];
+  goals: GoalWithoutUserIdAndIsDeleted[];
   total: number;
 }
