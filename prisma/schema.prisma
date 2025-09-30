@@ -26,6 +26,7 @@ model Goal {
   title                  String
   desiredWeeklyFrequency Int      @map("desired_weekly_frequency")
   createdAt              DateTime @default(now()) @map("created_at")
+  isDeleted              Boolean  @default(false) @map("is_deleted")
 
   goalCompleted GoalCompleted[]
 
@@ -36,10 +37,10 @@ model Goal {
 
 model GoalCompleted {
   id        String   @id @default(uuid()) @db.Uuid
-  goalId    String   @map("goal_id") @db.Uuid
+  goalId    String?  @map("goal_id") @db.Uuid
   createdAt DateTime @default(now()) @map("created_at")
 
-  goal Goal @relation(fields: [goalId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  goal Goal? @relation(fields: [goalId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("goals_completed")
 }
