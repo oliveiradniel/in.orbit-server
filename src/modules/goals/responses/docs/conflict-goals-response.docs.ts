@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class ConflictResponseDOCS {
+export class ConflictGoalsResponseDOCS {
   @ApiProperty({
     example: 'Title already in use.',
     description: 'Error message.',

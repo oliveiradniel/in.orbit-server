@@ -40,6 +40,7 @@ import { WeeklyGoalResponseDOCS } from './responses/docs/weekly-goal-response.do
 import { WeeklySummaryResponseDOCS } from './responses/docs/weekly-summary-response.docs';
 import { CreateGoalResponseDOCS } from './responses/docs/create-goal-response.docs';
 import { FindAllResponseDOCS } from './responses/docs/find-all-response.docs';
+import { ConflictGoalsResponseDOCS } from './responses/docs/conflict-goals-response.docs';
 
 import { UnauthorizedResponseDOCS } from 'src/shared/responses/docs/unauthorized-response.docs';
 import { NotFoundUserResponseDOCS } from 'src/shared/responses/docs/not-found-user-response.docs';
@@ -51,7 +52,6 @@ import { type WeeklyGoalsSummary } from 'src/shared/interfaces/goal/weekly-goals
 import { type GoalsWithTotal } from 'src/shared/interfaces/goal/goal-without-user-id.interface';
 
 import { GOALS_SERVICE } from 'src/shared/constants/tokens';
-import { ConflictResponseDOCS } from './responses/docs/conflict-response.docs';
 
 @ApiBearerAuth()
 @ApiUnauthorizedResponse({
@@ -126,7 +126,7 @@ export class GoalsController {
   })
   @ApiConflictResponse({
     description: 'A goal with the same title already exists for this user.',
-    type: ConflictResponseDOCS,
+    type: ConflictGoalsResponseDOCS,
   })
   @Post()
   create(

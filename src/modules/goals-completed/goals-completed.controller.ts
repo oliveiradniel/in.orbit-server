@@ -15,8 +15,8 @@ import { GoalsCompletedService } from './goals-completed.service';
 import { CreateGoalCompletedDTO } from './dtos/create-goal-completed.dto';
 
 import { CreateGoalCompletedResponseDOCS } from './responses/docs/create-goal-completed-response.docs';
-import { ConflictResponseDOCS } from './responses/docs/conflict-response.docs';
-import { BadRequestResponseDOCS } from './responses/docs/bad-request-response.docs';
+import { ConflictGoalsCompletedResponseDOCS } from './responses/docs/conflict-goals-completed-response.docs';
+import { BadRequestGoalsCompletedResponseDOCS } from './responses/docs/bad-request-goals-completed-response.docs';
 
 import { UnauthorizedResponseDOCS } from 'src/shared/responses/docs/unauthorized-response.docs';
 import { NotFoundUserOrGoalResponseDOCS } from 'src/shared/responses/docs/not-found-user-or-goal-response.docs';
@@ -43,7 +43,7 @@ export class GoalsCompletedController {
   })
   @ApiBadRequestResponse({
     description: 'This goal has already been completed today.',
-    type: BadRequestResponseDOCS,
+    type: BadRequestGoalsCompletedResponseDOCS,
   })
   @ApiNotFoundResponse({
     description: 'Could not find the user or goal.',
@@ -51,7 +51,7 @@ export class GoalsCompletedController {
   })
   @ApiConflictResponse({
     description: 'This goal has already reached its frequency this week.',
-    type: ConflictResponseDOCS,
+    type: ConflictGoalsCompletedResponseDOCS,
   })
   @Post()
   create(

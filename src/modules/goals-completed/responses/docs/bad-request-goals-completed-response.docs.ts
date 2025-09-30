@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class BadRequestResponseDOCS {
+export class BadRequestGoalsCompletedResponseDOCS {
   @ApiProperty({
     example: 'This goal has already been completed today.',
     description: 'Error message.',

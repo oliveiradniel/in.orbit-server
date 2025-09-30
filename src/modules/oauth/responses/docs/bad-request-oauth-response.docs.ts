@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class BadRequestResponseDOCS {
+export class BadRequestOAuthResponseDOCS {
   @ApiProperty({
     example: 'Invalid GitHub code or token not received.',
     description: 'Error message.',

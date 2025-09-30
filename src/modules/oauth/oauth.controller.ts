@@ -11,7 +11,7 @@ import { getConfig } from 'src/shared/config/config.helper';
 
 import { AuthenticateGitHubDTO } from './dtos/authenticate-github.dto';
 
-import { BadRequestResponseDOCS } from './responses/docs/bad-request-response.docs';
+import { BadRequestOAuthResponseDOCS } from './responses/docs/bad-request-oauth-response.docs';
 import { GitHubAuthenticateResponseDOCS } from './responses/docs/github-authenticate-response.docs';
 
 import { type GitHubAuthenticateResponse } from './interfaces/github-authenticate-response.interface';
@@ -32,7 +32,7 @@ export class OAuthController {
   })
   @ApiBadRequestResponse({
     description: 'Invalid GitHub code or missing token.',
-    type: BadRequestResponseDOCS,
+    type: BadRequestOAuthResponseDOCS,
   })
   @Post('github')
   async githubAuthenticate(

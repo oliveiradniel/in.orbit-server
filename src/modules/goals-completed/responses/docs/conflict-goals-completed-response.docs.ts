@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class ConflictResponseDOCS {
+export class ConflictGoalsCompletedResponseDOCS {
   @ApiProperty({
     example: 'Goal already completed this week.',
     description: 'Error message.',
