@@ -74,6 +74,7 @@ export class GoalsMockFactory {
           desiredWeeklyFrequency:
             GoalsMockFactory.create.desiredWeeklyFrequency(),
           completionCount: 7,
+          wasCompletedToday: true,
           status: 'completed',
           ...goal1,
         },
@@ -83,6 +84,7 @@ export class GoalsMockFactory {
           desiredWeeklyFrequency:
             GoalsMockFactory.create.desiredWeeklyFrequency(3),
           completionCount: 3,
+          wasCompletedToday: false,
           status: 'started',
           ...goal2,
         },

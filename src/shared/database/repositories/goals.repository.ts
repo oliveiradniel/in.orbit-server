@@ -67,16 +67,29 @@ export class PrismaGoalsRepository implements GoalsRepository {
       )
     `;
 
+    const cteIsGoalCompletedToday = `
+      is_goal_completed_today AS (
+        SELECT DISTINCT gc.goal_id, true AS "wasCompletedToday"
+        FROM goals_completed gc
+        INNER JOIN goals g ON g.id = gc.goal_id
+        WHERE DATE(gc.created_at) = CURRENT_DATE
+        AND g.user_id = $3::uuid
+      )
+    `;
+
     const query = `
       WITH
         ${cteGoalsCreatedUpToWeek},
-        ${cteCountOfCompletedGoals}
+        ${cteCountOfCompletedGoals},
+        ${cteIsGoalCompletedToday}
       SELECT g.id,
               g.title,
               g."desiredWeeklyFrequency",
-              COALESCE(c."completionCount", 0) AS "completionCount"
+              COALESCE(c."completionCount", 0) AS "completionCount",
+              COALESCE(t."wasCompletedToday", false) AS "wasCompletedToday"
       FROM goals_created_up_to_week g
-      LEFT JOIN count_of_completed_goals c ON c.goal_id = g.id;
+      LEFT JOIN count_of_completed_goals c ON c.goal_id = g.id
+      LEFT JOIN is_goal_completed_today t ON t.goal_id = g.id;
     `;
 
     return this.prismaService.$queryRawUnsafe<WeeklyGoalsProgress[]>(
