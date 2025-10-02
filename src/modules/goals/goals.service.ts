@@ -20,7 +20,10 @@ import { GoalIdParam } from './params/goal-id.param';
 
 import { type Goal } from './entities/goal.entity';
 import { type GoalsRepository } from 'src/shared/contracts/goals.repository.contract';
-import { type WeeklyGoalsProgress } from 'src/shared/interfaces/goal/weekly-goals-progress.interface';
+import {
+  type GoalStatus,
+  type WeeklyGoalsProgress,
+} from 'src/shared/interfaces/goal/weekly-goals-progress.interface';
 import { type WeeklyGoalsSummary } from 'src/shared/interfaces/goal/weekly-goals-summary.interface';
 import { type GoalsWithTotal } from 'src/shared/interfaces/goal/goal-without-user-id.interface';
 
@@ -51,11 +54,27 @@ export class GoalsService {
 
     await this.usersService.findUserById(userId);
 
-    return this.goalsRepository.getWeeklyGoalsWithCompletion({
-      userId,
-      lastDayOfWeek,
-      firstDayOfWeek,
+    const weeklyGoalsProgress =
+      await this.goalsRepository.getWeeklyGoalsWithCompletion({
+        userId,
+        lastDayOfWeek,
+        firstDayOfWeek,
+      });
+
+    const weeklyGoalsProgressWithStatus = weeklyGoalsProgress.map((goal) => {
+      const { desiredWeeklyFrequency, completionCount } = goal;
+
+      const status: GoalStatus =
+        completionCount === 0
+          ? 'not started'
+          : completionCount < desiredWeeklyFrequency
+            ? 'started'
+            : 'completed';
+
+      return { ...goal, status };
     });
+
+    return weeklyGoalsProgressWithStatus;
   }
 
   async findWeeklySummaryOfGoalsCompletedByDay({

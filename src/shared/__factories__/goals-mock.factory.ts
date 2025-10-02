@@ -63,7 +63,7 @@ export class GoalsMockFactory {
     }),
 
     weeklyGoalsProgress: (
-      override: Partial<Goal>[] = [],
+      override: Partial<WeeklyGoalsProgress>[] = [],
     ): WeeklyGoalsProgress[] => {
       const [goal1 = {}, goal2 = {}] = override;
 
@@ -74,6 +74,7 @@ export class GoalsMockFactory {
           desiredWeeklyFrequency:
             GoalsMockFactory.create.desiredWeeklyFrequency(),
           completionCount: 7,
+          status: 'completed',
           ...goal1,
         },
         {
@@ -82,6 +83,7 @@ export class GoalsMockFactory {
           desiredWeeklyFrequency:
             GoalsMockFactory.create.desiredWeeklyFrequency(3),
           completionCount: 3,
+          status: 'started',
           ...goal2,
         },
       ];
