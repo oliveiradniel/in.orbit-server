@@ -195,12 +195,12 @@ export class GoalsMockFactory {
               GoalsMockFactory.create.goalWithoutUserId(),
               GoalsMockFactory.create.goalWithoutUserId(),
             ],
-            total: 3,
+            totalActiveGoals: 3,
           }),
         empty: () =>
           GoalsMockFactory.repository.getAllByUserId.mockResolvedValue({
             goals: [],
-            total: 0,
+            totalActiveGoals: 0,
           }),
       },
       create: {

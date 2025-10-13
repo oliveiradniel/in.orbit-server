@@ -1,4 +1,5 @@
 import { Test } from '@nestjs/testing';
+import { ConflictException } from '@nestjs/common';
 
 import {
   afterEach,
@@ -21,9 +22,9 @@ import { unitDescribeGoalNotExists } from './helpers/unit-describe-goal-not-exis
 import { describeUserNotExistsInGoals } from 'src/shared/__tests__/helpers/unit/describe-user-not-exists-in-goals.helper';
 
 import { type GoalsWithTotal } from 'src/shared/interfaces/goal/goal-without-user-id.interface';
+import { type WeeklyGoalsProgress } from 'src/shared/interfaces/goal/weekly-goals-progress.interface';
 
 import { GOALS_REPOSITORY, USERS_SERVICE } from 'src/shared/constants/tokens';
-import { ConflictException } from '@nestjs/common';
 
 describe('GoalsService', () => {
   let goalsService: GoalsService;
@@ -50,18 +51,20 @@ describe('GoalsService', () => {
 
   describe('findWeeklyGoalsWithCompletion', () => {
     it('should to return a goal with completion count', async () => {
-      const mockGoals = [
+      const mockGoals: Partial<WeeklyGoalsProgress>[] = [
         {
           id: GoalsMockFactory.create.id(),
           title: GoalsMockFactory.create.title(),
-          desiredWeeklyFrequency:
-            GoalsMockFactory.create.desiredWeeklyFrequency(),
+          desiredWeeklyFrequency: 3,
+          completionCount: 3,
+          status: 'completed',
         },
         {
           id: GoalsMockFactory.create.id(),
           title: GoalsMockFactory.create.title(),
-          desiredWeeklyFrequency:
-            GoalsMockFactory.create.desiredWeeklyFrequency(),
+          desiredWeeklyFrequency: 4,
+          completionCount: 3,
+          status: 'started',
         },
       ];
 
@@ -77,7 +80,8 @@ describe('GoalsService', () => {
 
       const firstDayOfWeek = dayjs().startOf('week').toDate();
       const lastDayOfWeek = dayjs().endOf('week').toDate();
-
+      console.log({ weeklyGoalsProgress });
+      console.log({ goal });
       expect(UsersMockFactory.service.findUserById).toHaveBeenCalledWith(
         mockUserId,
       );
@@ -166,7 +170,7 @@ describe('GoalsService', () => {
       expect(UsersMockFactory.service.findUserById).toHaveBeenCalled();
       expect(GoalsMockFactory.repository.getAllByUserId).toHaveBeenCalled();
 
-      expect(listGoals.total).toBe(3);
+      expect(listGoals.totalActiveGoals).toBe(3);
       expect(listGoals.goals).toHaveLength(3);
 
       listGoals.goals.forEach((goal) => {
@@ -187,7 +191,7 @@ describe('GoalsService', () => {
       expect(UsersMockFactory.service.findUserById).toHaveBeenCalled();
       expect(GoalsMockFactory.repository.getAllByUserId).toHaveBeenCalled();
 
-      expect(listGoals.total).toBe(0);
+      expect(listGoals.totalActiveGoals).toBe(0);
       expect(listGoals.goals).toHaveLength(0);
 
       expect(listGoals.goals).toEqual([]);

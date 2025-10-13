@@ -232,7 +232,7 @@ describe('Goals Module', () => {
           expect(response.statusCode).toBe(200);
           expect(response.body).toMatchObject({
             completed: 0,
-            total: null,
+            total: 0,
             goalsPerDay: null,
           });
         });
@@ -274,7 +274,7 @@ describe('Goals Module', () => {
         const goalsWithTotal = response.body as GoalsWithTotal;
 
         expect(response.statusCode).toBe(200);
-        expect(goalsWithTotal.total).toBe(3);
+        expect(goalsWithTotal.totalActiveGoals).toBe(3);
         expect(goalsWithTotal.goals).toHaveLength(3);
 
         goalsWithTotal.goals.forEach((goal) => {
@@ -293,7 +293,7 @@ describe('Goals Module', () => {
         const goalsWithTotal = response.body as GoalsWithTotal;
 
         expect(response.statusCode).toBe(200);
-        expect(goalsWithTotal.total).toBe(0);
+        expect(goalsWithTotal.totalActiveGoals).toBe(0);
         expect(goalsWithTotal.goals).toHaveLength(0);
 
         expect(goalsWithTotal.goals).toStrictEqual([]);
