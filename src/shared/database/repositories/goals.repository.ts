@@ -211,13 +211,13 @@ export class PrismaGoalsRepository implements GoalsRepository {
       this.prismaService.goal.findMany({
         where: {
           userId,
-          isDeleted: false,
         },
         select: {
           id: true,
           title: true,
           desiredWeeklyFrequency: true,
           createdAt: true,
+          isDeleted: true,
         },
       }),
       this.prismaService.goal.count({
