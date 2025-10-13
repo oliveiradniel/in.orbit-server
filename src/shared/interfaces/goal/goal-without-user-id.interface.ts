@@ -4,5 +4,5 @@ export type GoalWithoutUserIdAndIsDeleted = Omit<Goal, 'userId' | 'isDeleted'>;
 
 export interface GoalsWithTotal {
   goals: GoalWithoutUserIdAndIsDeleted[];
-  total: number;
+  totalActiveGoals: number;
 }

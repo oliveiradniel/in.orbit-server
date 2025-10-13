@@ -207,7 +207,7 @@ export class PrismaGoalsRepository implements GoalsRepository {
   }
 
   async getAllByUserId(userId: string): Promise<GoalsWithTotal> {
-    const [goals, total] = await Promise.all([
+    const [goals, totalActiveGoals] = await Promise.all([
       this.prismaService.goal.findMany({
         where: {
           userId,
@@ -225,7 +225,7 @@ export class PrismaGoalsRepository implements GoalsRepository {
       }),
     ]);
 
-    return { goals, total };
+    return { goals, totalActiveGoals };
   }
 
   create(
