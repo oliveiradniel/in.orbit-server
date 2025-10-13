@@ -108,24 +108,27 @@ export class PrismaGoalsRepository implements GoalsRepository {
     const cteGoalsCreatedUpToWeek = `
       goals_created_up_to_week AS (
         SELECT id,
-                title,
-                desired_weekly_frequency AS "desiredWeeklyFrequency", created_at AS "createdAt",
-                is_deleted AS "isDeleted"
+               title,
+               desired_weekly_frequency AS "desiredWeeklyFrequency",
+               created_at AS "createdAt",
+               is_deleted AS "isDeleted"
         FROM goals
-        WHERE created_at <= $1 AND user_id = $3::uuid
+        WHERE created_at <= $1
+          AND user_id = $3::uuid
       )
     `;
 
     const cteGoalsCompletedInWeek = `
       goals_completed_in_week AS (
         SELECT gc.id,
-                g.title,
-                g.is_deleted AS "isDeleted",
-                gc.created_at AS "completedAt",
-                DATE(gc.created_at) AS "completedAtDate"
+               gc.goal_id AS "goalId",
+               g.title,
+               g.is_deleted AS "isDeleted",
+               gc.created_at AS "completedAt",
+               DATE(gc.created_at) AS "completedAtDate"
         FROM goals_completed gc
         LEFT JOIN goals g ON g.id = gc.goal_id
-        WHERE gc.created_at BETWEEN $2 AND $1 AND user_id = $3::uuid
+        WHERE gc.created_at BETWEEN $2 AND $1 AND g.user_id = $3::uuid
         ORDER BY gc.created_at DESC
       )
     `;
@@ -136,7 +139,7 @@ export class PrismaGoalsRepository implements GoalsRepository {
                 JSON_AGG(
                   JSON_BUILD_OBJECT(
                     'id', gcw.id,
-                    'title',  gcw.title,
+                    'title', gcw.title,
                     'isDeleted', gcw."isDeleted",
                     'completedAt', gcw."completedAt"
                   )
@@ -147,19 +150,42 @@ export class PrismaGoalsRepository implements GoalsRepository {
       )
     `;
 
+    const cteRelevantGoals = `
+      relevant_goals AS (
+        SELECT id,
+               "desiredWeeklyFrequency"
+        FROM goals_created_up_to_week gcuw
+        WHERE gcuw."isDeleted" = false
+
+        UNION
+
+        SELECT g.id,
+                g.desired_weekly_frequency AS "desiredWeeklyFrequency"
+        FROM goals g
+        JOIN (
+          SELECT DISTINCT "goalId" FROM goals_completed_in_week
+        ) gcw ON gcw."goalId" = g.id
+        WHERE g.user_id = $3::uuid
+      )
+    `;
+
     const query = `
       WITH
         ${cteGoalsCreatedUpToWeek},
         ${cteGoalsCompletedInWeek},
+        ${cteRelevantGoals},
         ${cteGoalsCompletedByWeekDay}
       SELECT
         (SELECT COUNT(*)::int FROM goals_completed_in_week) AS completed,
-        (SELECT COALESCE(SUM(
-                  gcuw."desiredWeeklyFrequency"), 0
-                )::int
-                FROM goals_created_up_to_week gcuw
-                WHERE gcuw."isDeleted" = false
-        ) AS total,
+
+        (SELECT COALESCE(SUM(rg."desiredWeeklyFrequency")::int, 0)
+         FROM (
+          SELECT DISTINCT id,
+          "desiredWeeklyFrequency"
+          FROM relevant_goals
+        ) rg
+      ) AS total,
+
         (SELECT JSON_OBJECT_AGG(
                 gcbd."completedAtDate",
                 gcbd.completions
