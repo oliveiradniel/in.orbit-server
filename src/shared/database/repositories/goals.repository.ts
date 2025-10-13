@@ -152,20 +152,18 @@ export class PrismaGoalsRepository implements GoalsRepository {
 
     const cteRelevantGoals = `
       relevant_goals AS (
-        SELECT id,
-               "desiredWeeklyFrequency"
+        SELECT gcuw.id AS "goalId",
+               gcuw."desiredWeeklyFrequency",
+               gcuw."isDeleted",
+               COALESCE(gcw."completedCount", 0) AS "completedCount"
         FROM goals_created_up_to_week gcuw
-        WHERE gcuw."isDeleted" = false
-
-        UNION
-
-        SELECT g.id,
-                g.desired_weekly_frequency AS "desiredWeeklyFrequency"
-        FROM goals g
-        JOIN (
-          SELECT DISTINCT "goalId" FROM goals_completed_in_week
-        ) gcw ON gcw."goalId" = g.id
-        WHERE g.user_id = $3::uuid
+        LEFT JOIN (
+          SELECT
+            "goalId",
+            COUNT(*) AS "completedCount"
+          FROM goals_completed_in_week
+          GROUP BY "goalId"
+        ) gcw ON gcw."goalId" = gcuw.id
       )
     `;
 
@@ -178,13 +176,14 @@ export class PrismaGoalsRepository implements GoalsRepository {
       SELECT
         (SELECT COUNT(*)::int FROM goals_completed_in_week) AS completed,
 
-        (SELECT COALESCE(SUM(rg."desiredWeeklyFrequency")::int, 0)
-         FROM (
-          SELECT DISTINCT id,
-          "desiredWeeklyFrequency"
-          FROM relevant_goals
-        ) rg
-      ) AS total,
+        (SELECT COALESCE(SUM(
+          CASE
+            WHEN rg."isDeleted" = false THEN rg."desiredWeeklyFrequency"
+            ELSE rg."completedCount"
+          END
+        )::int, 0)
+          FROM relevant_goals rg
+        ) AS total,
 
         (SELECT JSON_OBJECT_AGG(
                 gcbd."completedAtDate",
