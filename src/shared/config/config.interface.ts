@@ -1,6 +1,8 @@
 export type AmbientMode = 'dev' | 'prod' | 'test';
 
 export interface AppConfig {
+  PORT: number;
+  HOST: string;
   FRONTEND_ORIGIN: string;
   POSTGRES_USER: string;
   POSTGRES_PASSWORD: string;

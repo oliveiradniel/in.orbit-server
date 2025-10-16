@@ -1,9 +1,11 @@
 import { ConfigService } from '@nestjs/config';
 
-import { AmbientMode, type AppConfig } from './config.interface';
+import { type AmbientMode, type AppConfig } from './config.interface';
 
 export function getConfig(configService: ConfigService): AppConfig {
   return {
+    PORT: configService.get<number>('PORT')!,
+    HOST: configService.get<string>('HOST')!,
     FRONTEND_ORIGIN: configService.get<string>('FRONTEND_ORIGIN')!,
     POSTGRES_USER: configService.get<string>('POSTGRES_USER')!,
     POSTGRES_PASSWORD: configService.get<string>('POSTGRES_PASSWORD')!,

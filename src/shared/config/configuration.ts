@@ -1,9 +1,20 @@
-import { plainToInstance } from 'class-transformer';
-import { IsNotEmpty, IsString, validateSync } from 'class-validator';
+import { plainToInstance, Transform } from 'class-transformer';
+import { IsNotEmpty, IsNumber, IsString, validateSync } from 'class-validator';
 
 import { AmbientMode } from './config.interface';
 
 class EnvironmentVariables {
+  @IsNumber()
+  @IsNotEmpty()
+  @Transform(({ value: port }: { value: string }) =>
+    port ? Number(port) : 3000,
+  )
+  PORT: number;
+
+  @IsString()
+  @IsNotEmpty()
+  HOST: string;
+
   @IsString()
   @IsNotEmpty()
   FRONTEND_ORIGIN: string;
