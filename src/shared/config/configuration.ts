@@ -21,6 +21,17 @@ class EnvironmentVariables {
 
   @IsString()
   @IsNotEmpty()
+  @Transform(({ value: port }: { value: string }) =>
+    port ? Number(port) : 5432,
+  )
+  POSTGRES_PORT: number;
+
+  @IsString()
+  @IsNotEmpty()
+  POSTGRES_HOST: string;
+
+  @IsString()
+  @IsNotEmpty()
   POSTGRES_USER: string;
 
   @IsString()

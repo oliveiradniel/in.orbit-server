@@ -7,6 +7,8 @@ export function getConfig(configService: ConfigService): AppConfig {
     PORT: configService.get<number>('PORT')!,
     HOST: configService.get<string>('HOST')!,
     FRONTEND_ORIGIN: configService.get<string>('FRONTEND_ORIGIN')!,
+    POSTGRES_PORT: configService.get<number>('POSTGRES_PORT')!,
+    POSTGRES_HOST: configService.get<string>('POSTGRES_HOST')!,
     POSTGRES_USER: configService.get<string>('POSTGRES_USER')!,
     POSTGRES_PASSWORD: configService.get<string>('POSTGRES_PASSWORD')!,
     POSTGRES_DB: configService.get<string>('POSTGRES_DB')!,
