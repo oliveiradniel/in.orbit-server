@@ -51,7 +51,7 @@ export class OAuthController {
 
     response.cookie('token', accessToken, {
       httpOnly: true,
-      secure: NODE_ENV === 'prod',
+      secure: NODE_ENV === 'production',
       sameSite: 'strict',
       maxAge: 2 * 24 * 60 * 60 * 1000, // 2 days
     });

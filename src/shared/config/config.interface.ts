@@ -1,4 +1,4 @@
-export type AmbientMode = 'dev' | 'prod' | 'test';
+export type AmbientMode = 'development' | 'production' | 'test';
 
 export interface AppConfig {
   PORT: number;

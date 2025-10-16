@@ -80,8 +80,7 @@ describe('GoalsService', () => {
 
       const firstDayOfWeek = dayjs().startOf('week').toDate();
       const lastDayOfWeek = dayjs().endOf('week').toDate();
-      console.log({ weeklyGoalsProgress });
-      console.log({ goal });
+
       expect(UsersMockFactory.service.findUserById).toHaveBeenCalledWith(
         mockUserId,
       );
