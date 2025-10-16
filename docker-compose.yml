@@ -2,7 +2,7 @@ name: inorbit
 
 services:
   pg:
-    image: bitnami/postgresql:17.6.0
+    image: postgresql:17
     ports:
       - '5432:5432'
     environment:
