@@ -36,10 +36,9 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 # dotenv environment variable files
-.env
-.env.development.local
+.env.development
 .env.test.local
-.env.production.local
+.env.production
 .env.local
 
 # temp directory
@@ -56,3 +55,6 @@ pids
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 /generated/prisma
+
+# Docker
+/docker/Dockerfile.prod
