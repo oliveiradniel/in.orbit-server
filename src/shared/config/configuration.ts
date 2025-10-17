@@ -19,7 +19,7 @@ class EnvironmentVariables {
   @IsNotEmpty()
   FRONTEND_ORIGIN: string;
 
-  @IsString()
+  @IsNumber()
   @IsNotEmpty()
   @Transform(({ value: port }: { value: string }) =>
     port ? Number(port) : 5432,
