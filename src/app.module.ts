@@ -18,6 +18,7 @@ import { UsersModule } from './modules/users/users.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
+      envFilePath: '.env.development',
       validate: validate,
     }),
     GoalsModule,
