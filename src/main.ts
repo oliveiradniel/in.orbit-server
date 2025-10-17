@@ -22,7 +22,7 @@ async function bootstrap() {
   const HOST = configService.HOST;
 
   app.enableCors({
-    ORIGIN,
+    origin: ORIGIN,
     credentials: true,
   });
 
