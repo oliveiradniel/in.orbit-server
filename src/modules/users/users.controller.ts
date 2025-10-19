@@ -1,14 +1,26 @@
-import { Controller, Get, Inject } from '@nestjs/common';
+import {
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Inject,
+  Res,
+} from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
+import { ConfigService } from '@nestjs/config';
+
+import { Request, Response } from 'express';
 
 import { UsersService } from './users.service';
 
 import { ActiveUserId } from 'src/shared/decorators/active-user-id.decorator';
+import { getConfig } from 'src/shared/config/config.helper';
 
 import { FindUserByIdResponseDOCS } from './responses/docs/find-user-by-id-response.docs';
 import { FindUserLevelAndExperienceResponseDOCS } from './responses/docs/find-user-level-and-experience-response.docs';
@@ -19,7 +31,7 @@ import { NotFoundUserResponseDOCS } from 'src/shared/responses/docs/not-found-us
 import { type UserWithoutExternalAccountId } from 'src/shared/database/interfaces/user/user-without-external-account-id.interface';
 import { type GamificationInfo } from './interfaces/gamification-info.interface';
 
-import { USERS_SERVICE } from 'src/shared/constants/tokens';
+import { CONFIG_SERVICE, USERS_SERVICE } from 'src/shared/constants/tokens';
 
 @ApiBearerAuth()
 @ApiUnauthorizedResponse({
@@ -34,6 +46,7 @@ import { USERS_SERVICE } from 'src/shared/constants/tokens';
 export class UsersController {
   constructor(
     @Inject(USERS_SERVICE) private readonly usersService: UsersService,
+    @Inject(CONFIG_SERVICE) private readonly configService: ConfigService,
   ) {}
 
   @ApiOkResponse({
@@ -57,5 +70,24 @@ export class UsersController {
     @ActiveUserId() userId: string,
   ): Promise<GamificationInfo> {
     return this.usersService.findUserLevelAndExperience(userId);
+  }
+
+  @HttpCode(HttpStatus.NO_CONTENT)
+  @Delete()
+  async delete(
+    @ActiveUserId() userId: string,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<void> {
+    await this.usersService.deleteActiveUser(userId);
+
+    const { NODE_ENV } = getConfig(this.configService);
+
+    response.cookie('token', '', {
+      httpOnly: true,
+      secure: NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 0,
+      expires: new Date(0),
+    });
   }
 }
