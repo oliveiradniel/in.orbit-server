@@ -1,23 +1,23 @@
 name: inorbit
 
 services:
-  api:
-    container_name: inorbit_api
-    build:
-      context: .
-      dockerfile: ./docker/Dockerfile.dev
-    ports:
-      - '3000:3000'
-    env_file:
-      - .env.development
-    volumes:
-      - .:/app
-      - /app/node_modules
-    command: sh -c "yarn prisma migrate dev && yarn start:dev"
-    depends_on:
-      - pg
-    networks:
-      - inorbit_network
+  # api:
+  #   container_name: inorbit_api
+  #   build:
+  #     context: .
+  #     dockerfile: ./docker/Dockerfile.dev
+  #   ports:
+  #     - '3000:3000'
+  #   env_file:
+  #     - .env.development
+  #   volumes:
+  #     - .:/app:cached
+  #     - /app/node_modules
+  #   command: sh -c "yarn prisma migrate dev && yarn start:dev"
+  #   depends_on:
+  #     - pg
+  #   networks:
+  #     - inorbit_network
 
   pg:
     container_name: inorbit_pg
