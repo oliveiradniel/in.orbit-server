@@ -1,5 +1,10 @@
 import { Body, Controller, Inject, Post, Res } from '@nestjs/common';
-import { ApiBadRequestResponse, ApiOkResponse } from '@nestjs/swagger';
+import {
+  ApiBadRequestResponse,
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
 import { ConfigService } from '@nestjs/config';
 
 import { Response } from 'express';
@@ -11,8 +16,8 @@ import { getConfig } from 'src/shared/config/config.helper';
 
 import { AuthenticateGitHubDTO } from './dtos/authenticate-github.dto';
 
+import { UnauthorizedResponseDOCS } from 'src/shared/responses/docs/unauthorized-response.docs';
 import { BadRequestOAuthResponseDOCS } from './responses/docs/bad-request-oauth-response.docs';
-import { GitHubAuthenticateResponseDOCS } from './responses/docs/github-authenticate-response.docs';
 
 import { type GitHubAuthenticateResponse } from './interfaces/github-authenticate-response.interface';
 
@@ -27,7 +32,10 @@ export class OAuthController {
 
   @ApiOkResponse({
     description: 'Successful authentication with GitHub code.',
-    type: GitHubAuthenticateResponseDOCS,
+    schema: {
+      example: { message: 'Login successful.' },
+    },
+    // type: GitHubAuthenticateResponseDOCS,
   })
   @ApiBadRequestResponse({
     description: 'Invalid GitHub code or missing token.',
@@ -56,9 +64,20 @@ export class OAuthController {
       maxAge: 2 * 24 * 60 * 60 * 1000, // 2 days
     });
 
-    return { message: 'Login successful' };
+    return { message: 'Login successful.' };
   }
 
+  @ApiBearerAuth()
+  @ApiUnauthorizedResponse({
+    description: 'Unauthorized request.',
+    type: UnauthorizedResponseDOCS,
+  })
+  @ApiOkResponse({
+    description: 'User successfully logged out.',
+    schema: {
+      example: { message: 'Logged out successfully.' },
+    },
+  })
   @Post('logout')
   logout(@Res({ passthrough: true }) response: Response) {
     response.cookie('token', '', {
@@ -69,6 +88,6 @@ export class OAuthController {
       expires: new Date(0),
     });
 
-    return { message: 'Logged out successfully' };
+    return { message: 'Logged out successfully.' };
   }
 }
