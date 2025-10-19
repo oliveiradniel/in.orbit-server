@@ -14,4 +14,6 @@ export abstract class UsersRepository {
   abstract getUserExperience(userId: string): Promise<UserExperience | null>;
 
   abstract create(dataToCreateUser: DataToCreateUser): Promise<User>;
+
+  abstract delete(userId: string): Promise<void>;
 }
