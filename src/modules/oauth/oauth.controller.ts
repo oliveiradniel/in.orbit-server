@@ -18,7 +18,6 @@ import { type GitHubAuthenticateResponse } from './interfaces/github-authenticat
 
 import { CONFIG_SERVICE, OAUTH_SERVICE } from 'src/shared/constants/tokens';
 
-@IsPublic()
 @Controller('oauth')
 export class OAuthController {
   constructor(
@@ -34,6 +33,7 @@ export class OAuthController {
     description: 'Invalid GitHub code or missing token.',
     type: BadRequestOAuthResponseDOCS,
   })
+  @IsPublic()
   @Post('github')
   async githubAuthenticate(
     @Body() authenticateGitHubDTO: AuthenticateGitHubDTO,
@@ -57,5 +57,18 @@ export class OAuthController {
     });
 
     return { message: 'Login successful' };
+  }
+
+  @Post('logout')
+  logout(@Res({ passthrough: true }) response: Response) {
+    response.cookie('token', '', {
+      httpOnly: true,
+      secure: true,
+      sameSite: 'strict',
+      maxAge: 0,
+      expires: new Date(0),
+    });
+
+    return { message: 'Logged out successfully' };
   }
 }
