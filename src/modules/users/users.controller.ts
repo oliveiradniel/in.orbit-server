@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
+  ApiNoContentResponse,
   ApiNotFoundResponse,
   ApiOkResponse,
   ApiUnauthorizedResponse,
@@ -72,6 +73,9 @@ export class UsersController {
     return this.usersService.findUserLevelAndExperience(userId);
   }
 
+  @ApiNoContentResponse({
+    description: 'User account deleted and authentication cookie cleared.',
+  })
   @HttpCode(HttpStatus.NO_CONTENT)
   @Delete()
   async delete(
