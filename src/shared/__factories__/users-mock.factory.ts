@@ -13,6 +13,7 @@ export class UsersMockFactory {
     getUserByExternalAccountId: vi.fn(),
     getUserExperience: vi.fn(),
     create: vi.fn(),
+    delete: vi.fn(),
   };
 
   static service = {
@@ -80,6 +81,12 @@ export class UsersMockFactory {
           UsersMockFactory.repository.create.mockResolvedValue(
             UsersMockFactory.create.user(override),
           ),
+      },
+
+      delete: {
+        success: () =>
+          UsersMockFactory.repository.delete.mockResolvedValue(undefined),
+        null: () => UsersMockFactory.repository.delete.mockResolvedValue(null),
       },
     },
 

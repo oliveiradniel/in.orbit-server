@@ -106,4 +106,22 @@ describe('UsersService', () => {
       userId: () => mockUserId,
     });
   });
+
+  describe('delete', () => {
+    it('should delete the active user', async () => {
+      UsersMockFactory.responses.repository.delete.success();
+
+      await usersService.deleteActiveUser(mockUserId);
+
+      expect(UsersMockFactory.repository.delete).toHaveBeenCalled();
+    });
+
+    describeUserNotExistsInUsers({
+      request: () => usersService.deleteActiveUser(mockUserId),
+      classMethod: 'delete',
+      repositorySpy: UsersMockFactory.repository.delete,
+      repositoryMethod: UsersMockFactory.responses.repository.delete,
+      userId: () => mockUserId,
+    });
+  });
 });
