@@ -20,6 +20,7 @@ import { UnauthorizedResponseDOCS } from 'src/shared/responses/docs/unauthorized
 import { BadRequestOAuthResponseDOCS } from './responses/docs/bad-request-oauth-response.docs';
 
 import { type GitHubAuthenticateResponse } from './interfaces/github-authenticate-response.interface';
+import { type LogoutResponse } from './interfaces/logout-response.interface';
 
 import { CONFIG_SERVICE, OAUTH_SERVICE } from 'src/shared/constants/tokens';
 
@@ -79,10 +80,12 @@ export class OAuthController {
     },
   })
   @Post('logout')
-  logout(@Res({ passthrough: true }) response: Response) {
+  logout(@Res({ passthrough: true }) response: Response): LogoutResponse {
+    const { NODE_ENV } = getConfig(this.configService);
+
     response.cookie('token', '', {
       httpOnly: true,
-      secure: true,
+      secure: NODE_ENV === 'production',
       sameSite: 'strict',
       maxAge: 0,
       expires: new Date(0),
