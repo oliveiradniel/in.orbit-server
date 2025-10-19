@@ -45,4 +45,8 @@ export class UsersService {
       experienceToNextLevel,
     };
   }
+
+  async deleteActiveUser(userId: string): Promise<void> {
+    await this.usersRepository.delete(userId);
+  }
 }
