@@ -107,9 +107,10 @@ describe('UsersService', () => {
     });
   });
 
-  describe('delete', () => {
+  describe('deleteActiveUser', () => {
     it('should delete the active user', async () => {
       UsersMockFactory.responses.repository.delete.success();
+      UsersMockFactory.responses.repository.getUserById.success();
 
       await usersService.deleteActiveUser(mockUserId);
 
@@ -119,8 +120,8 @@ describe('UsersService', () => {
     describeUserNotExistsInUsers({
       request: () => usersService.deleteActiveUser(mockUserId),
       classMethod: 'delete',
-      repositorySpy: UsersMockFactory.repository.delete,
-      repositoryMethod: UsersMockFactory.responses.repository.delete,
+      repositorySpy: UsersMockFactory.repository.getUserById,
+      repositoryMethod: UsersMockFactory.responses.repository.getUserById,
       userId: () => mockUserId,
     });
   });
