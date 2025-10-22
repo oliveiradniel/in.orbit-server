@@ -30,7 +30,7 @@ model Goal {
 
   goalCompleted GoalCompleted[]
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade, onUpdate: Cascade)
+  user User @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@map("goals")
 }
