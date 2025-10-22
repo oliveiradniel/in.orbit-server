@@ -42,8 +42,8 @@ export class PrismaUsersRepository implements UsersRepository {
     });
   }
 
-  async getUserExperience(userId: string): Promise<UserExperience | null> {
-    return await this.prismaService.user.findUnique({
+  getUserExperience(userId: string): Promise<UserExperience | null> {
+    return this.prismaService.user.findUnique({
       where: {
         id: userId,
       },
@@ -70,10 +70,24 @@ export class PrismaUsersRepository implements UsersRepository {
   }
 
   async delete(userId: string): Promise<void> {
-    await this.prismaService.user.delete({
-      where: {
-        id: userId,
-      },
+    await this.prismaService.$transaction(async (transaction) => {
+      await transaction.goalCompleted.deleteMany({
+        where: {
+          goal: { userId },
+        },
+      });
+
+      await transaction.goal.deleteMany({
+        where: {
+          userId,
+        },
+      });
+
+      await transaction.user.delete({
+        where: {
+          id: userId,
+        },
+      });
     });
   }
 }
