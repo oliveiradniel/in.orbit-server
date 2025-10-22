@@ -145,4 +145,29 @@ describe('Users Module', () => {
       });
     });
   });
+
+  describe('DELETE', () => {
+    describe('/users', () => {
+      it('should delete the active user', async () => {
+        const response = await request(server)
+          .delete('/users')
+          .set('Authorization', `Bearer ${accessToken}`);
+
+        expect(response.statusCode).toEqual(204);
+      });
+
+      describeUserNotExists({
+        getServer: () => server,
+        getJWTService: () => jwtService,
+        route: '/users',
+        httpMethod: 'delete',
+      });
+
+      describeAuthGuard({
+        getServer: () => server,
+        route: '/users',
+        httpMethod: 'delete',
+      });
+    });
+  });
 });

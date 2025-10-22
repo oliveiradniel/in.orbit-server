@@ -86,7 +86,6 @@ export class UsersMockFactory {
       delete: {
         success: () =>
           UsersMockFactory.repository.delete.mockResolvedValue(undefined),
-        null: () => UsersMockFactory.repository.delete.mockResolvedValue(null),
       },
     },
 

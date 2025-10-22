@@ -13,13 +13,15 @@ import { PrismaService } from 'src/shared/database/prisma.service';
 
 import { PrismaUsersRepository } from 'src/shared/database/repositories/users.repository';
 
+import { GoalsCompletedSpecModule } from 'src/modules/goals-completed/__tests__/goals-completed.spec.module';
+
 import {
+  CONFIG_SERVICE,
   JWT_SERVICE,
   PRISMA_SERVICE,
   USERS_REPOSITORY,
   USERS_SERVICE,
 } from 'src/shared/constants/tokens';
-import { GoalsCompletedSpecModule } from 'src/modules/goals-completed/__tests__/goals-completed.spec.module';
 
 @Module({
   imports: [AuthModule, GoalsCompletedSpecModule],
@@ -30,6 +32,7 @@ import { GoalsCompletedSpecModule } from 'src/modules/goals-completed/__tests__/
     { provide: PRISMA_SERVICE, useClass: PrismaService },
     { provide: USERS_REPOSITORY, useClass: PrismaUsersRepository },
     { provide: JWT_SERVICE, useClass: JwtService },
+    { provide: CONFIG_SERVICE, useClass: ConfigService },
     {
       provide: APP_GUARD,
       useFactory: (jwt: JwtService, config: ConfigService) => {

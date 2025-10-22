@@ -20,7 +20,7 @@ export function describeUserNotExists({
 
       let response: SupertestResponse;
 
-      if (httpMethod === 'get') {
+      if (httpMethod === 'get' || !getData) {
         response = await request(getServer())
           [httpMethod](route)
           .set('Authorization', `Bearer ${token}`);
