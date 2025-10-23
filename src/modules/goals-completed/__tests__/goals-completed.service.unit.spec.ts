@@ -311,7 +311,7 @@ describe('GoalsCompletedService', () => {
       expect(totalQuantity).toBe(completedGoalsCount);
     });
 
-    it('should return total quantity of goals completed when has not goals completed', async () => {
+    it('should return 0 when has not goals completed', async () => {
       UsersMockFactory.responses.service.findUserById.success();
       GoalsCompletedMockFactory.responses.repository.totalQuantity.success(0);
 

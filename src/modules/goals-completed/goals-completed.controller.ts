@@ -42,6 +42,7 @@ export class GoalsCompletedController {
   ): Promise<{ totalQuantity: number }> {
     const totalQuantity =
       await this.goalsCompletedService.totalQuantity(userId);
+
     return { totalQuantity };
   }
   @ApiCreatedResponse({

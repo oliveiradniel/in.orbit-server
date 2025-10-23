@@ -26,10 +26,12 @@ import { createTestGoal } from 'src/shared/__tests__/helpers/int/create-test-goa
 import { createTestGoalCompleted } from 'src/shared/__tests__/helpers/int/create-test-goal-completed.helper';
 
 import { GoalsCompletedMockFactory } from '../__factories__/goals-completed-mock.factory';
+import { GoalsMockFactory } from 'src/shared/__factories__/goals-mock.factory';
 
 import { type User } from 'src/modules/users/entities/user.entity';
 
 import { JWT_SERVICE, PRISMA_SERVICE } from 'src/shared/constants/tokens';
+import { describeUserNotExists } from 'src/shared/__tests__/helpers/int/describe-user-not-exists.helper';
 
 describe('Goals Completed Module', () => {
   let app: NestApplication;
@@ -71,6 +73,70 @@ describe('Goals Completed Module', () => {
   afterAll(async () => {
     vi.useRealTimers();
     await app.close();
+  });
+
+  describe('GET', () => {
+    describe('/goals-completed', () => {
+      describe('/total-quantity', () => {
+        it('should return total quantity of goals completed when has goals completed', async () => {
+          const [goal1, goal2, goal3] = await createTestGoal({
+            prismaService,
+            userId: activeUser.id!,
+            otherGoals: [
+              {
+                title: GoalsMockFactory.create.title(),
+                desiredWeeklyFrequency:
+                  GoalsMockFactory.create.desiredWeeklyFrequency(),
+              },
+              {
+                title: GoalsMockFactory.create.title(),
+                desiredWeeklyFrequency:
+                  GoalsMockFactory.create.desiredWeeklyFrequency(),
+              },
+            ],
+          });
+
+          await createTestGoalCompleted({
+            prismaService,
+            goalId: goal1.id!,
+            otherGoalsCompleted: [
+              {
+                goalId: goal2.id!,
+              },
+              {
+                goalId: goal3.id!,
+              },
+            ],
+          });
+
+          const response = await request(server)
+            .get('/goals-completed/total-quantity')
+            .set('Authorization', `Bearer ${accessToken}`);
+
+          expect(response.statusCode).toBe(200);
+          expect(response.body).toMatchObject({
+            totalQuantity: 3,
+          });
+        });
+
+        it('should return 0 when has not goals completed', async () => {
+          const response = await request(server)
+            .get('/goals-completed/total-quantity')
+            .set('Authorization', `Bearer ${accessToken}`);
+
+          expect(response.statusCode).toBe(200);
+          expect(response.body).toMatchObject({
+            totalQuantity: 0,
+          });
+        });
+
+        describeUserNotExists({
+          getServer: () => server,
+          getJWTService: () => jwtService,
+          route: '/goals-completed/total-quantity',
+        });
+      });
+    });
   });
 
   describe('POST', () => {
