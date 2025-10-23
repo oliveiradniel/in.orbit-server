@@ -1,4 +1,4 @@
-import { Body, Controller, Inject, Post } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Post } from '@nestjs/common';
 import {
   ApiBadRequestResponse,
   ApiBearerAuth,
@@ -36,6 +36,11 @@ export class GoalsCompletedController {
     @Inject(GOALS_COMPLETED_SERVICE)
     private readonly goalsCompletedService: GoalsCompletedService,
   ) {}
+
+  @Get('total-quantity')
+  totalQuantity(@ActiveUserId() userId: string): Promise<number> {
+    return this.goalsCompletedService.totalQuantity(userId);
+  }
 
   @ApiCreatedResponse({
     description: 'Returns the newly created goal completion record.',
