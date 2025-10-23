@@ -9,6 +9,7 @@ export class GoalsCompletedMockFactory {
   static repository = {
     create: vi.fn(),
     getGoalCompletedByDateAndByGoalId: vi.fn(),
+    totalQuantity: vi.fn(),
   };
 
   static create = {
@@ -38,6 +39,12 @@ export class GoalsCompletedMockFactory {
         alreadyCompleted: (override: Partial<GoalCompleted> = {}) =>
           GoalsCompletedMockFactory.repository.getGoalCompletedByDateAndByGoalId.mockResolvedValue(
             GoalsCompletedMockFactory.create.goalCompleted(override),
+          ),
+      },
+      totalQuantity: {
+        success: (quantity: number) =>
+          GoalsCompletedMockFactory.repository.totalQuantity.mockResolvedValue(
+            quantity,
           ),
       },
     },

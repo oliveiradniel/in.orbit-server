@@ -285,4 +285,56 @@ describe('GoalsCompletedService', () => {
       ).not.toHaveBeenCalled();
     });
   });
+
+  describe('totalQuantity', () => {
+    it('should return total quantity of goals completed when has goals completed', async () => {
+      const mockGoalsCompleted = Array.from({ length: 3 }, () =>
+        GoalsCompletedMockFactory.create.goalCompleted({
+          goalId: mockGoal.id!,
+        }),
+      );
+
+      const completedGoalsCount = mockGoalsCompleted.length;
+
+      UsersMockFactory.responses.service.findUserById.success();
+      GoalsCompletedMockFactory.responses.repository.totalQuantity.success(
+        completedGoalsCount,
+      );
+
+      const totalQuantity =
+        await goalsCompletedService.totalQuantity(mockUserId);
+
+      expect(UsersMockFactory.service.findUserById).toHaveBeenCalled();
+      expect(
+        GoalsCompletedMockFactory.repository.totalQuantity,
+      ).toHaveBeenCalled();
+      expect(totalQuantity).toBe(completedGoalsCount);
+    });
+
+    it('should return total quantity of goals completed when has not goals completed', async () => {
+      UsersMockFactory.responses.service.findUserById.success();
+      GoalsCompletedMockFactory.responses.repository.totalQuantity.success(0);
+
+      const totalQuantity =
+        await goalsCompletedService.totalQuantity(mockUserId);
+
+      expect(UsersMockFactory.service.findUserById).toHaveBeenCalled();
+      expect(
+        GoalsCompletedMockFactory.repository.totalQuantity,
+      ).toHaveBeenCalled();
+      expect(totalQuantity).toBe(0);
+    });
+
+    it('should to throw an error when the user does not exist', async () => {
+      UsersMockFactory.responses.service.findUserById.failure();
+
+      await expect(
+        goalsCompletedService.totalQuantity(mockUserId),
+      ).rejects.toThrow(NotFoundException);
+
+      expect(
+        GoalsCompletedMockFactory.repository.totalQuantity,
+      ).not.toHaveBeenCalled();
+    });
+  });
 });
