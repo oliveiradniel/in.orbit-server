@@ -37,11 +37,13 @@ export class GoalsCompletedController {
     private readonly goalsCompletedService: GoalsCompletedService,
   ) {}
 
-  @Get('total-quantity')
-  totalQuantity(@ActiveUserId() userId: string): Promise<number> {
-    return this.goalsCompletedService.totalQuantity(userId);
+  @Get('total-quantity') async totalQuantity(
+    @ActiveUserId() userId: string,
+  ): Promise<{ totalQuantity: number }> {
+    const totalQuantity =
+      await this.goalsCompletedService.totalQuantity(userId);
+    return { totalQuantity };
   }
-
   @ApiCreatedResponse({
     description: 'Returns the newly created goal completion record.',
     type: CreateGoalCompletedResponseDOCS,
