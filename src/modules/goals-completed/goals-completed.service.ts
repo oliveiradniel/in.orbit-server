@@ -81,4 +81,10 @@ export class GoalsCompletedService {
       experiencePoints: earnedExperiencePoints,
     });
   }
+
+  async totalQuantity(userId: string): Promise<number> {
+    await this.usersService.findUserById(userId);
+
+    return this.goalsCompletedRepository.totalQuantity(userId);
+  }
 }
