@@ -8,4 +8,6 @@ export abstract class GoalsCompletedRepository {
   ): Promise<GoalCompleted | null>;
 
   abstract create(params: CreateGoalCompleted): Promise<GoalCompleted>;
+
+  abstract totalQuantity(userId: string): Promise<number>;
 }

@@ -67,4 +67,14 @@ export class PrismaGoalsCompletedRepository
 
     return goalCompleted;
   }
+
+  totalQuantity(userId: string): Promise<number> {
+    return this.prismaService.goalCompleted.count({
+      where: {
+        goal: {
+          userId,
+        },
+      },
+    });
+  }
 }
