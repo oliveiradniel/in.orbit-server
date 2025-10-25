@@ -50,9 +50,13 @@ export class PrismaGoalsRepository implements GoalsRepository {
   }: UserDateRangeFilter): Promise<WeeklyGoalsProgress[]> {
     const cteGoalsCreatedUpToWeek = `
       goals_created_up_to_week AS (
-        SELECT id, title, desired_weekly_frequency AS "desiredWeeklyFrequency", created_at AS "createdAt"
+        SELECT id,
+               title,
+               desired_weekly_frequency AS "desiredWeeklyFrequency",
+               is_deleted AS "isDeleted",
+               created_at AS "createdAt"
         FROM goals
-        WHERE created_at <= $1 AND user_id = $3::uuid AND is_deleted = false
+        WHERE created_at <= $1 AND user_id = $3::uuid
       )
     `;
 
@@ -85,6 +89,7 @@ export class PrismaGoalsRepository implements GoalsRepository {
       SELECT g.id,
               g.title,
               g."desiredWeeklyFrequency",
+              g."isDeleted",
               COALESCE(c."completionCount", 0) AS "completionCount",
               COALESCE(t."wasCompletedToday", false) AS "wasCompletedToday"
       FROM goals_created_up_to_week g
