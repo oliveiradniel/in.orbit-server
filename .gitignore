@@ -58,6 +58,6 @@ report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 /generated/prisma
 
 # Docker
-/docker/Dockerfile.prod
+# /docker/Dockerfile.prod
 /docker-compose.prod.yml
 /docker/init.sh
