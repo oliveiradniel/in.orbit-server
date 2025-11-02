@@ -1,4 +1,4 @@
-# 💰 inOrbit API
+# 🌌 inOrbit API
 
 > API REST desenvolvida com **NestJS**, **Prisma** e **PostgreSQL**. Inclui autenticação via GitHub OAuth, gerenciamento de metas e tarefas, além de testes unitários e de integração para garantir confiabilidade.
 
