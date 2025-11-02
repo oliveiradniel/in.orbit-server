@@ -150,4 +150,6 @@ Após iniciar o servidor, acesse a documentação interativa com Swagger em:
 
 [![Deploy](https://img.shields.io/badge/🧑🏻‍💻_aplicação_em_tempo_real-8E51FF?style=for-the-badge&logo=windows-terminal&logoColor=white)](https://app.inorbit.site/login)
 
+[![Repositório Front-End](https://img.shields.io/badge/repositório_front_end-0a1123?style=for-the-badge&logo=github&logoColor=white)](https://github.com/oliveiradniel/in.orbit-web)
+
 [![Portfólio](https://img.shields.io/badge/meu_portfólio-00A6F4?style=for-the-badge&logo=google-earth&logoColor=white)](https://jovemprogramador.dev/)
