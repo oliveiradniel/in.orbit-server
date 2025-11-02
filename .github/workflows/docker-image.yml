@@ -1,9 +1,10 @@
-name: Docker Image CI
+name: Docker Image CD
 
 on:
-  push:
-    branches:
-      - 'main'
+  workflow_run:
+    workflows: ['inOrbit CI']
+    types:
+      - completed
 
 jobs:
   build-and-push:
