@@ -1,0 +1,24 @@
+name: inOrbit CD
+
+on:
+  workflow_run:
+    workflows: ['Docker Image CD']
+    types:
+      - completed
+
+jobs:
+  deploy:
+    name: Deploy to Vultr
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: connect SSH and deploy
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VULTR_IP }}
+          username: dockeruser
+          key: ${{ secrets.VULTR_SSH_SECRET_KEY }}
+          script: |
+            cd /apps/inorbit
+            docker pull dkadadev/inorbit-api:latest
+            docker compose up -d
