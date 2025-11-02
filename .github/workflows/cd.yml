@@ -21,4 +21,4 @@ jobs:
           script: |
             cd /home/dockeruser/apps/inorbit
             docker pull dkadadev/inorbit-api:latest
-            docker compose up -d
+            docker compose up -d api
