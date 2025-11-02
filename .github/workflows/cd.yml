@@ -19,6 +19,6 @@ jobs:
           username: dockeruser
           key: ${{ secrets.VULTR_SSH_SECRET_KEY }}
           script: |
-            cd /apps/inorbit
+            cd /home/dockeruser/apps/inorbit
             docker pull dkadadev/inorbit-api:latest
             docker compose up -d
